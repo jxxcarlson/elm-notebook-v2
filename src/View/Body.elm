@@ -3,7 +3,7 @@ module View.Body exposing (view)
 import Dict exposing (Dict)
 import Element as E exposing (Element)
 import Element.Background as Background
-import Element.Border
+import Element.Border as Border
 import Element.Font as Font
 import Notebook.Book exposing (Book)
 import Notebook.Eval
@@ -30,20 +30,29 @@ view model user =
             , E.width E.fill
             ]
             [ viewNotebookList model user
-            , E.column
-                [ Font.size 14
-                , E.scrollbarY
-                , E.spacing 18
-                , Font.family
-                    [ Font.typeface "Courier"
-                    , Font.monospace
-                    ]
-                , E.paddingEach
-                    { top = 18, bottom = 36, left = 0, right = 0 }
-                , E.height (E.px monitorHeight)
-                ]
-                [ E.text "Declarations", Notebook.Eval.displayDictionary model.evalState.decls ]
+            , declarations model user
             ]
+        ]
+
+
+declarations model user =
+    E.column
+        [ Font.size 14
+        , E.scrollbarY
+        , E.spacing 18
+        , Border.widthEach { left = 2, right = 0, top = 0, bottom = 0 }
+        , Border.color (E.rgb255 73 78 89)
+        , Font.family
+            [ Font.typeface "Courier"
+            , Font.monospace
+            ]
+        , E.paddingEach
+            { top = 18, bottom = 36, left = 0, right = 0 }
+        , E.height (E.px monitorHeight)
+        ]
+        [ E.el [ E.paddingXY 18 0 ]
+            (E.text "Declarations")
+        , Notebook.Eval.displayDictionary model.evalState.decls
         ]
 
 
@@ -54,8 +63,8 @@ monitor model =
         , E.spacing 18
         , Font.size 14
         , E.height (E.px monitorHeight)
-        , Element.Border.widthEach { left = 1, right = 0, top = 0, bottom = 0 }
-        , Element.Border.color Color.darkGray
+        , Border.widthEach { left = 1, right = 0, top = 0, bottom = 0 }
+        , Border.color Color.darkGray
         , E.scrollbarY
         , Font.color Color.white
         ]
@@ -77,13 +86,13 @@ viewNotebookList model user =
         [ E.spacing 1
         , E.alignTop
         , Font.size 14
-        , E.width (E.px (View.Geometry.notebookListWidth - 46))
-        , Element.Border.widthEach { left = 1, right = 0, top = 0, bottom = 1 }
-        , Element.Border.color Color.stillDarkerSteelGray
+        , E.width (E.px (View.Geometry.notebookListWidth - 24))
+        , Border.widthEach { left = 1, right = 0, top = 0, bottom = 1 }
+        , Border.color (E.rgb 0.4 0.4 0.5)
         , Background.color (E.rgb255 73 78 89)
         , E.height (E.px (View.Geometry.bodyHeight model - monitorHeight))
         , E.scrollbarY
-        , E.paddingXY 24 12
+        , E.paddingXY 18 12
         ]
         (case model.showNotebooks of
             Types.ShowUserNotebooks ->
@@ -163,7 +172,7 @@ viewNotebook model user =
             }
     in
     E.column
-        [ E.paddingEach { left = 24, right = 24, top = 0, bottom = 0 }
+        [ E.paddingEach { left = 24, right = 0, top = 0, bottom = 0 }
         ]
         [ E.column
             [ View.Style.fgGray 0.6
