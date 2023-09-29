@@ -5,6 +5,7 @@ module View.Geometry exposing
     , footerHeight
     , hPadding
     , headerHeight
+    , loweRightSidePanelHeight
     , mainColumnHeight
     , notebookListWidth
     , notebookWidth
@@ -24,6 +25,11 @@ appHeight model =
 mainColumnHeight : { a | windowHeight : number } -> number
 mainColumnHeight model =
     appHeight model - headerHeight - footerHeight - 35
+
+
+loweRightSidePanelHeight : { a | windowHeight : Int } -> Int
+loweRightSidePanelHeight model =
+    0.55 * (toFloat <| mainColumnHeight model) |> round
 
 
 bodyHeight : { a | windowHeight : number } -> number

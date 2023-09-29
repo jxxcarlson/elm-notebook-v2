@@ -38,18 +38,21 @@ view model user =
 declarations model user =
     E.column
         [ Font.size 14
-        , E.scrollbarY
         , E.spacing 18
         , Border.widthEach { left = 2, right = 0, top = 0, bottom = 0 }
         , Border.color (E.rgb255 73 78 89)
         , View.Style.monospace
         , E.paddingEach
             { top = 18, bottom = 36, left = 0, right = 0 }
-        , E.height (E.px monitorHeight)
         ]
         [ E.el [ E.paddingXY 18 0, Font.underline ]
             (E.text "Declarations")
-        , Notebook.Eval.displayDictionary model.evalState.decls
+        , E.el
+            [ E.height (E.px <| View.Geometry.loweRightSidePanelHeight model)
+            , E.width (E.px <| View.Geometry.notebookListWidth model)
+            , E.scrollbarY
+            ]
+            (Notebook.Eval.displayDictionary model.evalState.decls)
         ]
 
 
@@ -87,7 +90,7 @@ viewNotebookList model user =
         , Border.widthEach { left = 1, right = 0, top = 0, bottom = 1 }
         , Border.color (E.rgb 0.4 0.4 0.5)
         , Background.color (E.rgb255 73 78 89)
-        , E.height (E.px (View.Geometry.bodyHeight model - monitorHeight))
+        , E.height (E.px (View.Geometry.bodyHeight model - View.Geometry.loweRightSidePanelHeight model))
         , E.scrollbarY
         , E.paddingXY 18 12
         ]
