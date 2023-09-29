@@ -80,6 +80,7 @@ signedInHeader model user =
         , View.Utility.showIf (Predicate.regularUser model) Button.newNotebook
         , View.Utility.showIf (Predicate.regularUser model) (Button.deleteNotebook model.deleteNotebookState)
         , View.Utility.showIf (Predicate.regularUser model) (Button.cancelDeleteNotebook model.deleteNotebookState)
+        , View.Utility.showIf (Predicate.regularUser model) (Button.processAllCells)
         , Button.clearValues
         , welcomeLink
         , Button.manual

@@ -5,6 +5,7 @@ module View.Button exposing
     , cloneNotebook
     , createDataSet
     , deleteDataSet
+    , processAllCells
     , deleteNotebook
     , dismissPopup
     , dismissPopupSmall
@@ -95,6 +96,10 @@ dismissPopupTransparent =
 dismissPopupSmall : Element FrontendMsg
 dismissPopupSmall =
     Button.smallPrimary { msg = ChangePopup NoPopup, status = Button.ActiveTransparent, label = Button.Text "x", tooltipText = Nothing }
+
+processAllCells : Element FrontendMsg
+processAllCells =
+    Button.smallPrimary { msg = ProcessAllCells, status = Button.ActiveTransparent, label = Button.Text "Process", tooltipText = Nothing }
 
 
 runCell : CellState -> CellType -> Int -> Element FrontendMsg

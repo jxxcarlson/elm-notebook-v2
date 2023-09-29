@@ -1,4 +1,4 @@
-module Notebook.EvalCell exposing (processCell)
+module Notebook.EvalCell exposing (processCell, processAllCells)
 
 import Dict
 import Keyboard
@@ -14,6 +14,33 @@ import Types exposing (FrontendMsg)
 type alias Model =
     Types.FrontendModel
 
+processAllCells : Model -> ( Model, Cmd FrontendMsg )
+processAllCells model =
+    let
+        n = List.length model.currentBook.cells
+        indices = List.range 0 n
+        (newModel, commands) =
+            List.foldl folder ( model , [] ) indices
+
+        _ = newModel.evalState.decls |> Debug.log "@DECLS"
+    in
+    (newModel, Cmd.batch commands)
+
+
+
+folder : Int -> (Model, List (Cmd FrontendMsg)) -> (Model, List (Cmd FrontendMsg))
+folder k (model, cmds) =
+    let
+
+        (model_, cmd) =
+            processCell_ (k |> Debug.log "_index") model
+    in
+    (model_, cmd :: cmds)
+
+
+processCell_ : Int -> Model -> ( Model, Cmd FrontendMsg )
+processCell_ cellIndex model =
+    processCell CSView cellIndex model
 
 processCell : CellState -> Int -> Model -> ( Model, Cmd FrontendMsg )
 processCell cellState cellIndex model_ =
@@ -122,3 +149,9 @@ processNameAndExpr model cellState name expr =
             Just { name = Nothing, value = "Ok", tipe = "" }
     in
     ( { model | replData = replData, evalState = newEvalState }, Cmd.none )
+
+
+ppp =  { decls = Dict.fromList
+              [("inc x","inc x  =  x + 1\n")
+              ,("numbers","numbers  =  List.range 1 20\n")]
+      , imports = Dict.fromList [], types = Dict.fromList [] }

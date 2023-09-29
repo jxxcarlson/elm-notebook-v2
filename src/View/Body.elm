@@ -14,25 +14,32 @@ import Util
 import View.Button
 import View.Geometry
 import View.Style
-
+import Notebook.Eval
 
 view : FrontendModel -> User.User -> Element FrontendMsg
 view model user =
     E.row
         [ E.width (E.px (View.Geometry.appWidth model))
         , E.height (E.px (View.Geometry.bodyHeight model))
-
-        --, E.paddingEach { left = 0, right = 0, top = 18, bottom = 0 }
         ]
         [ viewNotebook model user
-        , E.column [] [ viewNotebookList model user, monitor model ]
+        , E.column [E.height (E.px (View.Geometry.bodyHeight model))
+        , Font.color (E.rgb 0.9 0.9 0.9)
+        , E.width E.fill
+        ] [
+           viewNotebookList model user
+        ,  E.column [Font.size 14, E.scrollbarY,
+           E.spacing 12,
+           E.paddingEach { top = 18, bottom = 0, left = 0, right = 0}, E.height (E.px monitorHeight)]
+          [E.text "Declarations", (Notebook.Eval.displayDictionary model.evalState.decls)] ]
+
         ]
 
 
 monitor : FrontendModel -> Element FrontendMsg
 monitor model =
     E.column
-        [ E.padding 12
+        [ E.paddingEach { left = 0, right = 24, top = 0, bottom = 0 }
         , E.spacing 18
         , Font.size 14
         , E.height (E.px monitorHeight)

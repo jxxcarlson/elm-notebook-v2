@@ -58,7 +58,7 @@ removeDeclaration name evalState =
 
 displayDictionary : Dict String String -> Element msg
 displayDictionary declarationDict =
-    E.column [ E.spacing 12, Font.size 16 ]
+    E.column [ E.spacing 12, Font.size 14 ]
         (List.map
             (\( k, v ) -> displayValue ( k, v ))
             (Dict.toList declarationDict |> List.sortBy Tuple.first)

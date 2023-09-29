@@ -477,6 +477,9 @@ update msg model =
                     )
 
         -- CELLS, NOTEBOOKS
+        ProcessAllCells ->
+            Notebook.EvalCell.processAllCells model
+
         ToggleCellLock cell ->
             ( Notebook.Update.toggleCellLock cell model, Cmd.none )
 
