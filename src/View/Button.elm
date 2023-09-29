@@ -113,16 +113,11 @@ runCell cellState cellType index =
             Button.smallPrimary { msg = EvalCell cellState index, status = Button.Active, label = Button.Text label, tooltipText = Just "ctrl-Enter" }
 
         Notebook.Cell.CTMarkdown ->
-            let
-                label =
-                    case cellState of
-                        CSView ->
-                            "Save!"
+            case cellState of
+                CSView ->
+                    E.none
+                CSEdit -> Button.smallPrimary { msg = EvalCell CSView index, status = Button.Active, label = Button.Text "Close", tooltipText = Just "ctrl-Enter" }
 
-                        CSEdit ->
-                            "Save"
-            in
-            Button.smallPrimary { msg = EvalCell cellState index, status = Button.Active, label = Button.Text label, tooltipText = Just "ctrl-Enter" }
 
 
 dismissPopup : Element FrontendMsg

@@ -74,9 +74,15 @@ viewSourceAndValue orignalviewData currentCellIndex mReport cellContents cell =
     E.column ([ Background.color (Utility.cellColor cell.tipe), E.paddingXY 6 12, E.spacing 4 ] ++ style)
         [ E.el [ E.alignRight, Background.color (Utility.cellColor cell.tipe) ] (controls viewData.width cell)
         , viewSource (viewData.width - controlWidth) cell cellContents
-        , viewValue viewData currentCellIndex mReport cell
+        ,  E.el (hrule cell) (viewValue viewData currentCellIndex mReport cell)
         ]
 
+hrule cell = case cell.tipe of
+    CTCode -> [
+         Element.Border.widthEach {top = 1, bottom = 0, left = 0, right = 0}
+       , Element.Border.color (E.rgb 0.75 0.75 1.0)
+       ]
+    CTMarkdown -> []
 
 controlBGEdit =
     Background.color (E.rgb 0.8 0.8 1.0)
@@ -147,7 +153,7 @@ viewSource width cell cellContent =
         CTCode ->
             case cell.cellState of
                 CSView ->
-                    viewSource_ "" width cell
+                    viewSource_ "**>** " width cell
 
                 CSEdit ->
                     editCell width cell cellContent
@@ -210,8 +216,8 @@ viewSuccess viewData cell =
             E.none
 
         CVString str ->
-            par realWidth
-                [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) str ]
+            E.el [E.paddingEach { top = 12, bottom = 0, left = 0, right = 0}] (par realWidth
+                [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) str ])
 
         CVMarkdown str ->
             par realWidth

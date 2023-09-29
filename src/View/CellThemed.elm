@@ -96,7 +96,7 @@ renderer theme =
     { heading = \data -> Element.row [] [ heading theme data ]
     , paragraph =
         Element.paragraph
-            [ Element.paddingEach { left = 0, right = 0, top = 0, bottom = 20 }
+            [ Element.paddingEach { left = 0, right = 0, top = 0, bottom = 12 }
             ]
     , blockQuote =
         \children ->

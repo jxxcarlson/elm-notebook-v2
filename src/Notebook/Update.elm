@@ -122,7 +122,7 @@ makeNewCell model cellState cellType index =
             }
 
         newBook =
-            Notebook.CellHelper.addCellToBook newCell model.currentBook
+            Notebook.CellHelper.addCellToBook newCell (Notebook.Book.initializeCellState  model.currentBook)
 
         _ =
             List.length newBook.cells
