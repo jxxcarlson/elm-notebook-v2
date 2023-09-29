@@ -22,7 +22,7 @@ classify : String -> Classification
 classify str =
     case run prefix str of
         Ok str2 ->
-            Decl (String.replace "= " "" str2 |> String.trim) str
+            Decl (String.replace "= " "" str2 |> String.trim) (String.replace str2 "" str)
 
         Err _ ->
             Expr str
