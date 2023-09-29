@@ -1,4 +1,4 @@
-module Notebook.EvalCell exposing (processCell, processAllCells)
+module Notebook.EvalCell exposing (processAllCells, processCell)
 
 import Dict
 import Keyboard
@@ -7,6 +7,7 @@ import Notebook.Book
 import Notebook.Cell as Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
 import Notebook.CellHelper
 import Notebook.Eval as Eval
+import Notebook.Parser
 import Notebook.Types exposing (EvalState)
 import Types exposing (FrontendMsg)
 
@@ -14,33 +15,38 @@ import Types exposing (FrontendMsg)
 type alias Model =
     Types.FrontendModel
 
+
 processAllCells : Model -> ( Model, Cmd FrontendMsg )
 processAllCells model =
     let
-        n = List.length model.currentBook.cells
-        indices = List.range 0 n
-        (newModel, commands) =
-            List.foldl folder ( model , [] ) indices
+        n =
+            List.length model.currentBook.cells
 
-        _ = newModel.evalState.decls |> Debug.log "@DECLS"
+        indices =
+            List.range 0 n
+
+        ( newModel, commands ) =
+            List.foldl folder ( model, [] ) indices
+
+        _ =
+            newModel.evalState.decls |> Debug.log "@DECLS"
     in
-    (newModel, Cmd.batch commands)
+    ( newModel, Cmd.batch commands )
 
 
-
-folder : Int -> (Model, List (Cmd FrontendMsg)) -> (Model, List (Cmd FrontendMsg))
-folder k (model, cmds) =
+folder : Int -> ( Model, List (Cmd FrontendMsg) ) -> ( Model, List (Cmd FrontendMsg) )
+folder k ( model, cmds ) =
     let
-
-        (model_, cmd) =
+        ( model_, cmd ) =
             processCell_ (k |> Debug.log "_index") model
     in
-    (model_, cmd :: cmds)
+    ( model_, cmd :: cmds )
 
 
 processCell_ : Int -> Model -> ( Model, Cmd FrontendMsg )
 processCell_ cellIndex model =
     processCell CSView cellIndex model
+
 
 processCell : CellState -> Int -> Model -> ( Model, Cmd FrontendMsg )
 processCell cellState cellIndex model_ =
@@ -81,18 +87,12 @@ processMarkdown model cellState cell =
 
 
 processCode model cellState cell_ =
-    case String.split "=" cell_.text of
-        [] ->
-            ( model, Cmd.none )
-
-        expr :: [] ->
+    case Notebook.Parser.classify cell_.text of
+        Notebook.Parser.Expr expr ->
             processExpr model cellState expr
 
-        name :: expr :: [] ->
+        Notebook.Parser.Decl name expr ->
             processNameAndExpr model cellState name expr
-
-        _ ->
-            ( { model | pressedKeys = [] }, Cmd.none )
 
 
 processExpr : Model -> CellState -> String -> ( Model, Cmd FrontendMsg )
@@ -151,7 +151,12 @@ processNameAndExpr model cellState name expr =
     ( { model | replData = replData, evalState = newEvalState }, Cmd.none )
 
 
-ppp =  { decls = Dict.fromList
-              [("inc x","inc x  =  x + 1\n")
-              ,("numbers","numbers  =  List.range 1 20\n")]
-      , imports = Dict.fromList [], types = Dict.fromList [] }
+ppp =
+    { decls =
+        Dict.fromList
+            [ ( "inc x", "inc x  =  x + 1\n" )
+            , ( "numbers", "numbers  =  List.range 1 20\n" )
+            ]
+    , imports = Dict.fromList []
+    , types = Dict.fromList []
+    }
