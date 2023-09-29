@@ -10,6 +10,7 @@ import List.Extra
 import Notebook.Book exposing (ViewData)
 import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
 import Notebook.ErrorReporter
+import Notebook.Parser
 import Notebook.Utility as Utility
 import Types exposing (FrontendModel, FrontendMsg(..))
 import UILibrary.Button as Button
@@ -220,7 +221,16 @@ viewSuccess viewData cell =
         CVNone ->
             E.none
 
-        CVString str ->
+        CVString str_ ->
+            let
+                str =
+                    case Notebook.Parser.classify cell.text of
+                        Notebook.Parser.Expr _ ->
+                            str_
+
+                        Notebook.Parser.Decl _ _ ->
+                            "Ok"
+            in
             E.el
                 [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
                 , Font.family

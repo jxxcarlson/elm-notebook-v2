@@ -1,7 +1,0 @@
-{
-  "root": "../src",
-  "tests": [
-    "./README.md",
-    "FastDict"
-  ]
-}
