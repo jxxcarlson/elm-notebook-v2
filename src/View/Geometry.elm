@@ -33,11 +33,12 @@ bodyHeight model =
 
 notebookWidth : { a | windowWidth : Int } -> Int
 notebookWidth model =
-    appWidth model - notebookListWidth
+    appWidth model - notebookListWidth model
 
 
-notebookListWidth =
-    400
+notebookListWidth : { a | windowWidth : Int } -> Int
+notebookListWidth model =
+    0.4 * toFloat (appWidth model) |> round
 
 
 headerHeight =

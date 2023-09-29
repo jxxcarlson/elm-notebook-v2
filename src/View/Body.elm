@@ -42,15 +42,12 @@ declarations model user =
         , E.spacing 18
         , Border.widthEach { left = 2, right = 0, top = 0, bottom = 0 }
         , Border.color (E.rgb255 73 78 89)
-        , Font.family
-            [ Font.typeface "Courier"
-            , Font.monospace
-            ]
+        , View.Style.monospace
         , E.paddingEach
             { top = 18, bottom = 36, left = 0, right = 0 }
         , E.height (E.px monitorHeight)
         ]
-        [ E.el [ E.paddingXY 18 0 ]
+        [ E.el [ E.paddingXY 18 0, Font.underline ]
             (E.text "Declarations")
         , Notebook.Eval.displayDictionary model.evalState.decls
         ]
@@ -86,7 +83,7 @@ viewNotebookList model user =
         [ E.spacing 1
         , E.alignTop
         , Font.size 14
-        , E.width (E.px (View.Geometry.notebookListWidth - 24))
+        , E.width (E.px (View.Geometry.notebookListWidth model - 24))
         , Border.widthEach { left = 1, right = 0, top = 0, bottom = 1 }
         , Border.color (E.rgb 0.4 0.4 0.5)
         , Background.color (E.rgb255 73 78 89)

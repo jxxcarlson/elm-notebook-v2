@@ -2,11 +2,19 @@ module View.Style exposing
     ( bgGray
     , buttonStyle
     , fgGray
+    , monospace
     )
 
 import Element exposing (Element)
 import Element.Background as Background
 import Element.Font as Font
+
+
+monospace =
+    Font.family
+        [ Font.typeface "Inconsolata"
+        , Font.monospace
+        ]
 
 
 fgGray : Float -> Element.Attr decorative msg

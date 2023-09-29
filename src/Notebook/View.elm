@@ -17,6 +17,7 @@ import UILibrary.Button as Button
 import UILibrary.Color as Color
 import View.Button exposing (runCell)
 import View.CellThemed
+import View.Style
 
 
 view : ViewData -> Int -> Maybe (List Notebook.ErrorReporter.MessageItem) -> String -> Cell -> Element FrontendMsg
@@ -221,26 +222,19 @@ viewSuccess viewData cell =
         CVNone ->
             E.none
 
-        CVString str_ ->
-            let
-                str =
-                    case Notebook.Parser.classify cell.text of
-                        Notebook.Parser.Expr _ ->
-                            str_
+        CVString str ->
+            case Notebook.Parser.classify cell.text of
+                Notebook.Parser.Expr _ ->
+                    E.el
+                        [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+                        , View.Style.monospace
+                        ]
+                        (par realWidth
+                            [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) str ]
+                        )
 
-                        Notebook.Parser.Decl _ _ ->
-                            "Ok"
-            in
-            E.el
-                [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-                , Font.family
-                    [ Font.typeface "Courier"
-                    , Font.monospace
-                    ]
-                ]
-                (par realWidth
-                    [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) str ]
-                )
+                Notebook.Parser.Decl _ _ ->
+                    E.el [ E.height (E.px 30), E.width (E.px 100), E.paddingXY 24 12 ] (E.text "Ok")
 
         CVMarkdown str ->
             par realWidth
@@ -404,10 +398,7 @@ viewSource_ prefix width cell =
         , Font.size 14
         , case cell.tipe of
             CTCode ->
-                Font.family
-                    [ Font.typeface "Courier"
-                    , Font.monospace
-                    ]
+                View.Style.monospace
 
             CTMarkdown ->
                 Font.family
@@ -451,10 +442,7 @@ editCell width cell cellContent =
                 , Font.color Color.black
                 , E.centerX
                 , E.width (E.px <| width)
-                , Font.family
-                    [ Font.typeface "Courier"
-                    , Font.monospace
-                    ]
+                , View.Style.monospace
                 ]
                 { onChange = InputElmCode cell.index
                 , text = cellContent
