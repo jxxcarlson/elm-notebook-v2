@@ -5,7 +5,6 @@ module View.Button exposing
     , cloneNotebook
     , createDataSet
     , deleteDataSet
-    , processAllCells
     , deleteNotebook
     , dismissPopup
     , dismissPopupSmall
@@ -20,6 +19,7 @@ module View.Button exposing
     , myNotebooks
     , newDataSet
     , newNotebook
+    , processAllCells
     , public
     , publicNotebooks
     , pullNotebook
@@ -97,9 +97,10 @@ dismissPopupSmall : Element FrontendMsg
 dismissPopupSmall =
     Button.smallPrimary { msg = ChangePopup NoPopup, status = Button.ActiveTransparent, label = Button.Text "x", tooltipText = Nothing }
 
+
 processAllCells : Element FrontendMsg
 processAllCells =
-    Button.smallPrimary { msg = ProcessAllCells, status = Button.ActiveTransparent, label = Button.Text "Process", tooltipText = Nothing }
+    Button.smallPrimary { msg = ProcessAllCells, status = Button.Active, label = Button.Text "Run all cells", tooltipText = Nothing }
 
 
 runCell : CellState -> CellType -> Int -> Element FrontendMsg
@@ -121,8 +122,9 @@ runCell cellState cellType index =
             case cellState of
                 CSView ->
                     E.none
-                CSEdit -> Button.smallPrimary { msg = EvalCell CSView index, status = Button.Active, label = Button.Text "Close", tooltipText = Just "ctrl-Enter" }
 
+                CSEdit ->
+                    Button.smallPrimary { msg = EvalCell CSView index, status = Button.Active, label = Button.Text "Close", tooltipText = Just "ctrl-Enter" }
 
 
 dismissPopup : Element FrontendMsg
