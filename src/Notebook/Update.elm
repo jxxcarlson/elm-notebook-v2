@@ -101,12 +101,19 @@ clearCell model index =
         Just cell_ ->
             let
                 updatedCell =
-                    { cell_ | text = "", cellState = CSView, value = CVNone }
+                    { cell_ | cellState = CSView, value = CVNone }
 
                 newBook =
                     Notebook.CellHelper.updateBookWithCell updatedCell model.currentBook
             in
-            ( { model | cellContent = "", currentBook = newBook }, Cmd.none )
+            ( { model
+                | cellContent = ""
+                , currentBook = newBook
+                , replData = Nothing
+                , report = Nothing
+              }
+            , Cmd.none
+            )
 
 
 makeNewCell : FrontendModel -> CellState -> CellType -> Int -> ( FrontendModel, Cmd FrontendMsg )
@@ -122,7 +129,7 @@ makeNewCell model cellState cellType index =
             }
 
         newBook =
-            Notebook.CellHelper.addCellToBook newCell (Notebook.Book.initializeCellState  model.currentBook)
+            Notebook.CellHelper.addCellToBook newCell (Notebook.Book.initializeCellState model.currentBook)
 
         _ =
             List.length newBook.cells
