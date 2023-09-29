@@ -37,7 +37,7 @@ notebookWidth model =
 
 
 notebookListWidth =
-    350
+    400
 
 
 headerHeight =

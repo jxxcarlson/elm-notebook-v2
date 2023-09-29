@@ -6,6 +6,7 @@ import Element.Background as Background
 import Element.Border
 import Element.Font as Font
 import Notebook.Book exposing (Book)
+import Notebook.Eval
 import Notebook.View
 import Types exposing (FrontendModel, FrontendMsg)
 import UILibrary.Color as Color
@@ -14,7 +15,7 @@ import Util
 import View.Button
 import View.Geometry
 import View.Style
-import Notebook.Eval
+
 
 view : FrontendModel -> User.User -> Element FrontendMsg
 view model user =
@@ -23,16 +24,26 @@ view model user =
         , E.height (E.px (View.Geometry.bodyHeight model))
         ]
         [ viewNotebook model user
-        , E.column [E.height (E.px (View.Geometry.bodyHeight model))
-        , Font.color (E.rgb 0.9 0.9 0.9)
-        , E.width E.fill
-        ] [
-           viewNotebookList model user
-        ,  E.column [Font.size 14, E.scrollbarY,
-           E.spacing 12,
-           E.paddingEach { top = 18, bottom = 0, left = 0, right = 0}, E.height (E.px monitorHeight)]
-          [E.text "Declarations", (Notebook.Eval.displayDictionary model.evalState.decls)] ]
-
+        , E.column
+            [ E.height (E.px (View.Geometry.bodyHeight model))
+            , Font.color (E.rgb 0.9 0.9 0.9)
+            , E.width E.fill
+            ]
+            [ viewNotebookList model user
+            , E.column
+                [ Font.size 14
+                , E.scrollbarY
+                , E.spacing 18
+                , Font.family
+                    [ Font.typeface "Courier"
+                    , Font.monospace
+                    ]
+                , E.paddingEach
+                    { top = 18, bottom = 36, left = 0, right = 0 }
+                , E.height (E.px monitorHeight)
+                ]
+                [ E.text "Declarations", Notebook.Eval.displayDictionary model.evalState.decls ]
+            ]
         ]
 
 

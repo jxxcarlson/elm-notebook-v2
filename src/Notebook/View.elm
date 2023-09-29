@@ -74,15 +74,20 @@ viewSourceAndValue orignalviewData currentCellIndex mReport cellContents cell =
     E.column ([ Background.color (Utility.cellColor cell.tipe), E.paddingXY 6 12, E.spacing 4 ] ++ style)
         [ E.el [ E.alignRight, Background.color (Utility.cellColor cell.tipe) ] (controls viewData.width cell)
         , viewSource (viewData.width - controlWidth) cell cellContents
-        ,  E.el (hrule cell) (viewValue viewData currentCellIndex mReport cell)
+        , E.el (hrule cell) (viewValue viewData currentCellIndex mReport cell)
         ]
 
-hrule cell = case cell.tipe of
-    CTCode -> [
-         Element.Border.widthEach {top = 1, bottom = 0, left = 0, right = 0}
-       , Element.Border.color (E.rgb 0.75 0.75 1.0)
-       ]
-    CTMarkdown -> []
+
+hrule cell =
+    case cell.tipe of
+        CTCode ->
+            [ Element.Border.widthEach { top = 1, bottom = 0, left = 0, right = 0 }
+            , Element.Border.color (E.rgb 0.75 0.75 1.0)
+            ]
+
+        CTMarkdown ->
+            []
+
 
 controlBGEdit =
     Background.color (E.rgb 0.8 0.8 1.0)
@@ -216,8 +221,16 @@ viewSuccess viewData cell =
             E.none
 
         CVString str ->
-            E.el [E.paddingEach { top = 12, bottom = 0, left = 0, right = 0}] (par realWidth
-                [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) str ])
+            E.el
+                [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+                , Font.family
+                    [ Font.typeface "Courier"
+                    , Font.monospace
+                    ]
+                ]
+                (par realWidth
+                    [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) str ]
+                )
 
         CVMarkdown str ->
             par realWidth
@@ -379,6 +392,18 @@ viewSource_ prefix width cell =
             Element.Events.onMouseDown NoOpFrontendMsg
         , E.width (E.px width)
         , Font.size 14
+        , case cell.tipe of
+            CTCode ->
+                Font.family
+                    [ Font.typeface "Courier"
+                    , Font.monospace
+                    ]
+
+            CTMarkdown ->
+                Font.family
+                    [ Font.typeface "Open Sans"
+                    , Font.sansSerif
+                    ]
         ]
         [ View.CellThemed.renderFull cell.tipe (scale 1.0 width) (prefix ++ source)
         ]
@@ -416,6 +441,10 @@ editCell width cell cellContent =
                 , Font.color Color.black
                 , E.centerX
                 , E.width (E.px <| width)
+                , Font.family
+                    [ Font.typeface "Courier"
+                    , Font.monospace
+                    ]
                 ]
                 { onChange = InputElmCode cell.index
                 , text = cellContent
