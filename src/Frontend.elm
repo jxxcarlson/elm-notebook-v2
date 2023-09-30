@@ -727,7 +727,7 @@ update msg model =
             Notebook.Update.clearCell model index
 
         EvalCell cellState index ->
-            Notebook.EvalCell.processCell cellState model.currentCellIndex model
+            Notebook.EvalCell.processCell cellState model.currentCellIndex { model | report = Nothing }
 
         -- NOTEBOOKS
         -- ADMIN
