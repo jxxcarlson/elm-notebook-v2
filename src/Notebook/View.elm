@@ -6,6 +6,8 @@ import Element.Border
 import Element.Events
 import Element.Font as Font
 import Element.Input
+import Html
+import Html.Attributes as HA
 import List.Extra
 import Notebook.Book exposing (ViewData)
 import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
@@ -18,6 +20,7 @@ import UILibrary.Color as Color
 import View.Button exposing (runCell)
 import View.CellThemed
 import View.Style
+import View.Utility
 
 
 view : ViewData -> Int -> String -> Cell -> Element FrontendMsg
@@ -156,32 +159,32 @@ isSimulation cell =
 
 viewSource : Int -> Cell -> String -> Element FrontendMsg
 viewSource width cell cellContent =
-    case cell.tipe of
-        CTCode ->
-            case cell.cellState of
-                CSView ->
-                    viewSource_ "**>** " width cell
+    case cell.cellState of
+        CSView ->
+            case cell.tipe of
+                CTCode ->
+                    renderCode cell width
 
-                CSEdit ->
-                    editCell width cell cellContent
+                CTMarkdown ->
+                    renderMarkdown cell width
 
-        CTMarkdown ->
-            case cell.cellState of
-                CSView ->
-                    viewSource_ "" width cell
-
-                CSEdit ->
-                    editCell width cell cellContent
+        CSEdit ->
+            editCell width cell cellContent
 
 
 viewValue : ViewData -> Cell -> Element FrontendMsg
 viewValue viewData cell =
-    case cell.report of
-        Just report ->
-            viewFailure viewData report
+    case cell.tipe of
+        CTMarkdown ->
+            E.none
 
-        Nothing ->
-            viewSuccess viewData cell
+        CTCode ->
+            case cell.report of
+                Just report ->
+                    viewFailure viewData report
+
+                Nothing ->
+                    viewSuccess viewData cell
 
 
 viewFailure : ViewData -> List Notebook.ErrorReporter.MessageItem -> Element FrontendMsg
@@ -234,38 +237,6 @@ viewSuccess viewData cell =
                 [ E.none ]
 
 
-
---CVPlot2D args data ->
---    case List.Extra.unconsLast args of
---        Nothing ->
---            E.image
---                [ E.width (E.px realWidth) ]
---                { src = getArg 0 args, description = "image" }
---
---        Just ( dataVariable, args_ ) ->
---            let
---                options =
---                    Notebook.Utility.keyValueDict (("width:" ++ String.fromInt realWidth) :: args_)
---
---                innerArgs =
---                    List.filter (\s -> not (String.contains s ":")) args_
---
---                kind =
---                    List.head innerArgs |> Maybe.withDefault "line"
---            in
---            --case Notebook.Eval.evaluateWithCumulativeBindingsToResult Dict.empty viewData.book.cells dataVariable of
---            --    Err _ ->
---            --        E.text "Error (22)"
---            --
---            --    Ok listPairs ->
---            --@@dataVariable: "data"
---            --(index):260 @@args_: ["plot2D","line"]
---            Notebook.Chart.plot2D "line" options data
---
---CVVisual vt args ->
---    Element.Lazy.lazy3 renderVT viewData vt args
-
-
 par width =
     E.paragraph
         [ E.spacing 8
@@ -273,69 +244,6 @@ par width =
         , E.width (E.px width)
         , Background.color (E.rgb 0.85 0.85 0.95)
         ]
-
-
-
---
---renderVT : ViewData -> VisualType -> List String -> Element FrontendMsg
---renderVT viewData vt args =
---    let
---        realWidth =
---            viewData.width - controlWidth
---    in
---    case vt of
---        VTImage ->
---            case List.Extra.unconsLast args of
---                Nothing ->
---                    E.image
---                        [ E.width (E.px realWidth) ]
---                        { src = getArg 0 args, description = "image" }
---
---                Just ( url, args_ ) ->
---                    let
---                        options =
---                            Notebook.Utility.keyValueDict args_
---
---                        width_ =
---                            case Dict.get "width" options of
---                                Just w ->
---                                    w |> String.toInt |> Maybe.withDefault realWidth
---
---                                Nothing ->
---                                    realWidth
---                    in
---                    E.image
---                        [ E.width (E.px width_) ]
---                        { src = url, description = "image" }
---
---        VTSvg ->
---            let
---                cleanArgs =
---                    args
---                        |> List.filter (\s -> not (String.contains s "#"))
---                        |> List.map (String.replace "> svg " "")
---            in
---            Element.Lazy.lazy Notebook.SVG.render cleanArgs
---
---        VTChart ->
---            case List.Extra.unconsLast args of
---                Nothing ->
---                    E.image
---                        [ E.width (E.px realWidth) ]
---                        { src = getArg 0 args, description = "image" }
---
---                Just ( dataVariable, args_ ) ->
---                    let
---                        options =
---                            Notebook.Utility.keyValueDict (("width:" ++ String.fromInt realWidth) :: args_)
---
---                        innerArgs =
---                            List.filter (\s -> not (String.contains s ":")) args_
---
---                        kind =
---                            List.head innerArgs |> Maybe.withDefault "line"
---                    in
---                    Notebook.Chart.chart kind options (dataVariable |> Notebook.Eval.transformWordsWithKVDict viewData.kvDict)
 
 
 getArg : Int -> List String -> String
@@ -365,20 +273,40 @@ viewIndex cell =
     E.el
         [ action
         , padding
-        , Font.color (E.rgb 0.1 0.1 0.7)
-        , E.paddingEach { left = 8, right = 4, top = 0, bottom = 0 }
+        , Font.color (E.rgba 0.1 0.1 0.7 0.5)
+        , E.htmlAttribute <| HA.style "z-index" "1"
+        , Font.family
+            [ Font.typeface "Open Sans"
+            , Font.sansSerif
+            ]
         ]
         (E.text <| "Cell " ++ String.fromInt (cell.index + 1))
 
 
-viewSource_ prefix width cell =
-    let
-        cellHeight_ =
-            40
+renderCode cell width =
+    E.column
+        [ E.width (E.px width)
+        , E.paddingXY 12 0
+        , Font.size 14
+        , View.Style.monospace
+        , Font.color (E.rgb 0.0 0.0 0.8)
+        , E.height E.shrink
+        , if not cell.locked then
+            Element.Events.onMouseDown (EditCell cell)
 
-        source =
-            cell.text
-    in
+          else
+            Element.Events.onMouseDown NoOpFrontendMsg
+        , E.inFront (E.el [ E.alignRight, E.moveDown 8 ] (viewIndex cell))
+        ]
+        [ View.Utility.preformattedElement [ HA.style "line-height" "1.5" ] cell.text
+        ]
+
+
+
+-- , Styled.style [ ( "z-index", "1" ) ]
+
+
+renderMarkdown cell width =
     E.column
         [ E.spacing 0
         , if not cell.locked then
@@ -387,18 +315,14 @@ viewSource_ prefix width cell =
           else
             Element.Events.onMouseDown NoOpFrontendMsg
         , E.width (E.px width)
+        , E.inFront (E.el [ E.alignRight, E.moveUp 8 ] (viewIndex cell))
         , Font.size 14
-        , case cell.tipe of
-            CTCode ->
-                View.Style.monospace
-
-            CTMarkdown ->
-                Font.family
-                    [ Font.typeface "Open Sans"
-                    , Font.sansSerif
-                    ]
+        , Font.family
+            [ Font.typeface "Open Sans"
+            , Font.sansSerif
+            ]
         ]
-        [ View.CellThemed.renderFull cell.tipe (scale 1.0 width) (prefix ++ source)
+        [ View.CellThemed.renderFull cell.tipe (width - 54) ("**>** " ++ cell.text)
         ]
 
 

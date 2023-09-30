@@ -2,10 +2,7 @@
     "type": "application",
     "source-directories": [
         "src",
-        "vendor/uiStuff",
-        "vendor/interpreter/src",
-        "vendor/elm-fast-dict/src",
-        "vendor/interpreter/generated"
+        "vendor/uiStuff"
     ],
     "elm-version": "0.19.1",
     "dependencies": {
@@ -44,6 +41,7 @@
             "ohanhi/keyboard": "2.0.1",
             "perzanko/elm-loading": "2.0.5",
             "rlopzc/elm-hmac-sha1": "1.0.0",
+            "rtfeldman/elm-css": "17.1.1",
             "rtfeldman/elm-hex": "1.0.0",
             "stil4m/elm-syntax": "7.2.9",
             "terezka/charts": "20.0.1"
@@ -71,7 +69,6 @@
             "ktonon/elm-word": "2.1.2",
             "myrho/elm-round": "1.0.5",
             "robinheghan/murmur3": "1.0.0",
-            "rtfeldman/elm-css": "17.1.1",
             "ryannhg/date-format": "2.3.0",
             "stil4m/structured-writer": "1.0.3",
             "terezka/intervals": "2.0.1",

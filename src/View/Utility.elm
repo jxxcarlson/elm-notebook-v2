@@ -5,6 +5,7 @@ module View.Utility exposing
     , hideIf
     , katexCSS
     , noFocus
+    , preformattedElement
     , setViewPortForSelectedLine
     , showIf
     , showIfIsAdmin
@@ -17,6 +18,11 @@ import Html
 import Html.Attributes as HA
 import Task exposing (Task)
 import Types exposing (FrontendModel, FrontendMsg)
+
+
+preformattedElement : List (Html.Attribute msg) -> String -> Element msg
+preformattedElement attrs str =
+    Element.html <| Html.pre attrs [ Html.text str ]
 
 
 
