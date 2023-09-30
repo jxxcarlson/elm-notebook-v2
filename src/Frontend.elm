@@ -26,7 +26,7 @@ import Notebook.CellHelper
 import Notebook.Codec
 import Notebook.Config
 import Notebook.DataSet
-import Notebook.ErrorReporter
+import Notebook.ErrorReporter exposing (MessageItem(..))
 import Notebook.Eval
 import Notebook.EvalCell
 import Notebook.Update
@@ -167,6 +167,16 @@ update msg model =
                             | currentBook =
                                 Notebook.Book.setReplDataAt model.currentCellIndex
                                     (Just <| Notebook.Eval.reportError str)
+                                    model.currentBook
+                          }
+                        , Cmd.none
+                        )
+
+                    else if str == "indent" then
+                        ( { model
+                            | currentBook =
+                                Notebook.Book.setReplDataAt model.currentCellIndex
+                                    (Just [ Plain "ERROR — maybe indentation, maybe something else." ])
                                     model.currentBook
                           }
                         , Cmd.none

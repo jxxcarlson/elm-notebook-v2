@@ -3,7 +3,6 @@ module Notebook.ErrorReporter exposing
     , StyledString
     , decodeErrorReporter
     , prepareReport
-    , render
     , stringToMessageItem
     )
 
@@ -126,10 +125,6 @@ type MessageItem
     | Styled StyledString
 
 
-
--- decodeErrorReporter : String -> Result String ReplError
-
-
 decodeErrorReporter str =
     D.decodeString replErrorDecoder str
 
@@ -186,27 +181,6 @@ styledStringDecoder =
         (D.field "underline" D.bool)
         (D.field "color" (D.nullable D.string))
         (D.field "string" D.string)
-
-
-render report =
-    if List.isEmpty report then
-        Element.none
-
-    else if report == [ Plain "Ok" ] then
-        Element.none
-
-    else
-        column
-            [ paddingXY 8 8
-            , Font.color (rgb 0.9 0.9 0.9)
-            , Font.size 14
-            , width (px 600)
-            , height (px 400)
-            , scrollbarY
-            , spacing 8
-            , Background.color (rgb 0 0 0)
-            ]
-            (prepareReport report)
 
 
 breakMessage : MessageItem -> List MessageItem

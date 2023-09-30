@@ -73,7 +73,7 @@ render chosenRenderer cellType width_ markdownBody =
                         [ Element.width (Element.px width_)
                         , Element.Background.color (Utility.cellColor cellType)
                         , Element.height Element.fill
-                        , Element.paddingEach { left = 12, right = 12, top = 0, bottom = 0 }
+                        , Element.paddingEach { left = 12, right = 12, top = 12, bottom = 0 }
                         ]
            )
 

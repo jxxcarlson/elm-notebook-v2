@@ -229,7 +229,8 @@ viewSuccess viewData cell =
                         )
 
                 Notebook.Parser.Decl _ _ ->
-                    E.el [ E.height (E.px 30), E.width (E.px 100), E.paddingXY 24 12 ] (E.text "Ok")
+                    -- E.el [ E.height (E.px 30), E.width (E.px 100), E.paddingXY 24 12 ] (E.text "Ok")
+                    E.none
 
         CVMarkdown str ->
             par realWidth
@@ -315,14 +316,14 @@ renderMarkdown cell width =
           else
             Element.Events.onMouseDown NoOpFrontendMsg
         , E.width (E.px width)
-        , E.inFront (E.el [ E.alignRight, E.moveUp 8 ] (viewIndex cell))
+        , E.inFront (E.el [ E.alignRight, E.moveDown 4 ] (viewIndex cell))
         , Font.size 14
         , Font.family
             [ Font.typeface "Open Sans"
             , Font.sansSerif
             ]
         ]
-        [ View.CellThemed.renderFull cell.tipe (width - 54) ("**>** " ++ cell.text)
+        [ View.CellThemed.renderFull cell.tipe (width - 54) cell.text
         ]
 
 
