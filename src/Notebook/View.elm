@@ -29,13 +29,13 @@ view viewData currentCellIndex cellContents cell =
         ]
         [ E.row
             [ E.width (E.px viewData.width) ]
-            [ viewSourceAndValue viewData currentCellIndex cellContents cell
+            [ viewSourceAndValue viewData cellContents cell
             ]
         ]
 
 
-viewSourceAndValue : ViewData -> Int -> String -> Cell -> Element FrontendMsg
-viewSourceAndValue orignalviewData currentCellIndex cellContents cell =
+viewSourceAndValue : ViewData -> String -> Cell -> Element FrontendMsg
+viewSourceAndValue orignalviewData cellContents cell =
     let
         style =
             case ( cell.cellState, cell.tipe ) of
