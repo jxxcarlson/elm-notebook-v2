@@ -49,6 +49,7 @@ scratchPad username =
           , cellState = CSView
           , locked = False
           , report = Nothing
+          , replData = Nothing
           }
         , { index = 1
           , text = "1 + 1"
@@ -57,6 +58,7 @@ scratchPad username =
           , cellState = CSView
           , locked = False
           , report = Nothing
+          , replData = Nothing
           }
         ]
     , currentIndex = 0
@@ -92,6 +94,7 @@ new author title =
           , cellState = CSView
           , locked = False
           , report = Nothing
+          , replData = Nothing
           }
         , { index = 1
           , text = "1 + 1"
@@ -100,6 +103,7 @@ new author title =
           , cellState = CSView
           , locked = False
           , report = Nothing
+          , replData = Nothing
           }
         ]
     , currentIndex = 0
@@ -125,6 +129,7 @@ newBook author title =
           , cellState = CSView
           , locked = False
           , report = Nothing
+          , replData = Nothing
           }
         , { index = 1
           , text = "1 + 1"
@@ -133,6 +138,7 @@ newBook author title =
           , cellState = CSView
           , locked = False
           , report = Nothing
+          , replData = Nothing
           }
         ]
     , currentIndex = 0

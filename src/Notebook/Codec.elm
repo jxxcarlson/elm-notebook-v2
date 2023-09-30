@@ -4,6 +4,7 @@ import Codec exposing (Codec, Error, Value)
 import Notebook.Book exposing (Book)
 import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
 import Notebook.ErrorReporter as ErrorReporter exposing (MessageItem(..), StyledString)
+import Notebook.Types exposing (ReplData)
 import Time
 
 
@@ -49,14 +50,17 @@ cellCodec =
         |> Codec.field "cellState" .cellState cellStateCodec
         |> Codec.field "locked" .locked Codec.bool
         |> Codec.field "report" .report (Codec.maybe <| Codec.list messageItemCodec)
+        |> Codec.field "replData" .replData (Codec.maybe <| replDataCodec)
         |> Codec.buildObject
 
 
-
---
---type MessageItem
---    = Plain String
---    | Styled StyledString
+replDataCodec : Codec ReplData
+replDataCodec =
+    Codec.object ReplData
+        |> Codec.field "name" .name (Codec.maybe Codec.string)
+        |> Codec.field "value" .value Codec.string
+        |> Codec.field "tipe" .tipe Codec.string
+        |> Codec.buildObject
 
 
 messageItemCodec : Codec MessageItem

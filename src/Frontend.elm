@@ -576,21 +576,17 @@ update msg model =
             ( model, Task.perform ImportLoaded (File.toString file) )
 
         ImportLoaded dataString ->
-            let
-                cmd =
-                    case Notebook.Codec.importBook dataString of
-                        Err _ ->
-                            Cmd.none
+            case Notebook.Codec.importBook dataString of
+                Err _ ->
+                    ( { model | message = "Error decoding imported file" }, Cmd.none )
 
-                        Ok newBook ->
-                            case model.currentUser of
-                                Nothing ->
-                                    Cmd.none
+                Ok newBook ->
+                    case model.currentUser of
+                        Nothing ->
+                            ( model, Cmd.none )
 
-                                Just user ->
-                                    sendToBackend (ImportNewBook user.username newBook)
-            in
-            ( model, cmd )
+                        Just user ->
+                            ( model, sendToBackend (ImportNewBook user.username newBook) )
 
         SetCurrentNotebook book ->
             case model.currentUser of

@@ -126,6 +126,7 @@ makeNewCell model cellState cellType index =
             , cellState = cellState
             , locked = False
             , report = Nothing
+            , replData = Nothing
             }
 
         newBook =
