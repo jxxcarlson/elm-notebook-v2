@@ -618,12 +618,11 @@ update msg model =
                             { user_ | currentNotebookId = Just book.id }
 
                         ( newModel, _ ) =
-                            Notebook.EvalCell.updateDeclarationsDictionary model
+                            Notebook.EvalCell.updateDeclarationsDictionary { model | currentBook = currentBook }
                     in
                     ( { newModel
                         | currentUser = Just user
-                        , currentBook = currentBook
-                        , books = books
+                        , books = newModel.books
                       }
                     , Cmd.batch [ sendToBackend (UpdateUserWith user), sendToBackend (SaveNotebook previousBook) ]
                     )
@@ -823,8 +822,11 @@ updateFromBackend msg model =
 
                     else
                         xbook :: books
+
+                ( newModel, _ ) =
+                    Notebook.EvalCell.updateDeclarationsDictionary { model | currentBook = book }
             in
-            ( { model | currentBook = book, books = addOrReplaceBook book model.books }, Cmd.none )
+            ( { newModel | currentBook = book, books = addOrReplaceBook book model.books }, Cmd.none )
 
         GotPublicNotebook book_ ->
             let
@@ -856,16 +858,13 @@ updateFromBackend msg model =
             )
 
         GotNotebooks maybeNotebook books ->
-            let
-                currentBook =
-                    case maybeNotebook of
-                        Nothing ->
-                            List.head books |> Maybe.withDefault model.currentBook
+            -- TODO: ^^ maybeNotebook? WTF??
+            case List.head books of
+                Nothing ->
+                    ( model, Cmd.none )
 
-                        Just book ->
-                            book
-            in
-            ( { model | books = books, currentBook = currentBook }, Cmd.none )
+                Just book ->
+                    ( { model | books = books, currentBook = book }, Cmd.none )
 
 
 view : Model -> { title : String, body : List (Html.Html FrontendMsg) }
