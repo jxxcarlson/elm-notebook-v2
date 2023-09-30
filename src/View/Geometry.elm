@@ -7,8 +7,8 @@ module View.Geometry exposing
     , headerHeight
     , loweRightSidePanelHeight
     , mainColumnHeight
-    , notebookListWidth
     , notebookWidth
+    , sidePanelWidth
     )
 
 
@@ -39,11 +39,11 @@ bodyHeight model =
 
 notebookWidth : { a | windowWidth : Int } -> Int
 notebookWidth model =
-    appWidth model - notebookListWidth model
+    appWidth model - sidePanelWidth model
 
 
-notebookListWidth : { a | windowWidth : Int } -> Int
-notebookListWidth model =
+sidePanelWidth : { a | windowWidth : Int } -> Int
+sidePanelWidth model =
     0.4 * toFloat (appWidth model) |> round
 
 

@@ -19,7 +19,6 @@ module View.Button exposing
     , myNotebooks
     , newDataSet
     , newNotebook
-    , processAllCells
     , public
     , publicNotebooks
     , pullNotebook
@@ -36,6 +35,7 @@ module View.Button exposing
     , stateEditor
     , toggleViewPrivateDataSets
     , toggleViewPublicDataSets
+    , updateDeclarationsDictionary
     , viewNotebookEntry
     )
 
@@ -98,9 +98,9 @@ dismissPopupSmall =
     Button.smallPrimary { msg = ChangePopup NoPopup, status = Button.ActiveTransparent, label = Button.Text "x", tooltipText = Nothing }
 
 
-processAllCells : Element FrontendMsg
-processAllCells =
-    Button.smallPrimary { msg = ProcessAllCells, status = Button.Active, label = Button.Text "Run all cells", tooltipText = Nothing }
+updateDeclarationsDictionary : Element FrontendMsg
+updateDeclarationsDictionary =
+    Button.smallPrimary { msg = ProcessAllCells, status = Button.Active, label = Button.Text "Update", tooltipText = Nothing }
 
 
 runCell : CellState -> CellType -> Int -> Element FrontendMsg

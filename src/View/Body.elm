@@ -39,17 +39,20 @@ declarations model user =
     E.column
         [ Font.size 14
         , E.spacing 18
+        , E.width (E.px <| View.Geometry.sidePanelWidth model)
         , Border.widthEach { left = 2, right = 0, top = 0, bottom = 0 }
         , Border.color (E.rgb255 73 78 89)
         , View.Style.monospace
         , E.paddingEach
             { top = 18, bottom = 36, left = 0, right = 0 }
         ]
-        [ E.el [ E.paddingXY 18 0, Font.underline ]
-            (E.text "Declarations")
+        [ E.row [ E.paddingXY 18 0, E.width (E.px <| View.Geometry.sidePanelWidth model) ]
+            [ E.el [ Font.underline ] (E.text "Declarations")
+            , E.el [ E.paddingEach { left = 24, right = 0, top = 0, bottom = 0 } ] View.Button.updateDeclarationsDictionary
+            ]
         , E.el
             [ E.height (E.px <| View.Geometry.loweRightSidePanelHeight model)
-            , E.width (E.px <| View.Geometry.notebookListWidth model)
+            , E.width (E.px <| View.Geometry.sidePanelWidth model)
             , E.scrollbarY
             ]
             (Notebook.Eval.displayDictionary model.evalState.decls)
@@ -86,7 +89,7 @@ viewNotebookList model user =
         [ E.spacing 1
         , E.alignTop
         , Font.size 14
-        , E.width (E.px (View.Geometry.notebookListWidth model - 24))
+        , E.width (E.px (View.Geometry.sidePanelWidth model - 24))
         , Border.widthEach { left = 1, right = 0, top = 0, bottom = 1 }
         , Border.color (E.rgb 0.4 0.4 0.5)
         , Background.color (E.rgb255 73 78 89)
