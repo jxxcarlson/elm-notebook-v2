@@ -28,7 +28,7 @@ view model =
             , Font.size 14
             , Font.color (E.rgb 0.8 0.8 0.8)
             ]
-            [ E.column [ E.spacing 16, E.paddingEach { left = 0, right = 0, top = 12, bottom = 48 } ]
+            [ E.column [ Font.size 16, E.spacing 16, E.paddingEach { left = 0, right = 0, top = 12, bottom = 48 } ]
                 [ E.paragraph [ E.spacing 8 ]
                     [ E.text "Elm Notebook is a web app for writing and running Elm code. "
                     , E.text "Cells contain either text or Elm code. "
@@ -38,14 +38,14 @@ view model =
                         { src = "https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/94d42afa-2246-4d63-ba08-f5e53b36b800/public"
                         , description = "Cells in Elm Notebook"
                         }
-                    , E.el [ Font.size 12, Font.color UILibrary.Color.lightGray ] (E.text "Screenshot")
+                    , E.el [ Font.color UILibrary.Color.lightGray ] (E.text "Screenshot")
                     ]
                 , E.column [ E.spacing 6 ]
                     [ E.image [ E.width (E.px 600), E.centerX, E.centerY ]
                         { src = "https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/bdd5f465-bf3e-4696-3773-b11eb7993600/public"
                         , description = "Editing a cell"
                         }
-                    , E.el [ Font.size 12, Font.color UILibrary.Color.lightGray ] (E.text "Screenshot: user clicked on a cell to edit it.")
+                    , E.el [ Font.color UILibrary.Color.lightGray ] (E.text "Screenshot: user clicked on a cell to edit it.")
                     ]
                 , E.paragraph [ Font.italic, Font.color (E.rgb 0.65 0.65 1.0) ]
                     [ E.text "Click on the \"Sign in as Guest,\" button to view and run example notebooks. (See blue link above, center.)" ]
