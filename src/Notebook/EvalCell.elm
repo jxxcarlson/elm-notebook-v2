@@ -110,7 +110,7 @@ processExpr model cellState expr =
         processRemoveCmd model expr
 
     else
-        ( { model | replData = Nothing }, Eval.requestEvaluation model.evalState expr )
+        ( model, Eval.requestEvaluation model.evalState expr )
 
 
 processClearCmd model =
@@ -119,8 +119,7 @@ processClearCmd model =
             model.evalState
     in
     ( { model
-        | replData = Just { name = Nothing, value = "cleared ...", tipe = "" }
-        , evalState = { evalState | decls = Dict.empty }
+        | evalState = { evalState | decls = Dict.empty }
       }
     , Cmd.none
     )
@@ -135,14 +134,13 @@ processRemoveCmd model expr =
     case Dict.get key model.evalState.decls of
         Just _ ->
             ( { model
-                | replData = Just { name = Nothing, value = key ++ ": removed", tipe = "" }
-                , evalState = Eval.removeDeclaration key model.evalState
+                | evalState = Eval.removeDeclaration key model.evalState
               }
             , Cmd.none
             )
 
         Nothing ->
-            ( { model | replData = Just { name = Nothing, value = key ++ ": not found", tipe = "" } }, Cmd.none )
+            ( model, Cmd.none )
 
 
 processNameAndExpr : Model -> CellState -> String -> String -> ( Model, Cmd FrontendMsg )
@@ -150,11 +148,8 @@ processNameAndExpr model cellState name expr =
     let
         newEvalState =
             Eval.insertDeclaration name (name ++ " = " ++ expr ++ "\n") model.evalState
-
-        replData =
-            Just { name = Nothing, value = "Ok", tipe = "" }
     in
-    ( { model | replData = replData, evalState = newEvalState }, Cmd.none )
+    ( { model | evalState = newEvalState }, Cmd.none )
 
 
 ppp =

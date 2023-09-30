@@ -17,7 +17,7 @@ updateBookWithCellIndexAndReplData cellIndex replData book =
             book
 
         Just targetCell ->
-            updateBookWithCell { targetCell | value = CVString replData.value } book
+            updateBookWithCell { targetCell | value = CVString replData.value, replData = Just replData } book
 
 
 updateBookWithCell : Cell -> Book -> Book

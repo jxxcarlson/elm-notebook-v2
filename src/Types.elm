@@ -54,7 +54,6 @@ type alias FrontendModel =
     , privateDataSetMetaDataList : List Notebook.DataSet.DataSetMetaData
 
     -- NOTEBOOKS
-    , replData : Maybe Notebook.Types.ReplData
     , evalState : Notebook.Types.EvalState
 
     -- NOTEBOOKS II

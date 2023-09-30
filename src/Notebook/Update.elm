@@ -101,7 +101,7 @@ clearCell model index =
         Just cell_ ->
             let
                 updatedCell =
-                    { cell_ | cellState = CSView, value = CVNone }
+                    { cell_ | cellState = CSView, value = CVNone, replData = Nothing }
 
                 newBook =
                     Notebook.CellHelper.updateBookWithCell updatedCell model.currentBook
@@ -109,7 +109,6 @@ clearCell model index =
             ( { model
                 | cellContent = ""
                 , currentBook = newBook
-                , replData = Nothing
               }
             , Cmd.none
             )

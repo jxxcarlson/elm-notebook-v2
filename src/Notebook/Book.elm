@@ -9,7 +9,7 @@ module Notebook.Book exposing
     )
 
 import Dict exposing (Dict)
-import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
+import Notebook.Cell exposing (CellState(..), CellType(..), CellValue(..))
 import Notebook.ErrorReporter
 import Notebook.Types
 import Time
@@ -170,9 +170,21 @@ type alias ViewData =
     }
 
 
+apply : (Notebook.Cell.Cell -> Notebook.Cell.Cell) -> Book -> Book
+apply f book =
+    { book | cells = List.map f book.cells }
+
+
 setAllCellStates : CellState -> Book -> Book
 setAllCellStates cellState book =
-    { book | cells = List.map (\cell -> { cell | cellState = cellState }) book.cells }
+    -- { book | cells = List.map (\cell -> { cell | cellState = cellState }) book.cells }
+    apply (\cell -> { cell | cellState = cellState }) book
+
+
+clearReplData : CellState -> Book -> Book
+clearReplData cellState book =
+    -- { book | cells = List.map (\cell -> { cell | replData = Nothing }) book.cells }
+    apply (\cell -> { cell | replData = Nothing }) book
 
 
 setReplDataAt : Int -> Maybe (List Notebook.ErrorReporter.MessageItem) -> Book -> Book
