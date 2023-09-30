@@ -25,8 +25,14 @@ processAllCells model =
         indices =
             List.range 0 n
 
+        oldEvalState =
+            model.evalState
+
+        newEvalState =
+            { oldEvalState | decls = Dict.empty }
+
         ( newModel, commands ) =
-            List.foldl folder ( model, [] ) indices
+            List.foldl folder ( { model | evalState = newEvalState }, [] ) indices
 
         _ =
             newModel.evalState.decls |> Debug.log "@DECLS"
