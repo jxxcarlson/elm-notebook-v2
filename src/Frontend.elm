@@ -72,7 +72,6 @@ init url key =
       , url = url
 
       -- NOTEBOOK (NEW)
-      , replData = Nothing
       , evalState = Notebook.Eval.initEmptyEvalState
       , message = "Welcome!"
       , messages = []
@@ -154,10 +153,10 @@ update msg model =
                         book =
                             Notebook.CellHelper.updateBookWithCellIndexAndReplData model.currentCellIndex data model.currentBook
                     in
-                    ( { model | replData = Just data, currentBook = book }, Cmd.none )
+                    ( { model | currentBook = book }, Cmd.none )
 
                 Err _ ->
-                    ( { model | replData = Nothing }, Cmd.none )
+                    ( { model | message = "Error evaluating Elm code" }, Cmd.none )
 
         GotReply result ->
             case result of
@@ -565,7 +564,6 @@ update msg model =
                         )
                     )
 
-        -- File.Download.string (String.replace "." "-" dataSet.identifier ++ ".csv") "text/csv" dataSet.data
         ExportNotebook ->
             ( model, File.Download.string (BackendHelper.compress model.currentBook.title ++ ".json") "text/json" (Notebook.Codec.exportBook model.currentBook) )
 
