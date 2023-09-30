@@ -45,6 +45,7 @@ scratchPad username =
           , value = CVMarkdown "This is a *test*"
           , cellState = CSView
           , locked = False
+          , report = Nothing
           }
         , { index = 1
           , text = "1 + 1"
@@ -52,6 +53,7 @@ scratchPad username =
           , value = CVNone
           , cellState = CSView
           , locked = False
+          , report = Nothing
           }
         ]
     , currentIndex = 0
@@ -86,6 +88,7 @@ new author title =
           , value = CVMarkdown "This is a *test*"
           , cellState = CSView
           , locked = False
+          , report = Nothing
           }
         , { index = 1
           , text = "1 + 1"
@@ -93,6 +96,7 @@ new author title =
           , value = CVNone
           , cellState = CSView
           , locked = False
+          , report = Nothing
           }
         ]
     , currentIndex = 0
@@ -117,6 +121,7 @@ newBook author title =
           , value = CVMarkdown "This is a *test*"
           , cellState = CSView
           , locked = False
+          , report = Nothing
           }
         , { index = 1
           , text = "1 + 1"
@@ -124,6 +129,7 @@ newBook author title =
           , value = CVNone
           , cellState = CSView
           , locked = False
+          , report = Nothing
           }
         ]
     , currentIndex = 0

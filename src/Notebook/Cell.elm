@@ -1,5 +1,7 @@
 module Notebook.Cell exposing (..)
 
+import Notebook.ErrorReporter
+
 
 type alias Cell =
     { index : Int
@@ -8,6 +10,7 @@ type alias Cell =
     , value : CellValue
     , cellState : CellState
     , locked : Bool
+    , report : Maybe (List Notebook.ErrorReporter.MessageItem)
     }
 
 

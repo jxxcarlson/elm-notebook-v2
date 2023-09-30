@@ -3,6 +3,7 @@ module Notebook.Codec exposing (exportBook, importBook)
 import Codec exposing (Codec, Error, Value)
 import Notebook.Book exposing (Book)
 import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
+import Notebook.ErrorReporter as ErrorReporter exposing (MessageItem(..), StyledString)
 import Time
 
 
@@ -47,6 +48,40 @@ cellCodec =
         |> Codec.field "value" .value cellValueCodec
         |> Codec.field "cellState" .cellState cellStateCodec
         |> Codec.field "locked" .locked Codec.bool
+        |> Codec.field "report" .report (Codec.maybe <| Codec.list messageItemCodec)
+        |> Codec.buildObject
+
+
+
+--
+--type MessageItem
+--    = Plain String
+--    | Styled StyledString
+
+
+messageItemCodec : Codec MessageItem
+messageItemCodec =
+    Codec.custom
+        (\plain styled value ->
+            case value of
+                Plain s ->
+                    plain s
+
+                Styled ss ->
+                    styled ss
+        )
+        |> Codec.variant1 "Plain" Plain Codec.string
+        |> Codec.variant1 "Styled" Styled styledStringCodec
+        |> Codec.buildCustom
+
+
+styledStringCodec : Codec StyledString
+styledStringCodec =
+    Codec.object StyledString
+        |> Codec.field "bold" .bold Codec.bool
+        |> Codec.field "underline" .underline Codec.bool
+        |> Codec.field "color" .color (Codec.maybe Codec.string)
+        |> Codec.field "string" .string Codec.string
         |> Codec.buildObject
 
 

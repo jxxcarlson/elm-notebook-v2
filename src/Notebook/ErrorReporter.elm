@@ -1,5 +1,6 @@
 module Notebook.ErrorReporter exposing
     ( MessageItem(..)
+    , StyledString
     , decodeErrorReporter
     , prepareReport
     , render
