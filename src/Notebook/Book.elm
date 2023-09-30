@@ -5,10 +5,13 @@ module Notebook.Book exposing
     , new
     , scratchPad
     , setAllCellStates
+    , setReplDataAt
     )
 
 import Dict exposing (Dict)
 import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
+import Notebook.ErrorReporter
+import Notebook.Types
 import Time
 
 
@@ -164,3 +167,23 @@ type alias ViewData =
 setAllCellStates : CellState -> Book -> Book
 setAllCellStates cellState book =
     { book | cells = List.map (\cell -> { cell | cellState = cellState }) book.cells }
+
+
+setReplDataAt : Int -> Maybe (List Notebook.ErrorReporter.MessageItem) -> Book -> Book
+setReplDataAt index report book =
+    let
+        cells =
+            book.cells
+    in
+    { book
+        | cells =
+            List.map
+                (\cell ->
+                    if cell.index == index then
+                        { cell | report = report }
+
+                    else
+                        cell
+                )
+                cells
+    }

@@ -72,7 +72,6 @@ init url key =
       , url = url
 
       -- NOTEBOOK (NEW)
-      , report = Nothing
       , replData = Nothing
       , evalState = Notebook.Eval.initEmptyEvalState
       , message = "Welcome!"
@@ -164,13 +163,35 @@ update msg model =
             case result of
                 Ok str ->
                     if Notebook.Eval.hasReplError str then
-                        ( { model | report = Just <| Notebook.Eval.reportError (str |> Debug.log "ERROR REPORT") }, Cmd.none )
+                        -- ( { model | report = Just <| Notebook.Eval.reportError (str |> Debug.log "ERROR REPORT") }, Cmd.none )
+                        ( { model
+                            | currentBook =
+                                Notebook.Book.setReplDataAt model.currentCellIndex
+                                    (Just <| Notebook.Eval.reportError str)
+                                    model.currentBook
+                          }
+                        , Cmd.none
+                        )
 
                     else
-                        ( { model | report = Nothing }, Ports.sendDataToJS str )
+                        ( { model
+                            | currentBook =
+                                Notebook.Book.setReplDataAt model.currentCellIndex
+                                    Nothing
+                                    model.currentBook
+                          }
+                        , Ports.sendDataToJS str
+                        )
 
                 Err _ ->
-                    ( { model | report = Just <| [ Notebook.ErrorReporter.stringToMessageItem "Error" ] }, Cmd.none )
+                    ( { model
+                        | currentBook =
+                            Notebook.Book.setReplDataAt model.currentCellIndex
+                                Nothing
+                                model.currentBook
+                      }
+                    , Cmd.none
+                    )
 
         KeyboardMsg keyMsg ->
             let
@@ -727,7 +748,7 @@ update msg model =
             Notebook.Update.clearCell model index
 
         EvalCell cellState index ->
-            Notebook.EvalCell.processCell cellState model.currentCellIndex { model | report = Nothing }
+            Notebook.EvalCell.processCell cellState model.currentCellIndex model
 
         -- NOTEBOOKS
         -- ADMIN

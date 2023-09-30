@@ -20,8 +20,8 @@ import View.CellThemed
 import View.Style
 
 
-view : ViewData -> Int -> Maybe (List Notebook.ErrorReporter.MessageItem) -> String -> Cell -> Element FrontendMsg
-view viewData currentCellIndex mReport cellContents cell =
+view : ViewData -> Int -> String -> Cell -> Element FrontendMsg
+view viewData currentCellIndex cellContents cell =
     E.column
         [ E.paddingEach { top = 0, right = 0, bottom = 0, left = 0 }
         , E.width (E.px viewData.width)
@@ -29,13 +29,13 @@ view viewData currentCellIndex mReport cellContents cell =
         ]
         [ E.row
             [ E.width (E.px viewData.width) ]
-            [ viewSourceAndValue viewData currentCellIndex mReport cellContents cell
+            [ viewSourceAndValue viewData currentCellIndex cellContents cell
             ]
         ]
 
 
-viewSourceAndValue : ViewData -> Int -> Maybe (List Notebook.ErrorReporter.MessageItem) -> String -> Cell -> Element FrontendMsg
-viewSourceAndValue orignalviewData currentCellIndex mReport cellContents cell =
+viewSourceAndValue : ViewData -> Int -> String -> Cell -> Element FrontendMsg
+viewSourceAndValue orignalviewData currentCellIndex cellContents cell =
     let
         style =
             case ( cell.cellState, cell.tipe ) of
@@ -76,7 +76,7 @@ viewSourceAndValue orignalviewData currentCellIndex mReport cellContents cell =
     E.column ([ Background.color (Utility.cellColor cell.tipe), E.paddingXY 6 12, E.spacing 4 ] ++ style)
         [ E.el [ E.alignRight, Background.color (Utility.cellColor cell.tipe) ] (controls viewData.width cell)
         , viewSource (viewData.width - controlWidth) cell cellContents
-        , E.el (hrule cell) (viewValue viewData currentCellIndex mReport cell)
+        , E.el (hrule cell) (viewValue viewData cell)
         ]
 
 
@@ -174,19 +174,11 @@ viewSource width cell cellContent =
                     editCell width cell cellContent
 
 
-viewValue : ViewData -> Int -> Maybe (List Notebook.ErrorReporter.MessageItem) -> Cell -> Element FrontendMsg
-viewValue viewData currentCellIndex mReport cell =
-    let
-        _ =
-            Debug.log "Cell index" cell.index
-    in
-    case mReport of
+viewValue : ViewData -> Cell -> Element FrontendMsg
+viewValue viewData cell =
+    case cell.report of
         Just report ->
-            if currentCellIndex == cell.index then
-                viewFailure viewData report
-
-            else
-                viewSuccess viewData cell
+            viewFailure viewData report
 
         Nothing ->
             viewSuccess viewData cell

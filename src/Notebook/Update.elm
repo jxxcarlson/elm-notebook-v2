@@ -110,7 +110,6 @@ clearCell model index =
                 | cellContent = ""
                 , currentBook = newBook
                 , replData = Nothing
-                , report = Nothing
               }
             , Cmd.none
             )
