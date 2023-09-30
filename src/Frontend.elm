@@ -508,7 +508,7 @@ update msg model =
 
         -- CELLS, NOTEBOOKS
         ProcessAllCells ->
-            Notebook.EvalCell.processAllCells model
+            Notebook.EvalCell.updateDeclarationsDictionary model
 
         ToggleCellLock cell ->
             ( Notebook.Update.toggleCellLock cell model, Cmd.none )
@@ -616,8 +616,11 @@ update msg model =
 
                         user =
                             { user_ | currentNotebookId = Just book.id }
+
+                        ( newModel, _ ) =
+                            Notebook.EvalCell.updateDeclarationsDictionary model
                     in
-                    ( { model
+                    ( { newModel
                         | currentUser = Just user
                         , currentBook = currentBook
                         , books = books

@@ -199,7 +199,10 @@ render report =
         , Font.color (E.rgb 0.9 0.9 0.9)
         , Font.size 14
         , E.width (E.px 600)
-        , E.height (E.px 400)
+        , E.height E.fill
+        , E.paddingEach { top = 24, bottom = 24, left = 24, right = 0 }
+
+        --, E.height (E.px 400)
         , E.scrollbarY
         , E.spacing 8
         , Background.color (E.rgb 0 0 0)

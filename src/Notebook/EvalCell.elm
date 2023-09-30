@@ -1,4 +1,4 @@
-module Notebook.EvalCell exposing (processAllCells, processCell)
+module Notebook.EvalCell exposing (processCell, updateDeclarationsDictionary)
 
 import Dict
 import Keyboard
@@ -16,8 +16,8 @@ type alias Model =
     Types.FrontendModel
 
 
-processAllCells : Model -> ( Model, Cmd FrontendMsg )
-processAllCells model =
+updateDeclarationsDictionary : Model -> ( Model, Cmd FrontendMsg )
+updateDeclarationsDictionary model =
     let
         n =
             List.length model.currentBook.cells
