@@ -103,7 +103,7 @@ processCell cellState cellIndex model_ =
         Just cell ->
             case cell.tipe of
                 Cell.CTCode ->
-                    processCode model cell
+                    processCode model { cell | report = Nothing, replData = Nothing }
 
                 Cell.CTMarkdown ->
                     processMarkdown model cell
