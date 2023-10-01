@@ -156,7 +156,7 @@ type FrontendMsg
     | AskToCreateDataSet
     | AskToDeleteDataSet Notebook.DataSet.DataSetMetaData
       -- CELL
-    | ProcessAllCells
+    | UpdateDeclarationsDictionary
     | ToggleCellLock Cell
     | NewCodeCell CellState Int
     | NewMarkdownCell CellState Int

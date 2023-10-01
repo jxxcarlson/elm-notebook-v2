@@ -100,7 +100,7 @@ dismissPopupSmall =
 
 updateDeclarationsDictionary : Element FrontendMsg
 updateDeclarationsDictionary =
-    Button.smallPrimary { msg = ProcessAllCells, status = Button.Active, label = Button.Text "Update", tooltipText = Nothing }
+    Button.smallPrimary { msg = UpdateDeclarationsDictionary, status = Button.Active, label = Button.Text "Update", tooltipText = Nothing }
 
 
 runCell : CellState -> CellType -> Int -> Element FrontendMsg

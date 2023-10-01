@@ -507,7 +507,7 @@ update msg model =
                     )
 
         -- CELLS, NOTEBOOKS
-        ProcessAllCells ->
+        UpdateDeclarationsDictionary ->
             Notebook.EvalCell.updateDeclarationsDictionary model
 
         ToggleCellLock cell ->

@@ -33,9 +33,6 @@ updateDeclarationsDictionary model =
 
         ( newModel, commands ) =
             List.foldl folder ( { model | evalState = newEvalState }, [] ) indices
-
-        _ =
-            newModel.evalState.decls |> Debug.log "@DECLS"
     in
     ( newModel, Cmd.batch commands )
 
@@ -44,7 +41,7 @@ folder : Int -> ( Model, List (Cmd FrontendMsg) ) -> ( Model, List (Cmd Frontend
 folder k ( model, cmds ) =
     let
         ( model_, cmd ) =
-            processCell_ (k |> Debug.log "_index") model
+            processCell_ k model
     in
     ( model_, cmd :: cmds )
 
@@ -80,9 +77,6 @@ processCell cellState cellIndex model_ =
 
 processMarkdown model cellState cell =
     let
-        _ =
-            Debug.log "processMarkdown" cell.text
-
         newCell =
             { cell | value = CVMarkdown cell.text }
 

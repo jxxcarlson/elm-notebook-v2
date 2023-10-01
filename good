@@ -1,0 +1,2 @@
+collatzM x = 
+  iterM collatz (1, [x])
