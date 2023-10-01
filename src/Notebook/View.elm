@@ -86,8 +86,8 @@ viewSourceAndValue orignalviewData cellContents cell =
 hrule cell =
     case cell.tipe of
         CTCode ->
-            [ Element.Border.widthEach { top = 1, bottom = 0, left = 0, right = 0 }
-            , Element.Border.color (E.rgb 0.75 0.75 1.0)
+            [ Element.Border.widthEach { top = 2, bottom = 0, left = 0, right = 0 }
+            , Element.Border.color (E.rgba 0.75 0.75 1.0 0.8)
             ]
 
         CTMarkdown ->
@@ -246,7 +246,7 @@ par width =
         [ E.spacing 8
         , Font.color Color.black
         , E.width (E.px width)
-        , Background.color (E.rgb 0.85 0.85 0.95)
+        , Background.color (E.rgb 0.75 0.75 0.95)
         ]
 
 
