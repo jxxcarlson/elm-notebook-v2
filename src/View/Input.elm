@@ -17,8 +17,11 @@ module View.Input exposing
 
 import Element as E exposing (Element, px)
 import Element.Background as Background
+import Element.Events
 import Element.Font as Font
 import Element.Input as Input
+import Html.Events
+import Json.Decode as Decode exposing (Decoder)
 import Types exposing (FrontendModel, FrontendMsg(..))
 import View.Color
 
@@ -162,4 +165,23 @@ passwordAgain model =
 
 
 title model =
-    inputFieldTemplate (E.px 220) "Title" InputTitle model.inputTitle
+    inputFieldTemplate2
+        [ E.htmlAttribute <| Html.Events.on "keydown" (enterKeyDecoder UpdateNotebookTitle)
+        ]
+        (E.px 220)
+        "Title"
+        InputTitle
+        model.inputTitle
+
+
+enterKeyDecoder : FrontendMsg -> Decoder FrontendMsg
+enterKeyDecoder msg =
+    Html.Events.keyCode
+        |> Decode.andThen
+            (\code ->
+                if code == 13 then
+                    Decode.succeed msg
+
+                else
+                    Decode.fail "Not the Enter key"
+            )

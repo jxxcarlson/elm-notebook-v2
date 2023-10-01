@@ -101,7 +101,7 @@ dismissPopupSmall =
 
 executeNotebook : Element FrontendMsg
 executeNotebook =
-    Button.smallPrimary { msg = ExecuteNoteook, status = Button.Active, label = Button.Text "Run all cells", tooltipText = Nothing }
+    Button.smallPrimary { msg = ExecuteNoteook, status = Button.Highlighted, label = Button.Text "Run all cells", tooltipText = Nothing }
 
 
 updateDeclarationsDictionary : Element FrontendMsg

@@ -4,6 +4,7 @@ import Color
 import Element as E exposing (Element)
 import Element.Background as Background
 import Element.Border
+import Element.Events
 import Element.Font as Font
 import Message
 import Predicate
@@ -74,9 +75,14 @@ signedInHeader model user =
                 View.Input.title model
 
               else
-                underlinedTitle model.currentBook.title
+                E.el
+                    [ Element.Events.onClick (Types.ChangeAppMode Types.AMEditTitle)
+                    ]
+                    (underlinedTitle model.currentBook.title)
             ]
-        , View.Utility.showIf (Predicate.regularUser model) (Button.editTitle model.appMode)
+
+        --, View.Utility.showIf (Predicate.regularUser model) (Button.editTitle model.appMode)
+        , View.Utility.showIf (Predicate.regularUser model) (E.el [ E.paddingEach { left = 0, right = 0, top = 0, bottom = 0 } ] Button.executeNotebook)
         , View.Utility.showIf (Predicate.regularUser model) Button.newNotebook
         , View.Utility.showIf (Predicate.regularUser model) (Button.deleteNotebook model.deleteNotebookState)
         , View.Utility.showIf (Predicate.regularUser model) (Button.cancelDeleteNotebook model.deleteNotebookState)
