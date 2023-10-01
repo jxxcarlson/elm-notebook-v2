@@ -53,7 +53,7 @@ dictionaryLines dict =
 
 firstReplErrorLine : Dict String String -> Int
 firstReplErrorLine dict =
-    dictionaryLines dict + 3
+    dictionaryLines dict + 2
 
 
 insertDeclaration : String -> String -> EvalState -> EvalState

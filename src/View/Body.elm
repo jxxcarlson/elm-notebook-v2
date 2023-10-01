@@ -23,7 +23,7 @@ view model user =
         [ E.width (E.px (View.Geometry.appWidth model))
         , E.height (E.px (View.Geometry.bodyHeight model))
         ]
-        [ viewNotebook model user
+        [ viewNotebook model
         , E.column
             [ E.height (E.px (View.Geometry.bodyHeight model))
             , Font.color (E.rgb 0.9 0.9 0.9)
@@ -165,8 +165,8 @@ controls showNotebooks =
         ]
 
 
-viewNotebook : FrontendModel -> User.User -> Element FrontendMsg
-viewNotebook model user =
+viewNotebook : FrontendModel -> Element FrontendMsg
+viewNotebook model =
     let
         viewData =
             { book = model.currentBook
@@ -174,7 +174,7 @@ viewNotebook model user =
             , width = View.Geometry.notebookWidth model
             , ticks = model.tickCount
             , cellDirection = model.cellInsertionDirection
-            , errorLocation = Notebook.Eval.firstReplErrorLine model.evalState.decls
+            , errorLocation = Notebook.Eval.firstReplErrorLine model.evalState.decls |> Debug.log "ERROR_LOCATION"
             }
     in
     E.column
