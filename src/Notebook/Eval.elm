@@ -1,13 +1,13 @@
 module Notebook.Eval exposing
     ( displayDictionary
     , encodeExpr
-    , firstReplErrorLine
     , hasReplError
     , initEmptyEvalState
     , initEvalState
     , insertDeclaration
     , removeDeclaration
     , replDataCodec
+    , replErrorOffset
     , reportError
     , requestEvaluation
     )
@@ -35,10 +35,6 @@ replDataCodec =
 
 requestEvaluation : EvalState -> Cell -> String -> Cmd FrontendMsg
 requestEvaluation evalState cell expr =
-    let
-        _ =
-            Debug.log "DICTIONARY LINES" (dictionaryLines evalState.decls)
-    in
     Http.post
         { url = "http://localhost:8000/repl"
         , body = Http.jsonBody (encodeExpr evalState expr)
@@ -51,9 +47,9 @@ dictionaryLines dict =
     dict |> Dict.values |> String.join "" |> String.split "\n" |> List.length
 
 
-firstReplErrorLine : Dict String String -> Int
-firstReplErrorLine dict =
-    dictionaryLines dict + 2
+replErrorOffset : Dict String String -> Int
+replErrorOffset dict =
+    dictionaryLines dict + 1
 
 
 insertDeclaration : String -> String -> EvalState -> EvalState

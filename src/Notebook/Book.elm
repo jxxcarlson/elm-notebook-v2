@@ -158,7 +158,7 @@ type alias ViewData =
     , width : Int
     , ticks : Int
     , cellDirection : Notebook.Types.CellDirection
-    , errorLocation : Int
+    , errorOffset : Int
     }
 
 

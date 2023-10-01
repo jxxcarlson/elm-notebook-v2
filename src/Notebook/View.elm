@@ -200,7 +200,7 @@ render viewData report =
         , E.spacing 8
         , Background.color (E.rgb 0 0 0)
         ]
-        (Notebook.ErrorReporter.prepareReport report)
+        (Notebook.ErrorReporter.prepareReport viewData.errorOffset report)
 
 
 viewSuccess : ViewData -> Cell -> Element FrontendMsg

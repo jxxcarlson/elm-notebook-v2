@@ -11,6 +11,7 @@ import Element exposing (..)
 import Element.Font as Font
 import Json.Decode as D
 import List.Extra
+import Notebook.Parser
 import Notebook.Types exposing (MessageItem(..), StyledString)
 
 
@@ -198,9 +199,45 @@ breakMessages messageItems =
         |> List.concat
 
 
-prepareReport : List MessageItem -> List (Element msg)
-prepareReport report =
+err =
+    [ Plain "The (++) operator can append List and String values, but not "
+    , Styled { bold = False, color = Just "yellow", string = "number", underline = False }
+    , Plain " values like\nthis:\n\n7|   1 ++ 1\n     "
+    , Styled { bold = False, color = Just "RED", string = "^", underline = False }
+    , Plain "\nTry using "
+    , Styled { bold = False, color = Just "GREEN", string = "String.fromInt", underline = False }
+    , Plain " to turn it into a string? Or put it in [] to make it a\nlist? Or switch to the (::) operator?"
+    ]
+
+
+adjustErrorLocation : Int -> MessageItem -> MessageItem
+adjustErrorLocation errorOffset messageItem =
+    case messageItem of
+        Plain str ->
+            case Notebook.Parser.getErrorOffset str of
+                Nothing ->
+                    messageItem
+
+                Just offset ->
+                    let
+                        target =
+                            String.fromInt offset ++ "|"
+
+                        replacement =
+                            String.fromInt (offset - errorOffset)
+                    in
+                    Plain (String.replace target replacement str)
+
+        Styled _ ->
+            messageItem
+
+
+prepareReport : Int -> List MessageItem -> List (Element msg)
+prepareReport errorOffset report_ =
     let
+        report =
+            List.map (adjustErrorLocation errorOffset) report_
+
         groups : List (List MessageItem)
         groups =
             groupMessageItemsHelp (breakMessages report)

@@ -1,16 +1,33 @@
-module Notebook.Parser exposing (Classification(..), classify)
+module Notebook.Parser exposing (Classification(..), classify, getErrorOffset)
 
-import Parser exposing ((|.), Parser, chompWhile, getChompedString, run, succeed, symbol)
+import Parser exposing ((|.), (|=), Parser, chompUntil, chompWhile, getChompedString, run, succeed, symbol)
 
 
 prefix : Parser String
 prefix =
     getChompedString <|
         succeed ()
-            --|. chompIf (\c -> c == '$')
-            --|. chompIf (\c -> Char.isAlpha c || c == '_')
             |. chompWhile (\c -> c /= '=')
             |. symbol "= "
+
+
+getErrorOffset : String -> Maybe Int
+getErrorOffset str =
+    case run errorOffsetParser str of
+        Ok offset ->
+            Just offset
+
+        Err _ ->
+            Nothing
+
+
+errorOffsetParser : Parser Int
+errorOffsetParser =
+    succeed identity
+        |. chompUntil "\n\n"
+        |. symbol "\n\n"
+        |= Parser.int
+        |. symbol "|"
 
 
 type Classification
