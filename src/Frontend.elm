@@ -35,14 +35,14 @@ import Predicate
 import Random
 import Task
 import Time
-import Types exposing (..)
+import Types exposing (AppMode(..), AppState(..), ClockState(..), DeleteNotebookState(..), FrontendModel, FrontendMsg(..), MessageStatus(..), PopupState(..), ShowNotebooks(..), SignupState(..), ToBackend(..), ToFrontend(..))
 import Url exposing (Url)
 import User
 import View.Main
 
 
 type alias Model =
-    FrontendModel
+    Types.FrontendModel
 
 
 app =

@@ -5,12 +5,12 @@ module BackendHelper exposing (..)
 import Notebook.Book exposing (Book)
 import NotebookDict
 import Random
-import Types exposing (..)
+import Types
 import UUID
 
 
 type alias Model =
-    BackendModel
+    Types.BackendModel
 
 
 getUUID : Model -> Model

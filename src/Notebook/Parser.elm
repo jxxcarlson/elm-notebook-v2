@@ -1,6 +1,6 @@
 module Notebook.Parser exposing (Classification(..), classify)
 
-import Parser exposing (..)
+import Parser exposing ((|.), Parser, chompWhile, getChompedString, run, succeed, symbol)
 
 
 prefix : Parser String

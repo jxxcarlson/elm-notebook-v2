@@ -26,9 +26,9 @@ import Review.Rule exposing (Rule)
 config : List Rule
 config =
     [ --NoUnused.CustomTypeConstructors.rule []
-      NoUnused.Dependencies.rule
+      -- NoUnused.Dependencies.rule
+      NoImportingEverything.rule [ "Element" ]
 
-    --, NoImportingEverything.rule [ "Element" ]
     --, NoUnused.Parameters.rule
     --, NoUnused.Variables.rule
     --, NoExposingEverything.rule

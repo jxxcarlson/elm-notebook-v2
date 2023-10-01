@@ -48,7 +48,15 @@ import Element.Input as Input
 import Notebook.Book exposing (Book)
 import Notebook.Cell exposing (CellState(..), CellType)
 import Notebook.DataSet
-import Types exposing (..)
+import Types
+    exposing
+        ( ClockState(..)
+        , DeleteNotebookState(..)
+        , FrontendModel
+        , FrontendMsg(..)
+        , PopupState(..)
+        , ShowNotebooks(..)
+        )
 import UILibrary.Button as Button
 import UILibrary.Color as Color
 import View.Style
@@ -91,7 +99,7 @@ linkStyle =
 
 dismissPopupTransparent : Element FrontendMsg
 dismissPopupTransparent =
-    Button.largePrimary { msg = ChangePopup NoPopup, status = Button.ActiveTransparent, label = Button.Text "x", tooltipText = Nothing }
+    Button.largePrimary { msg = ChangePopup Types.NoPopup, status = Button.ActiveTransparent, label = Button.Text "x", tooltipText = Nothing }
 
 
 dismissPopupSmall : Element FrontendMsg

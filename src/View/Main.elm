@@ -5,7 +5,7 @@ import Element.Background as Background
 import Element.Font as Font
 import Html exposing (Html)
 import Message
-import Types exposing (..)
+import Types exposing (FrontendModel, FrontendMsg)
 import UILibrary.Color as Color
 import View.Body
 import View.BodyNotSignedIn
