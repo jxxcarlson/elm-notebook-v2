@@ -23,8 +23,8 @@ import View.Style
 import View.Utility
 
 
-view : ViewData -> Int -> String -> Cell -> Element FrontendMsg
-view viewData currentCellIndex cellContents cell =
+view : ViewData -> String -> Cell -> Element FrontendMsg
+view viewData cellContents cell =
     E.column
         [ E.paddingEach { top = 0, right = 0, bottom = 0, left = 0 }
         , E.width (E.px viewData.width)
