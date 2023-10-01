@@ -33,7 +33,7 @@ config =
     --, NoUnused.Variables.rule
     --, NoExposingEverything.rule
     --, NoDebug.Log.rule
-    -- , CognitiveComplexity.rule 25
+    , CognitiveComplexity.rule 25
     ]
         |> List.map
             (Review.Rule.ignoreErrorsForFiles

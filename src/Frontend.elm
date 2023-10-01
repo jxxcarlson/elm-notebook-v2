@@ -12,7 +12,9 @@ import File
 import File.Download
 import File.Select
 import Frontend.Authentication
+import Frontend.ElmCompilerInterop
 import Frontend.Message
+import Frontend.UIHelper
 import Html exposing (Html)
 import Keyboard
 import Lamdera exposing (sendToBackend)
@@ -147,85 +149,15 @@ update msg model =
             , Cmd.none
             )
 
+        -- ELM COMPILER/JS INTEROP
         ReceivedFromJS str ->
-            case Codec.decodeString Notebook.Eval.replDataCodec str of
-                Ok replData ->
-                    case model.currentCell of
-                        Nothing ->
-                            ( { model | message = "Error: no cell foundf or ReceivedFromJS" }, Cmd.none )
-
-                        Just cell ->
-                            let
-                                newCell =
-                                    { cell | value = CVString replData.value, replData = Just replData }
-
-                                newBook =
-                                    Notebook.Book.replaceCell newCell model.currentBook
-                            in
-                            ( { model | currentCell = Nothing, currentBook = newBook }, Cmd.none )
-
-                Err _ ->
-                    ( { model | message = "Error evaluating Elm code" }, Cmd.none )
+            Frontend.ElmCompilerInterop.receiveReplDataFromJS model str
 
         GotReply cell result ->
-            case result of
-                Ok str ->
-                    if Notebook.Eval.hasReplError str then
-                        let
-                            newCell =
-                                { cell | report = Just <| Notebook.Eval.reportError str }
-
-                            newBook =
-                                Notebook.Book.replaceCell newCell model.currentBook
-                        in
-                        ( { model
-                            | currentBook = newBook
-                          }
-                        , Cmd.none
-                        )
-
-                    else if str == "indent" then
-                        ( { model
-                            | currentBook =
-                                Notebook.Book.setReplDataAt model.currentCellIndex
-                                    (Just [ Plain "ERROR — maybe indentation, maybe something else." ])
-                                    model.currentBook
-                          }
-                        , Cmd.none
-                        )
-
-                    else
-                        ( { model
-                            | currentCell = Just cell
-                            , currentBook = Notebook.Book.replaceCell { cell | replData = Nothing } model.currentBook
-                          }
-                        , Ports.sendDataToJS str
-                        )
-
-                Err _ ->
-                    ( { model
-                        | currentBook =
-                            Notebook.Book.setReplDataAt model.currentCellIndex
-                                Nothing
-                                model.currentBook
-                      }
-                    , Cmd.none
-                    )
+            Frontend.ElmCompilerInterop.handleReplyFromElmCompiler model cell result
 
         KeyboardMsg keyMsg ->
-            let
-                pressedKeys : List Keyboard.Key
-                pressedKeys =
-                    Keyboard.update keyMsg model.pressedKeys
-
-                ( newModel, cmd ) =
-                    if List.member Keyboard.Control pressedKeys && List.member Keyboard.Enter pressedKeys then
-                        Notebook.EvalCell.processCell CSEdit model.currentCellIndex { model | pressedKeys = pressedKeys }
-
-                    else
-                        ( { model | pressedKeys = pressedKeys }, Cmd.none )
-            in
-            ( newModel, cmd )
+            Frontend.UIHelper.handleKeyPresses model keyMsg
 
         FETick time ->
             if Predicate.canSave model && model.currentBook.dirty then
@@ -259,113 +191,13 @@ update msg model =
 
         -- SYSTEM
         GotViewport vp ->
-            case model.appState of
-                Types.Loaded ->
-                    updateWithViewport vp model
-
-                Types.Loading ->
-                    let
-                        -- First we have to get the window width and height
-                        w =
-                            round vp.viewport.width
-
-                        h =
-                            round vp.viewport.height
-                    in
-                    -- Then we set the appState to Loaded
-                    ( { model
-                        | windowWidth = w
-                        , windowHeight = h
-                        , appState = Types.Loaded
-                      }
-                    , Cmd.none
-                    )
+            Frontend.UIHelper.handleViewport model vp
 
         GotNewWindowDimensions w h ->
             ( { model | windowWidth = w, windowHeight = h }, Cmd.none )
 
         ChangePopup popupState ->
-            case popupState of
-                NoPopup ->
-                    ( { model | popupState = NoPopup }, Cmd.none )
-
-                EditDataSetPopup metaData ->
-                    ( { model
-                        | popupState = EditDataSetPopup metaData
-                        , inputName = metaData.name
-                        , inputDescription = metaData.description
-                        , inputComments = metaData.comments
-                      }
-                    , Cmd.none
-                    )
-
-                NewNotebookPopup ->
-                    if model.popupState == NewNotebookPopup then
-                        ( { model | popupState = NoPopup }, Cmd.none )
-
-                    else
-                        ( { model | popupState = NewNotebookPopup }, Cmd.none )
-
-                StateEditorPopup ->
-                    if model.popupState == StateEditorPopup then
-                        ( { model | popupState = NoPopup }, Cmd.none )
-
-                    else
-                        ( { model
-                            | popupState = StateEditorPopup
-                          }
-                        , Cmd.none
-                        )
-
-                ManualPopup ->
-                    if model.popupState == ManualPopup then
-                        ( { model | popupState = NoPopup }, Cmd.none )
-
-                    else
-                        ( { model | popupState = ManualPopup }, Cmd.none )
-
-                ViewPublicDataSetsPopup ->
-                    if model.popupState == ViewPublicDataSetsPopup then
-                        ( { model | popupState = NoPopup }, Cmd.none )
-
-                    else
-                        ( { model | popupState = ViewPublicDataSetsPopup }, Cmd.none )
-
-                ViewPrivateDataSetsPopup ->
-                    if model.popupState == ViewPrivateDataSetsPopup then
-                        ( { model | popupState = NoPopup }, Cmd.none )
-
-                    else
-                        ( { model | popupState = ViewPrivateDataSetsPopup }, Cmd.none )
-
-                NewDataSetPopup ->
-                    if model.popupState == NewDataSetPopup then
-                        ( { model | popupState = NoPopup }, Cmd.none )
-
-                    else
-                        ( { model | popupState = NewDataSetPopup }, Cmd.none )
-
-                SignUpPopup ->
-                    if model.popupState == SignUpPopup then
-                        ( { model | popupState = NoPopup }, Cmd.none )
-
-                    else
-                        ( { model
-                            | popupState = SignUpPopup
-                            , inputUsername = ""
-                            , inputEmail = ""
-                            , inputPassword = ""
-                            , inputPasswordAgain = ""
-                          }
-                        , Cmd.none
-                        )
-
-                AdminPopup ->
-                    if model.popupState == AdminPopup then
-                        ( { model | popupState = NoPopup }, Cmd.none )
-
-                    else
-                        ( { model | popupState = AdminPopup }, sendToBackend SendUsers )
+            Frontend.UIHelper.handlePopups model popupState
 
         -- SIGN UP, IN, OUT
         SetSignupState state ->
@@ -920,23 +752,6 @@ getRandomProbabilities model k =
     ( { model
         | randomProbabilities = randomProbabilities
         , randomSeed = randomSeed
-      }
-    , Cmd.none
-    )
-
-
-updateWithViewport : Browser.Dom.Viewport -> FrontendModel -> ( FrontendModel, Cmd FrontendMsg )
-updateWithViewport vp model =
-    let
-        w =
-            round vp.viewport.width
-
-        h =
-            round vp.viewport.height
-    in
-    ( { model
-        | windowWidth = w
-        , windowHeight = h
       }
     , Cmd.none
     )
