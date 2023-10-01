@@ -24,14 +24,11 @@ import Navigation
 import Notebook.Action
 import Notebook.Book exposing (Book)
 import Notebook.Cell exposing (CellState(..), CellType(..), CellValue(..))
-import Notebook.CellHelper
 import Notebook.Codec
-import Notebook.Config
 import Notebook.DataSet
-import Notebook.ErrorReporter exposing (MessageItem(..))
 import Notebook.Eval
 import Notebook.EvalCell
-import Notebook.Types
+import Notebook.Types exposing (MessageItem(..))
 import Notebook.Update
 import Ports
 import Predicate

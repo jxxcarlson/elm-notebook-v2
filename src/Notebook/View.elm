@@ -6,7 +6,6 @@ import Element.Border
 import Element.Events
 import Element.Font as Font
 import Element.Input
-import Html
 import Html.Attributes as HA
 import List.Extra
 import Notebook.Book exposing (ViewData)
@@ -175,19 +174,19 @@ viewValue viewData cell =
         CTCode ->
             case cell.report of
                 Just report ->
-                    viewFailure report
+                    viewFailure viewData report
 
                 Nothing ->
                     viewSuccess viewData cell
 
 
-viewFailure : List Notebook.ErrorReporter.MessageItem -> Element FrontendMsg
-viewFailure report =
-    render report
+viewFailure : ViewData -> List Notebook.Types.MessageItem -> Element FrontendMsg
+viewFailure viewData report =
+    render viewData report
 
 
-render : List Notebook.ErrorReporter.MessageItem -> Element FrontendMsg
-render report =
+render : ViewData -> List Notebook.Types.MessageItem -> Element FrontendMsg
+render viewData report =
     E.column
         [ E.paddingXY 8 8
         , Font.color (E.rgb 0.9 0.9 0.9)

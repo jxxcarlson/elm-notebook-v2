@@ -1,6 +1,5 @@
 module Notebook.Cell exposing (..)
 
-import Notebook.ErrorReporter
 import Notebook.Types
 
 
@@ -11,7 +10,7 @@ type alias Cell =
     , value : CellValue
     , cellState : CellState
     , locked : Bool
-    , report : Maybe (List Notebook.ErrorReporter.MessageItem)
+    , report : Maybe (List Notebook.Types.MessageItem)
     , replData : Maybe Notebook.Types.ReplData
     }
 

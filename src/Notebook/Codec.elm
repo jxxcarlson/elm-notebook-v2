@@ -3,8 +3,7 @@ module Notebook.Codec exposing (exportBook, importBook)
 import Codec exposing (Codec, Error, Value)
 import Notebook.Book exposing (Book)
 import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
-import Notebook.ErrorReporter as ErrorReporter exposing (MessageItem(..), StyledString)
-import Notebook.Types exposing (ReplData)
+import Notebook.Types exposing (MessageItem(..), ReplData, StyledString)
 import Time
 
 

@@ -174,6 +174,7 @@ viewNotebook model user =
             , width = View.Geometry.notebookWidth model
             , ticks = model.tickCount
             , cellDirection = model.cellInsertionDirection
+            , errorLocation = Notebook.Eval.firstReplErrorLine model.evalState.decls
             }
     in
     E.column

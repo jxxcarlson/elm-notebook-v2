@@ -1,4 +1,10 @@
-module Notebook.Types exposing (CellDirection(..), EvalState, ReplData)
+module Notebook.Types exposing
+    ( CellDirection(..)
+    , EvalState
+    , MessageItem(..)
+    , ReplData
+    , StyledString
+    )
 
 import Dict exposing (Dict)
 
@@ -20,3 +26,16 @@ type alias ReplData =
 type CellDirection
     = Up
     | Down
+
+
+type MessageItem
+    = Plain String
+    | Styled StyledString
+
+
+type alias StyledString =
+    { bold : Bool
+    , underline : Bool
+    , color : Maybe String
+    , string : String
+    }

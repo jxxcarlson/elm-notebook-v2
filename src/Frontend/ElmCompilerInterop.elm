@@ -6,8 +6,8 @@ module Frontend.ElmCompilerInterop exposing
 import Codec
 import Notebook.Book
 import Notebook.Cell exposing (CellValue(..))
-import Notebook.ErrorReporter
 import Notebook.Eval
+import Notebook.Types
 import Ports
 import Types
 
@@ -63,7 +63,7 @@ handleReplyFromElmCompiler model cell result =
                 ( { model
                     | currentBook =
                         Notebook.Book.setReplDataAt model.currentCellIndex
-                            (Just [ Notebook.ErrorReporter.Plain "ERROR — maybe indentation, maybe something else." ])
+                            (Just [ Notebook.Types.Plain "ERROR — maybe indentation, maybe something else." ])
                             model.currentBook
                   }
                 , Cmd.none

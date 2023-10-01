@@ -1,6 +1,7 @@
 module Notebook.Eval exposing
     ( displayDictionary
     , encodeExpr
+    , firstReplErrorLine
     , hasReplError
     , initEmptyEvalState
     , initEvalState
@@ -19,7 +20,7 @@ import Http
 import Json.Encode as Encode
 import Notebook.Cell exposing (Cell)
 import Notebook.ErrorReporter as ErrorReporter
-import Notebook.Types exposing (EvalState, ReplData)
+import Notebook.Types exposing (EvalState, MessageItem(..), ReplData)
 import Types exposing (FrontendMsg)
 
 
@@ -34,11 +35,25 @@ replDataCodec =
 
 requestEvaluation : EvalState -> Cell -> String -> Cmd FrontendMsg
 requestEvaluation evalState cell expr =
+    let
+        _ =
+            Debug.log "DICTIONARY LINES" (dictionaryLines evalState.decls)
+    in
     Http.post
         { url = "http://localhost:8000/repl"
         , body = Http.jsonBody (encodeExpr evalState expr)
         , expect = Http.expectString (Types.GotReply cell)
         }
+
+
+dictionaryLines : Dict String String -> Int
+dictionaryLines dict =
+    dict |> Dict.values |> String.join "" |> String.split "\n" |> List.length
+
+
+firstReplErrorLine : Dict String String -> Int
+firstReplErrorLine dict =
+    dictionaryLines dict + 3
 
 
 insertDeclaration : String -> String -> EvalState -> EvalState
@@ -110,7 +125,7 @@ encodeExpr evalState expr =
         ]
 
 
-reportError : String -> List ErrorReporter.MessageItem
+reportError : String -> List MessageItem
 reportError str =
     case ErrorReporter.decodeErrorReporter str of
         Ok replError ->
@@ -134,4 +149,4 @@ renderReplError replError =
 
 
 unknownReplError str =
-    [ ErrorReporter.Plain <| "Unknown REPL error" ]
+    [ Plain <| "Unknown REPL error" ]

@@ -11,7 +11,6 @@ module Notebook.Book exposing
 
 import Dict exposing (Dict)
 import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
-import Notebook.ErrorReporter
 import Notebook.Types
 import Time
 
@@ -159,6 +158,7 @@ type alias ViewData =
     , width : Int
     , ticks : Int
     , cellDirection : Notebook.Types.CellDirection
+    , errorLocation : Int
     }
 
 
@@ -179,7 +179,7 @@ clearReplData cellState book =
     apply (\cell -> { cell | replData = Nothing }) book
 
 
-setReplDataAt : Int -> Maybe (List Notebook.ErrorReporter.MessageItem) -> Book -> Book
+setReplDataAt : Int -> Maybe (List Notebook.Types.MessageItem) -> Book -> Book
 setReplDataAt index report book =
     let
         cells =

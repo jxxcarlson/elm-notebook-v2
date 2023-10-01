@@ -1,7 +1,5 @@
 module Notebook.ErrorReporter exposing
-    ( MessageItem(..)
-    , StyledString
-    , decodeErrorReporter
+    ( decodeErrorReporter
     , prepareReport
     , stringToMessageItem
     )
@@ -10,10 +8,10 @@ module Notebook.ErrorReporter exposing
 -}
 
 import Element exposing (..)
-import Element.Background as Background
 import Element.Font as Font
 import Json.Decode as D
 import List.Extra
+import Notebook.Types exposing (MessageItem(..), StyledString)
 
 
 type alias ReplError =
@@ -45,14 +43,6 @@ type alias Problem =
     { title : String
     , region : Region
     , message : List MessageItem
-    }
-
-
-type alias StyledString =
-    { bold : Bool
-    , underline : Bool
-    , color : Maybe String
-    , string : String
     }
 
 
@@ -118,11 +108,6 @@ renderMessageItem messageItem =
 stringToMessageItem : String -> MessageItem
 stringToMessageItem str =
     Plain str
-
-
-type MessageItem
-    = Plain String
-    | Styled StyledString
 
 
 decodeErrorReporter str =
