@@ -66,16 +66,16 @@ processCell cellState cellIndex model_ =
         Nothing ->
             ( model, Cmd.none )
 
-        Just cell_ ->
-            case cell_.tipe of
+        Just cell ->
+            case cell.tipe of
                 Cell.CTCode ->
-                    processCode model cellState cell_
+                    processCode model cell
 
                 Cell.CTMarkdown ->
-                    processMarkdown model cellState cell_
+                    processMarkdown model cell
 
 
-processMarkdown model cellState cell =
+processMarkdown model cell =
     let
         newCell =
             { cell | value = CVMarkdown cell.text }
@@ -86,25 +86,25 @@ processMarkdown model cellState cell =
     ( { model | currentBook = newBook }, Cmd.none )
 
 
-processCode model cellState cell_ =
-    case Notebook.Parser.classify cell_.text of
-        Notebook.Parser.Expr expr ->
-            processExpr model cellState expr
+processCode model cell =
+    case Notebook.Parser.classify cell.text of
+        Notebook.Parser.Expr sourceText ->
+            processExpr model cell sourceText
 
-        Notebook.Parser.Decl name expr ->
-            processNameAndExpr model cellState name expr
+        Notebook.Parser.Decl name sourceText ->
+            processNameAndExpr model cell name sourceText
 
 
-processExpr : Model -> CellState -> String -> ( Model, Cmd FrontendMsg )
-processExpr model cellState expr =
-    if String.left 6 expr == ":clear" then
+processExpr : Model -> Cell -> String -> ( Model, Cmd FrontendMsg )
+processExpr model cell sourceText =
+    if String.left 6 sourceText == ":clear" then
         processClearCmd model
 
-    else if String.left 7 expr == ":remove" then
-        processRemoveCmd model expr
+    else if String.left 7 sourceText == ":remove" then
+        processRemoveCmd model sourceText
 
     else
-        ( model, Eval.requestEvaluation model.evalState expr )
+        ( model, Eval.requestEvaluation model.evalState cell sourceText )
 
 
 processClearCmd model =
@@ -137,8 +137,8 @@ processRemoveCmd model expr =
             ( model, Cmd.none )
 
 
-processNameAndExpr : Model -> CellState -> String -> String -> ( Model, Cmd FrontendMsg )
-processNameAndExpr model cellState name expr =
+processNameAndExpr : Model -> Cell -> String -> String -> ( Model, Cmd FrontendMsg )
+processNameAndExpr model cell name expr =
     let
         newEvalState =
             Eval.insertDeclaration name (name ++ " = " ++ expr ++ "\n") model.evalState

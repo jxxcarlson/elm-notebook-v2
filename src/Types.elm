@@ -59,6 +59,7 @@ type alias FrontendModel =
     -- NOTEBOOKS II
     , kvDict : Dict String String
     , books : List Book
+    , currentCell : Maybe Cell
     , currentBook : Book
     , cellContent : String
     , currentCellIndex : Int
@@ -148,7 +149,7 @@ type FrontendMsg
     | InputAuthor String
     | InputInitialStateValue String
       -- Notebook
-    | GotReply (Result Http.Error String)
+    | GotReply Cell (Result Http.Error String)
     | ReceivedFromJS String
       -- DATA
     | AskToListDataSets DataSetDescription

@@ -3,15 +3,15 @@ module Notebook.Book exposing
     , ViewData
     , initializeCellState
     , new
+    , replaceCell
     , scratchPad
     , setAllCellStates
     , setReplDataAt
     )
 
 import Dict exposing (Dict)
-import Notebook.Cell exposing (CellState(..), CellType(..), CellValue(..))
+import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
 import Notebook.ErrorReporter
-import Notebook.Types
 import Time
 
 
@@ -62,16 +62,6 @@ scratchPad username =
           }
         ]
     , currentIndex = 0
-    }
-
-
-type alias Cell =
-    { index : Int
-    , text : String
-    , tipe : CellType
-    , value : CellValue
-    , cellState : CellState
-    , locked : Bool
     }
 
 
@@ -202,6 +192,26 @@ setReplDataAt index report book =
 
                     else
                         cell
+                )
+                cells
+    }
+
+
+replaceCell : Cell -> Book -> Book
+replaceCell cell book =
+    let
+        cells =
+            book.cells
+    in
+    { book
+        | cells =
+            List.map
+                (\c ->
+                    if c.index == cell.index then
+                        cell
+
+                    else
+                        c
                 )
                 cells
     }

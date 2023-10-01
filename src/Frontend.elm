@@ -21,7 +21,7 @@ import Loading
 import Navigation
 import Notebook.Action
 import Notebook.Book exposing (Book)
-import Notebook.Cell exposing (CellState(..), CellType(..))
+import Notebook.Cell exposing (CellState(..), CellType(..), CellValue(..))
 import Notebook.CellHelper
 import Notebook.Codec
 import Notebook.Config
@@ -104,6 +104,7 @@ init url key =
       -- NOTEBOOKS
       , kvDict = Dict.empty
       , books = []
+      , currentCell = Nothing
       , currentBook = Notebook.Book.scratchPad "anonymous"
       , cellContent = ""
       , currentCellIndex = 0
@@ -148,26 +149,37 @@ update msg model =
 
         ReceivedFromJS str ->
             case Codec.decodeString Notebook.Eval.replDataCodec str of
-                Ok data ->
-                    let
-                        book =
-                            Notebook.CellHelper.updateBookWithCellIndexAndReplData model.currentCellIndex data model.currentBook
-                    in
-                    ( { model | currentBook = book }, Cmd.none )
+                Ok replData ->
+                    case model.currentCell of
+                        Nothing ->
+                            ( { model | message = "Error: no cell foundf or ReceivedFromJS" }, Cmd.none )
+
+                        Just cell ->
+                            let
+                                newCell =
+                                    { cell | value = CVString replData.value, replData = Just replData }
+
+                                newBook =
+                                    Notebook.Book.replaceCell newCell model.currentBook
+                            in
+                            ( { model | currentCell = Nothing, currentBook = newBook }, Cmd.none )
 
                 Err _ ->
                     ( { model | message = "Error evaluating Elm code" }, Cmd.none )
 
-        GotReply result ->
+        GotReply cell result ->
             case result of
                 Ok str ->
                     if Notebook.Eval.hasReplError str then
-                        -- ( { model | report = Just <| Notebook.Eval.reportError (str |> Debug.log "ERROR REPORT") }, Cmd.none )
+                        let
+                            newCell =
+                                { cell | report = Just <| Notebook.Eval.reportError str }
+
+                            newBook =
+                                Notebook.Book.replaceCell newCell model.currentBook
+                        in
                         ( { model
-                            | currentBook =
-                                Notebook.Book.setReplDataAt model.currentCellIndex
-                                    (Just <| Notebook.Eval.reportError str)
-                                    model.currentBook
+                            | currentBook = newBook
                           }
                         , Cmd.none
                         )
@@ -184,10 +196,8 @@ update msg model =
 
                     else
                         ( { model
-                            | currentBook =
-                                Notebook.Book.setReplDataAt model.currentCellIndex
-                                    Nothing
-                                    model.currentBook
+                            | currentCell = Just cell
+                            , currentBook = Notebook.Book.replaceCell { cell | replData = Nothing } model.currentBook
                           }
                         , Ports.sendDataToJS str
                         )
