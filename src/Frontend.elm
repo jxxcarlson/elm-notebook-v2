@@ -31,6 +31,7 @@ import Notebook.DataSet
 import Notebook.ErrorReporter exposing (MessageItem(..))
 import Notebook.Eval
 import Notebook.EvalCell
+import Notebook.Types
 import Notebook.Update
 import Ports
 import Predicate
@@ -107,6 +108,7 @@ init url key =
       , kvDict = Dict.empty
       , books = []
       , currentCell = Nothing
+      , cellInsertionDirection = Notebook.Types.Down
       , currentBook = Notebook.Book.scratchPad "anonymous"
       , cellContent = ""
       , currentCellIndex = 0
@@ -364,6 +366,9 @@ update msg model =
 
         ToggleCellLock cell ->
             ( Notebook.Update.toggleCellLock cell model, Cmd.none )
+
+        ChangeCellInsertionDirection direction ->
+            ( { model | cellInsertionDirection = direction }, Cmd.none )
 
         StringDataRequested index variable ->
             ( model

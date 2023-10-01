@@ -13,6 +13,7 @@ import Notebook.Book exposing (ViewData)
 import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
 import Notebook.ErrorReporter
 import Notebook.Parser
+import Notebook.Types
 import Notebook.Utility as Utility
 import Types exposing (FrontendModel, FrontendMsg(..))
 import UILibrary.Button as Button
@@ -38,7 +39,7 @@ view viewData cellContents cell =
 
 
 viewSourceAndValue : ViewData -> String -> Cell -> Element FrontendMsg
-viewSourceAndValue orignalviewData cellContents cell =
+viewSourceAndValue originalviewData cellContents cell =
     let
         style =
             case ( cell.cellState, cell.tipe ) of
@@ -74,10 +75,10 @@ viewSourceAndValue orignalviewData cellContents cell =
                     ]
 
         viewData =
-            { orignalviewData | width = orignalviewData.width - 24 }
+            { originalviewData | width = originalviewData.width - 24 }
     in
     E.column ([ Background.color (Utility.cellColor cell.tipe), E.paddingXY 6 12, E.spacing 4 ] ++ style)
-        [ E.el [ E.alignRight, Background.color (Utility.cellColor cell.tipe) ] (controls viewData.width cell)
+        [ E.el [ E.alignRight, Background.color (Utility.cellColor cell.tipe) ] (controls viewData cell)
         , viewSource (viewData.width - controlWidth) cell cellContents
         , E.el (hrule cell) (viewValue viewData cell)
         ]
@@ -102,7 +103,7 @@ bgColor cell =
     Background.color (Utility.cellColor cell.tipe)
 
 
-controls width_ cell =
+controls viewData cell =
     case cell.cellState of
         CSView ->
             E.none
@@ -110,7 +111,7 @@ controls width_ cell =
         CSEdit ->
             E.row
                 [ controlBGEdit
-                , E.width (E.px (width_ - 3))
+                , E.width (E.px (viewData.width - 3))
                 , E.centerX
                 , E.paddingEach { left = 0, right = 12, bottom = 0, top = 0 }
                 , bgColor cell
@@ -123,7 +124,8 @@ controls width_ cell =
                     , E.paddingEach { top = 2, bottom = 2, left = 8, right = 4 }
                     ]
                     [ E.row [ E.spacing 6 ]
-                        [ newCodeCellAt cell.cellState cell.index
+                        [ newCellAboveOrBelow viewData.cellDirection
+                        , newCodeCellAt cell.cellState cell.index
                         , newMarkdownCellAt cell.cellState cell.index
                         ]
                     , E.row [ E.spacing 6 ]
@@ -364,6 +366,16 @@ editCell width cell cellContent =
                 }
             ]
         )
+
+
+newCellAboveOrBelow : Notebook.Types.CellDirection -> Element FrontendMsg
+newCellAboveOrBelow cellDirection =
+    case cellDirection of
+        Notebook.Types.Up ->
+            Button.smallPrimary { msg = ChangeCellInsertionDirection Notebook.Types.Down, status = Button.Highlighted, label = Button.Text "Above", tooltipText = Just "Insert new cell above" }
+
+        Notebook.Types.Down ->
+            Button.smallPrimary { msg = ChangeCellInsertionDirection Notebook.Types.Up, status = Button.Highlighted, label = Button.Text "Below", tooltipText = Just "Insert ew cell below " }
 
 
 newCodeCellAt : CellState -> Int -> Element FrontendMsg

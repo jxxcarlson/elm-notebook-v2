@@ -1,4 +1,4 @@
-module Notebook.Types exposing (EvalState, ReplData)
+module Notebook.Types exposing (CellDirection(..), EvalState, ReplData)
 
 import Dict exposing (Dict)
 
@@ -15,3 +15,8 @@ type alias ReplData =
     , value : String
     , tipe : String
     }
+
+
+type CellDirection
+    = Up
+    | Down

@@ -173,6 +173,7 @@ viewNotebook model user =
             , kvDict = model.kvDict
             , width = View.Geometry.notebookWidth model
             , ticks = model.tickCount
+            , cellDirection = model.cellInsertionDirection
             }
     in
     E.column

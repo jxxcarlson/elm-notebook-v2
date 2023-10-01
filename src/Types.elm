@@ -60,6 +60,7 @@ type alias FrontendModel =
     , kvDict : Dict String String
     , books : List Book
     , currentCell : Maybe Cell
+    , cellInsertionDirection : Notebook.Types.CellDirection
     , currentBook : Book
     , cellContent : String
     , currentCellIndex : Int
@@ -161,6 +162,7 @@ type FrontendMsg
     | UpdateDeclarationsDictionary
     | ProcessCell Int
     | ToggleCellLock Cell
+    | ChangeCellInsertionDirection Notebook.Types.CellDirection
     | NewCodeCell CellState Int
     | NewMarkdownCell CellState Int
     | DeleteCell Int

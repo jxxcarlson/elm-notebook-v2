@@ -39,6 +39,7 @@ import List.Extra
 import Notebook.Book exposing (Book)
 import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
 import Notebook.CellHelper
+import Notebook.Types
 import Types exposing (FrontendModel, FrontendMsg(..))
 
 
@@ -118,7 +119,13 @@ makeNewCell : FrontendModel -> CellState -> CellType -> Int -> ( FrontendModel, 
 makeNewCell model cellState cellType index =
     let
         newCell =
-            { index = index + 1
+            { index =
+                case model.cellInsertionDirection of
+                    Notebook.Types.Down ->
+                        index + 1
+
+                    Notebook.Types.Up ->
+                        index
             , text = "# New cell (" ++ String.fromInt (index + 2) ++ ") "
             , value = CVNone
             , tipe = cellType
