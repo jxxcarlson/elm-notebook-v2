@@ -10,6 +10,7 @@ module View.Button exposing
     , dismissPopupSmall
     , editDataSet
     , editTitle
+    , executeNotebook
     , exportNotebook
     , getRandomProbabilities
     , importNotebook
@@ -96,6 +97,11 @@ dismissPopupTransparent =
 dismissPopupSmall : Element FrontendMsg
 dismissPopupSmall =
     Button.smallPrimary { msg = ChangePopup NoPopup, status = Button.ActiveTransparent, label = Button.Text "x", tooltipText = Nothing }
+
+
+executeNotebook : Element FrontendMsg
+executeNotebook =
+    Button.smallPrimary { msg = ExecuteNoteook, status = Button.Active, label = Button.Text "Run all cells", tooltipText = Nothing }
 
 
 updateDeclarationsDictionary : Element FrontendMsg

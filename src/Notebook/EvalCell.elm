@@ -1,4 +1,9 @@
-module Notebook.EvalCell exposing (processCell, updateDeclarationsDictionary)
+module Notebook.EvalCell exposing
+    ( executeNotebok
+    , processCell
+    , processCell_
+    , updateDeclarationsDictionary
+    )
 
 import Dict
 import Keyboard
@@ -9,11 +14,40 @@ import Notebook.CellHelper
 import Notebook.Eval as Eval
 import Notebook.Parser
 import Notebook.Types exposing (EvalState)
+import Process
+import Task
 import Types exposing (FrontendMsg)
 
 
 type alias Model =
     Types.FrontendModel
+
+
+executeNotebok : Model -> ( Model, Cmd FrontendMsg )
+executeNotebok model =
+    let
+        n =
+            List.length model.currentBook.cells
+
+        indices =
+            List.range 0 n
+
+        oldEvalState =
+            model.evalState
+
+        newEvalState =
+            { oldEvalState | decls = Dict.empty }
+
+        commands =
+            List.indexedMap createDelayedCommand indices
+    in
+    ( { model | evalState = newEvalState }, Cmd.batch commands )
+
+
+createDelayedCommand : Int -> Int -> Cmd FrontendMsg
+createDelayedCommand idx _ =
+    Process.sleep (toFloat (idx * 50))
+        |> Task.perform (\_ -> Types.ProcessCell idx)
 
 
 updateDeclarationsDictionary : Model -> ( Model, Cmd FrontendMsg )

@@ -517,8 +517,18 @@ update msg model =
                     )
 
         -- CELLS, NOTEBOOKS
+        ExecuteNoteook ->
+            Notebook.EvalCell.executeNotebok model
+
         UpdateDeclarationsDictionary ->
             Notebook.EvalCell.updateDeclarationsDictionary model
+
+        ProcessCell k ->
+            let
+                ( newModel, cmd ) =
+                    Notebook.EvalCell.processCell_ k model
+            in
+            ( newModel, cmd )
 
         ToggleCellLock cell ->
             ( Notebook.Update.toggleCellLock cell model, Cmd.none )
