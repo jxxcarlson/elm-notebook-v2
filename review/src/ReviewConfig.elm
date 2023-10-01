@@ -11,59 +11,33 @@ when inside the directory containing this file.
 
 -}
 
-import Docs.ReviewAtDocs
-import NoConfusingPrefixOperator
+import CognitiveComplexity
 import NoDebug.Log
-import NoDebug.TodoOrToString
 import NoExposingEverything
 import NoImportingEverything
-import NoMissingTypeAnnotation
-import NoMissingTypeAnnotationInLetIn
-import NoMissingTypeExpose
-import NoPrematureLetComputation
-import NoSimpleLetBody
-import NoUnused.CustomTypeConstructorArgs
 import NoUnused.CustomTypeConstructors
 import NoUnused.Dependencies
-import NoUnused.Exports
 import NoUnused.Parameters
 import NoUnused.Patterns
 import NoUnused.Variables
-import Review.Rule as Rule exposing (Rule)
-import Simplify
+import Review.Rule exposing (Rule)
 
 
 config : List Rule
 config =
-    [ --Docs.ReviewAtDocs.rule
-      --, NoConfusingPrefixOperator.rule
-      NoDebug.Log.rule
-    , NoDebug.TodoOrToString.rule
-        |> Rule.ignoreErrorsForDirectories [ "tests/" ]
+    [ --NoUnused.CustomTypeConstructors.rule []
+      NoUnused.Dependencies.rule
 
-    --, NoExposingEverything.rule
-    --, NoImportingEverything.rule []
-    --  , NoMissingTypeAnnotation.rule
-    --, NoMissingTypeAnnotationInLetIn.rule
-    --, NoMissingTypeExpose.rule
-    --, NoSimpleLetBody.rule
-    --, NoPrematureLetComputation.rule
-    --, NoUnused.CustomTypeConstructors.rule []
-    --, NoUnused.CustomTypeConstructorArgs.rule
-    , NoUnused.Dependencies.rule
-    , NoUnused.Exports.rule
-
+    --, NoImportingEverything.rule [ "Element" ]
     --, NoUnused.Parameters.rule
-    --, NoUnused.Patterns.rule
     --, NoUnused.Variables.rule
-    --, Simplify.rule Simplify.defaults
+    --, NoExposingEverything.rule
+    --, NoDebug.Log.rule
+    -- , CognitiveComplexity.rule 25
     ]
         |> List.map
-            (Rule.ignoreErrorsForFiles
-                [ "src/IntepreterEnv.elm" -- reports "Production" as unused constructor. This is used by Lamdera in deploy.
-                , "src/Types.elm" -- 23/26 false positives
-                , "src/View/Utility.elm"
-                , "src/View.Spinner.elm"
+            (Review.Rule.ignoreErrorsForFiles
+                [ "src/Env.elm" -- reports "Production" as unused constructor. This is used by Lamdera in deploy.
                 ]
             )
-        |> List.map (Rule.ignoreErrorsForDirectories [ "src/Evergreen", "vendor" ])
+        |> List.map (Review.Rule.ignoreErrorsForDirectories [ "src/Evergreen", "freezer/" ])

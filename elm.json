@@ -43,8 +43,7 @@
             "rlopzc/elm-hmac-sha1": "1.0.0",
             "rtfeldman/elm-css": "17.1.1",
             "rtfeldman/elm-hex": "1.0.0",
-            "stil4m/elm-syntax": "7.2.9",
-            "terezka/charts": "20.0.1"
+            "stil4m/elm-syntax": "7.2.9"
         },
         "indirect": {
             "TSFoster/elm-bytes-extra": "1.3.0",

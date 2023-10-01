@@ -149,14 +149,6 @@ controlWidth =
     0
 
 
-isSimulation cell =
-    let
-        source =
-            cell.text |> String.join "\n"
-    in
-    String.contains "timeSeries" source || String.contains "evalSvg" source
-
-
 viewSource : Int -> Cell -> String -> Element FrontendMsg
 viewSource width cell cellContent =
     case cell.cellState of
@@ -181,14 +173,14 @@ viewValue viewData cell =
         CTCode ->
             case cell.report of
                 Just report ->
-                    viewFailure viewData report
+                    viewFailure report
 
                 Nothing ->
                     viewSuccess viewData cell
 
 
-viewFailure : ViewData -> List Notebook.ErrorReporter.MessageItem -> Element FrontendMsg
-viewFailure viewData report =
+viewFailure : List Notebook.ErrorReporter.MessageItem -> Element FrontendMsg
+viewFailure report =
     render report
 
 
