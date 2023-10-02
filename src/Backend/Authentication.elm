@@ -1,14 +1,47 @@
-module Backend.Authentication exposing (signIn, signOut, signUpUser)
+module Backend.Authentication exposing
+    ( signIn
+    , signOut
+    , signUpUser
+    , signoutBE
+    )
 
 import Authentication
 import BackendHelper
 import Dict
+import Env
 import Hex
 import Lamdera exposing (ClientId, SessionId)
 import Random
 import Set
 import Token
 import Types exposing (BackendModel, BackendMsg, MessageStatus(..), ToFrontend(..))
+
+
+type alias Model =
+    Types.BackendModel
+
+
+signoutBE : Model -> String -> Maybe String -> ( Model, Cmd BackendMsg )
+signoutBE model clientId mUsername =
+    case mUsername of
+        Nothing ->
+            ( model, Cmd.none )
+
+        Just username ->
+            case Env.mode of
+                Env.Production ->
+                    signOut model username clientId
+
+                Env.Development ->
+                    signOut model username clientId
+                        |> (\( m1, c1 ) ->
+                                let
+                                    ( m2, c2 ) =
+                                        -- Backend.Update.cleanup m1 sessionId clientId
+                                        ( m1, c1 )
+                                in
+                                ( m2, Cmd.batch [ c1, c2 ] )
+                           )
 
 
 signIn model sessionId clientId username encryptedPassword =

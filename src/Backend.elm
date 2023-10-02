@@ -2,6 +2,7 @@ module Backend exposing (..)
 
 import Authentication
 import Backend.Authentication
+import Backend.Update
 import BackendHelper
 import Dict exposing (Dict)
 import Env exposing (Mode(..))
@@ -98,25 +99,7 @@ updateFromFrontend sessionId clientId msg model =
             Backend.Authentication.signUpUser model sessionId clientId username encryptedPassword email
 
         Types.SignOutBE mUsername ->
-            case mUsername of
-                Nothing ->
-                    ( model, Cmd.none )
-
-                Just username ->
-                    case Env.mode of
-                        Env.Production ->
-                            Backend.Authentication.signOut model username clientId
-
-                        Env.Development ->
-                            Backend.Authentication.signOut model username clientId
-                                |> (\( m1, c1 ) ->
-                                        let
-                                            ( m2, c2 ) =
-                                                -- Backend.Update.cleanup m1 sessionId clientId
-                                                ( m1, c1 )
-                                        in
-                                        ( m2, Cmd.batch [ c1, c2 ] )
-                                   )
+            Backend.Authentication.signoutBE model clientId mUsername
 
         Types.SignInBE username encryptedPassword ->
             case Dict.get username model.authenticationDict of
@@ -260,75 +243,13 @@ updateFromFrontend sessionId clientId msg model =
             ( model, sendToFrontend clientId (GotNotebooks maybeBook (NotebookDict.allPublicWithAuthor username model.userToNoteBookDict)) )
 
         Types.UpdateSlugDict book ->
-            case String.split "." book.slug of
-                author :: slug :: [] ->
-                    let
-                        oldSlugDict =
-                            model.slugDict
-
-                        newSlugDict =
-                            Dict.insert book.slug { id = book.id, author = book.author, public = book.public } oldSlugDict
-                    in
-                    ( { model | slugDict = newSlugDict }, Cmd.none )
-
-                _ ->
-                    ( model, Cmd.none )
+            ( Backend.Update.updateSlugDictWithBook book model, Cmd.none )
 
         Types.GetClonedNotebook username slug ->
-            case Dict.get slug model.slugDict of
-                Just notebookRecord ->
-                    case NotebookDict.lookup notebookRecord.author notebookRecord.id model.userToNoteBookDict of
-                        Ok book ->
-                            if book.public == False then
-                                ( model, sendToFrontend clientId (SendMessage <| "Sorry, that notebook is private") )
-
-                            else
-                                let
-                                    newModel =
-                                        BackendHelper.getUUID model
-                                in
-                                ( newModel
-                                , sendToFrontend clientId
-                                    (GotNotebook
-                                        { book
-                                            | author = username
-                                            , id = newModel.uuid
-                                            , slug = BackendHelper.compress (username ++ "-" ++ book.title)
-                                            , origin = Just slug
-                                            , public = False
-                                            , dirty = True
-                                        }
-                                    )
-                                )
-
-                        Err _ ->
-                            ( model, sendToFrontend clientId (SendMessage <| "Sorry, couldn't get that notebook (1)") )
-
-                Nothing ->
-                    ( model, sendToFrontend clientId (SendMessage <| "Sorry, couldn't get that notebook (2)") )
+            Backend.Update.getClonedNotebook model username slug clientId
 
         Types.GetPulledNotebook username origin slug id ->
-            case Dict.get origin model.slugDict of
-                Just notebookRecord ->
-                    case NotebookDict.lookup notebookRecord.author notebookRecord.id model.userToNoteBookDict of
-                        Ok book ->
-                            ( model
-                            , sendToFrontend clientId
-                                (GotNotebook
-                                    { book
-                                        | author = username
-                                        , slug = BackendHelper.compress (username ++ "-" ++ book.title)
-                                        , origin = Just origin
-                                        , id = id
-                                    }
-                                )
-                            )
-
-                        Err _ ->
-                            ( model, sendToFrontend clientId (SendMessage <| "Sorry, couldn't get that notebook (1)") )
-
-                Nothing ->
-                    ( model, sendToFrontend clientId (SendMessage <| "Sorry, couldn't get the notebook record (2)") )
+            Backend.Update.pullNotebook model clientId username origin id
 
         Types.SaveNotebook book ->
             let
@@ -338,26 +259,7 @@ updateFromFrontend sessionId clientId msg model =
             ( { model | userToNoteBookDict = newNotebookDict }, Cmd.none )
 
         Types.CreateNotebook author title ->
-            let
-                newModel =
-                    BackendHelper.getUUID model
-
-                newBook_ =
-                    Notebook.Book.new author title
-
-                newBook =
-                    { newBook_
-                        | id = newModel.uuid
-                        , author = author
-                        , slug = BackendHelper.compress (author ++ "-" ++ title)
-                        , createdAt = model.currentTime
-                        , updatedAt = model.currentTime
-                    }
-
-                newNotebookDict =
-                    NotebookDict.insert newBook.author newBook.id newBook model.userToNoteBookDict
-            in
-            ( { newModel | userToNoteBookDict = newNotebookDict }, sendToFrontend clientId (GotNotebook newBook) )
+            Backend.Update.createNotebook model clientId author title
 
         Types.ImportNewBook username book ->
             let
