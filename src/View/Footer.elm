@@ -50,12 +50,12 @@ view model =
                 [ View.Utility.showIfIsAdmin model (Button.adminPopup model)
                 , View.Utility.showIfIsAdmin model Button.runTask
                 , messageRow model
-                , E.el [ Font.color (E.rgb 1 1 1) ] (E.text (String.fromInt <| List.length model.pressedKeys))
                 , View.Utility.showIf (Predicate.regularUser model) Button.importNotebook
                 , View.Utility.showIf (Predicate.regularUser model) Button.exportNotebook
-                , View.Utility.showIf (Predicate.regularUser model) Button.newDataSet
-                , Button.toggleViewPublicDataSets
-                , View.Utility.showIf (Predicate.regularUser model) Button.toggleViewPrivateDataSets
+
+                --, View.Utility.showIf (Predicate.regularUser model) Button.newDataSet
+                -- , Button.toggleViewPublicDataSets
+                --, View.Utility.showIf (Predicate.regularUser model) Button.toggleViewPrivateDataSets
                 , case model.currentBook.origin of
                     Just origin ->
                         E.el [ E.alignRight, Font.color Color.lightGray ] (E.text <| origin)
