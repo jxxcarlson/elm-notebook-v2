@@ -56,6 +56,15 @@ view model =
                     [ E.text "Elm-notebook runs code by talking to the Elm compiler. "
                     , E.text "Many thanks to Evan Czaplicki and Mario Rogic."
                     ]
+                , E.paragraph [ E.spacing 8, E.paddingEach { left = 0, right = 0, top = 24, bottom = 0 } ]
+                    [ E.text "Note that elm-notebook now has error messages (straight from the Elm compiler)."
+                    ]
+                , E.column [ E.spacing 6 ]
+                    [ E.image [ E.width (E.px 600), E.centerX, E.centerY ]
+                        { src = "https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/ab00a3a1-ab05-4655-8c9d-3f38046f3700/public"
+                        , description = "Error message"
+                        }
+                    ]
                 ]
             ]
         ]
