@@ -2,6 +2,8 @@ module Backend exposing (..)
 
 import Authentication
 import Backend.Authentication
+import Backend.Data
+import Backend.Notebook
 import Backend.Update
 import BackendHelper
 import Dict exposing (Dict)
@@ -93,7 +95,7 @@ updateFromFrontend sessionId clientId msg model =
         --SignInBE username encryptedPassword ->
         --    Backend.Authentication.signIn model sessionId clientId username encryptedPassword
         Types.SignInBEDev ->
-            Backend.Authentication.signIn model sessionId clientId "localuser" (Authentication.encryptForTransit "asdfasdf")
+            Backend.Authentication.signIn model clientId "localuser" (Authentication.encryptForTransit "asdfasdf")
 
         Types.SignUpBE username encryptedPassword email ->
             Backend.Authentication.signUpUser model sessionId clientId username encryptedPassword email
@@ -102,41 +104,7 @@ updateFromFrontend sessionId clientId msg model =
             Backend.Authentication.signoutBE model clientId mUsername
 
         Types.SignInBE username encryptedPassword ->
-            case Dict.get username model.authenticationDict of
-                Just userData ->
-                    if Authentication.verify username encryptedPassword model.authenticationDict then
-                        let
-                            user =
-                                userData.user
-
-                            result =
-                                NotebookDict.lookup user.username
-                                    (user.currentNotebookId |> Maybe.withDefault "--xx--")
-                                    model.userToNoteBookDict
-
-                            curentBookCmd =
-                                case result of
-                                    Err _ ->
-                                        Cmd.none
-
-                                    Ok book ->
-                                        sendToFrontend clientId (GotNotebook book)
-                        in
-                        ( model
-                        , Cmd.batch
-                            [ sendToFrontend clientId (SendUser userData.user)
-                            , curentBookCmd
-                            , getListOfDataSets clientId model Types.PublicDatasets
-                            , getListOfDataSets clientId model (Types.UserDatasets user.username)
-                            , sendToFrontend clientId (GotNotebooks Nothing (NotebookDict.allForUser username model.userToNoteBookDict))
-                            ]
-                        )
-
-                    else
-                        ( model, sendToFrontend clientId (SendMessage <| "Sorry, password and username don't match (1)") )
-
-                Nothing ->
-                    ( model, sendToFrontend clientId (SendMessage <| "Sorry, password and username don't match (2)") )
+            Backend.Authentication.signIn model clientId username encryptedPassword
 
         -- DATA
         Types.DeleteDataSet dataSetMetaData ->
@@ -147,26 +115,7 @@ updateFromFrontend sessionId clientId msg model =
             ( { model | dataSetLibrary = dataSetLibrary }, Cmd.none )
 
         Types.SaveDataSet dataSetMetaData ->
-            case Dict.get dataSetMetaData.identifier model.dataSetLibrary of
-                Nothing ->
-                    ( model, sendToFrontend clientId (SendMessage <| "Could not save data set " ++ dataSetMetaData.name) )
-
-                Just dataSet ->
-                    let
-                        newDataSet =
-                            { dataSet
-                                | modifiedAt = model.currentTime
-                                , name = dataSetMetaData.name
-                                , description = dataSetMetaData.description
-                                , public = dataSetMetaData.public
-                            }
-
-                        dataSetLibrary =
-                            Dict.insert dataSetMetaData.identifier newDataSet model.dataSetLibrary
-                    in
-                    ( { model | dataSetLibrary = dataSetLibrary }
-                    , sendToFrontend clientId (SendMessage <| "Data set " ++ dataSet.name ++ " saved")
-                    )
+            Backend.Data.saveDataSet model clientId dataSetMetaData
 
         Types.GetListOfDataSets description ->
             --- getListOfDataSets clientId model description
@@ -205,39 +154,14 @@ updateFromFrontend sessionId clientId msg model =
                     ( model, sendToFrontend clientId (GotDataForDownload dataSet) )
 
         Types.CreateDataSet dataSet_ ->
-            let
-                identifier =
-                    getUniqueIdentifier dataSet_.identifier model.dataSetLibrary
-
-                dataSet =
-                    { dataSet_
-                        | createdAt = model.currentTime
-                        , modifiedAt = model.currentTime
-                        , identifier = identifier
-                    }
-
-                dataSetLibrary =
-                    Dict.insert identifier dataSet model.dataSetLibrary
-            in
-            ( { model | dataSetLibrary = dataSetLibrary }
-            , sendToFrontend clientId (SendMessage <| "Data set " ++ dataSet.name ++ " added with identifier = " ++ identifier)
-            )
+            Backend.Data.createDataSet model clientId dataSet_
 
         -- NOTEBOOKS
         Types.GetUsersNotebooks username ->
             ( model, sendToFrontend clientId (GotNotebooks Nothing (NotebookDict.allForUser username model.userToNoteBookDict)) )
 
         Types.GetPublicNotebook slug ->
-            let
-                notebooks =
-                    NotebookDict.allPublic model.userToNoteBookDict |> List.filter (\b -> String.contains slug b.slug)
-            in
-            case List.head notebooks of
-                Nothing ->
-                    ( model, sendToFrontend clientId (SendMessage <| "Sorry, that notebook does not exist") )
-
-                Just notebook ->
-                    ( model, Cmd.batch [ sendToFrontend clientId (GotPublicNotebook notebook), sendToFrontend clientId (SendMessage <| "Found that notebook!") ] )
+            Backend.Notebook.getPublicNotebook model clientId slug
 
         Types.GetPublicNotebooks maybeBook username ->
             ( model, sendToFrontend clientId (GotNotebooks maybeBook (NotebookDict.allPublicWithAuthor username model.userToNoteBookDict)) )
@@ -249,7 +173,7 @@ updateFromFrontend sessionId clientId msg model =
             Backend.Update.getClonedNotebook model username slug clientId
 
         Types.GetPulledNotebook username origin slug id ->
-            Backend.Update.pullNotebook model clientId username origin id
+            Backend.Update.getPublicNotebook model clientId username origin id
 
         Types.SaveNotebook book ->
             let
@@ -262,30 +186,10 @@ updateFromFrontend sessionId clientId msg model =
             Backend.Update.createNotebook model clientId author title
 
         Types.ImportNewBook username book ->
-            let
-                newModel =
-                    BackendHelper.getUUID model
-
-                newBook =
-                    { book
-                        | id = newModel.uuid
-                        , author = username
-                        , slug = BackendHelper.compress (username ++ "-" ++ book.title)
-                        , createdAt = model.currentTime
-                        , updatedAt = model.currentTime
-                    }
-
-                newNotebookDict =
-                    NotebookDict.insert newBook.author newBook.id newBook model.userToNoteBookDict
-            in
-            ( { newModel | userToNoteBookDict = newNotebookDict }, sendToFrontend clientId (GotNotebook newBook) )
+            Backend.Notebook.importNewBook model clientId username book
 
         Types.DeleteNotebook book ->
-            let
-                newNotebookDict =
-                    NotebookDict.remove book.author book.id model.userToNoteBookDict
-            in
-            ( { model | userToNoteBookDict = newNotebookDict }, Cmd.none )
+            Backend.Notebook.deleteNotebook model book
 
 
 setupUser : Model -> ClientId -> String -> String -> String -> ( BackendModel, Cmd BackendMsg )
@@ -322,69 +226,3 @@ setupUser model clientId email transitPassword username =
                 , sendToFrontend clientId (SendUser user)
                 ]
             )
-
-
-idMessage model =
-    "ids: " ++ (List.map .id model.documents |> String.join ", ")
-
-
-getUniqueIdentifier : String -> Dict String a -> String
-getUniqueIdentifier id dict =
-    case Dict.get id dict of
-        Nothing ->
-            id
-
-        Just _ ->
-            getUniqueIdentifier_ 1 id dict
-
-
-getUniqueIdentifier_ : Int -> String -> Dict String a -> String
-getUniqueIdentifier_ counter id dict =
-    case Dict.get (id ++ "-" ++ String.fromInt counter) dict of
-        Nothing ->
-            id ++ "-" ++ String.fromInt counter
-
-        Just _ ->
-            getUniqueIdentifier_ (counter + 1) id dict
-
-
-getListOfDataSets : ClientId -> BackendModel -> Types.DataSetDescription -> Cmd backendMsg
-getListOfDataSets clientId model description =
-    case description of
-        Types.PublicDatasets ->
-            let
-                publicDataSets : List Notebook.DataSet.DataSetMetaData
-                publicDataSets =
-                    List.filter (\dataSet -> dataSet.public) (Dict.values model.dataSetLibrary)
-                        |> List.map Notebook.DataSet.extractMetaData
-            in
-            sendToFrontend clientId (GotListOfPublicDataSets publicDataSets)
-
-        Types.UserDatasets username ->
-            let
-                userDatasets =
-                    List.filter (\dataSet -> dataSet.author == username) (Dict.values model.dataSetLibrary)
-                        |> List.map Notebook.DataSet.extractMetaData
-            in
-            sendToFrontend clientId (GotListOfPrivateDataSets userDatasets)
-
-
-
---case description of
---    PublicDatasets ->
---        let
---            publicDataSets : List Notebook.DataSet.DataSetMetaData
---            publicDataSets =
---                --List.filter (\dataSet -> dataSet.public) (Dict.values model.dataSetLibrary)
---                Dict.values model.dataSetLibrary
---                    |> List.map Notebook.DataSet.extractMetaData
---        in
---        sendToFrontend clientId (GotListOfPublicDataSets publicDataSets)
---
---    UserDatasets username ->
---        let
---            userDatasets =
---                List.filter (\dataSet -> dataSet.author == username) (Dict.values model.dataSetLibrary)
---                    |> List.map Notebook.DataSet.extractMetaData
---        in
---        sendToFrontend clientId (GotListOfPublicDataSets userDatasets)

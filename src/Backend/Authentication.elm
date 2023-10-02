@@ -2,15 +2,18 @@ module Backend.Authentication exposing
     ( signIn
     , signOut
     , signUpUser
+    , signinBE
     , signoutBE
     )
 
 import Authentication
+import Backend.Data
 import BackendHelper
 import Dict
 import Env
 import Hex
 import Lamdera exposing (ClientId, SessionId)
+import NotebookDict
 import Random
 import Set
 import Token
@@ -19,6 +22,45 @@ import Types exposing (BackendModel, BackendMsg, MessageStatus(..), ToFrontend(.
 
 type alias Model =
     Types.BackendModel
+
+
+signinBE : Model -> String -> String -> String -> ( Model, Cmd BackendMsg )
+signinBE model clientId username encryptedPassword =
+    case Dict.get username model.authenticationDict of
+        Just userData ->
+            if Authentication.verify username encryptedPassword model.authenticationDict then
+                let
+                    user =
+                        userData.user
+
+                    result =
+                        NotebookDict.lookup user.username
+                            (user.currentNotebookId |> Maybe.withDefault "--xx--")
+                            model.userToNoteBookDict
+
+                    curentBookCmd =
+                        case result of
+                            Err _ ->
+                                Cmd.none
+
+                            Ok book ->
+                                Lamdera.sendToFrontend clientId (GotNotebook book)
+                in
+                ( model
+                , Cmd.batch
+                    [ Lamdera.sendToFrontend clientId (SendUser userData.user)
+                    , curentBookCmd
+                    , Backend.Data.getListOfDataSets clientId model Types.PublicDatasets
+                    , Backend.Data.getListOfDataSets clientId model (Types.UserDatasets user.username)
+                    , Lamdera.sendToFrontend clientId (GotNotebooks Nothing (NotebookDict.allForUser username model.userToNoteBookDict))
+                    ]
+                )
+
+            else
+                ( model, Lamdera.sendToFrontend clientId (SendMessage <| "Sorry, password and username don't match (1)") )
+
+        Nothing ->
+            ( model, Lamdera.sendToFrontend clientId (SendMessage <| "Sorry, password and username don't match (2)") )
 
 
 signoutBE : Model -> String -> Maybe String -> ( Model, Cmd BackendMsg )
@@ -44,7 +86,7 @@ signoutBE model clientId mUsername =
                            )
 
 
-signIn model sessionId clientId username encryptedPassword =
+signIn model clientId username encryptedPassword =
     case Dict.get username model.authenticationDict of
         Just userData ->
             if Authentication.verify username encryptedPassword model.authenticationDict then

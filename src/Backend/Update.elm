@@ -1,7 +1,7 @@
 module Backend.Update exposing
     ( createNotebook
     , getClonedNotebook
-    , pullNotebook
+    , getPublicNotebook
     , updateSlugDictWithBook
     )
 
@@ -52,8 +52,8 @@ getClonedNotebook model username slug clientId =
             ( model, Lamdera.sendToFrontend clientId (Types.SendMessage <| "Sorry, couldn't get that notebook (2)") )
 
 
-pullNotebook : Model -> String -> String -> String -> String -> ( Model, Cmd BackendMsg )
-pullNotebook model clientId username origin id =
+getPublicNotebook : Model -> String -> String -> String -> String -> ( Model, Cmd BackendMsg )
+getPublicNotebook model clientId username origin id =
     case Dict.get origin model.slugDict of
         Just notebookRecord ->
             case NotebookDict.lookup notebookRecord.author notebookRecord.id model.userToNoteBookDict of
