@@ -158,7 +158,8 @@ type FrontendMsg
     | AskToCreateDataSet
     | AskToDeleteDataSet Notebook.DataSet.DataSetMetaData
       -- CELL
-    | ExecuteNoteook
+    | ClearNotebookValues
+    | ExecuteNotebook
     | UpdateDeclarationsDictionary
     | ExecuteCell Int
     | ToggleCellLock Cell
@@ -178,7 +179,6 @@ type FrontendMsg
     | SetClock ClockState
     | Reset
     | TogglePublic
-    | ClearNotebookValues
     | SetCurrentNotebook Book
     | CloneNotebook
     | PullNotebook

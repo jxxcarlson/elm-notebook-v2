@@ -47,7 +47,7 @@ clearNotebookValues : Book -> FrontendModel -> ( FrontendModel, Cmd FrontendMsg 
 clearNotebookValues book model =
     let
         newBook =
-            { book | cells = List.map (\cell -> { cell | value = CVNone, text = "" }) book.cells }
+            { book | cells = List.map (\cell -> { cell | value = CVNone, cellState = CSView }) book.cells }
     in
     ( { model | currentBook = newBook }, Lamdera.sendToBackend (Types.SaveNotebook newBook) )
 

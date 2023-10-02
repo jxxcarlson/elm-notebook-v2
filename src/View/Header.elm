@@ -82,7 +82,8 @@ signedInHeader model user =
             ]
 
         --, View.Utility.showIf (Predicate.regularUser model) (Button.editTitle model.appMode)
-        , View.Utility.showIf (Predicate.regularUser model) (E.el [ E.paddingEach { left = 0, right = 0, top = 0, bottom = 0 } ] Button.executeNotebook)
+        , View.Utility.showIf (Predicate.regularUser model) Button.executeNotebook
+        , View.Utility.showIf (Predicate.regularUser model) Button.clearValues
         , View.Utility.showIf (Predicate.regularUser model) Button.newNotebook
         , View.Utility.showIf (Predicate.regularUser model) (Button.deleteNotebook model.deleteNotebookState)
         , View.Utility.showIf (Predicate.regularUser model) (Button.cancelDeleteNotebook model.deleteNotebookState)

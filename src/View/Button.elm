@@ -109,7 +109,12 @@ dismissPopupSmall =
 
 executeNotebook : Element FrontendMsg
 executeNotebook =
-    Button.smallPrimary { msg = ExecuteNoteook, status = Button.Highlighted, label = Button.Text "Run all cells", tooltipText = Nothing }
+    Button.smallPrimary { msg = ExecuteNotebook, status = Button.Highlighted, label = Button.Text "Run all cells", tooltipText = Nothing }
+
+
+clearNotebookValues : Element FrontendMsg
+clearNotebookValues =
+    Button.smallPrimary { msg = ClearNotebookValues, status = Button.Highlighted, label = Button.Text "Clear cell values", tooltipText = Nothing }
 
 
 updateDeclarationsDictionary : Element FrontendMsg

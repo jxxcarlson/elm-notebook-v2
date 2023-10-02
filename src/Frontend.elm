@@ -348,7 +348,10 @@ update msg model =
                     )
 
         -- CELLS, NOTEBOOKS
-        ExecuteNoteook ->
+        ClearNotebookValues ->
+            Notebook.Update.clearNotebookValues model.currentBook model
+
+        ExecuteNotebook ->
             Notebook.EvalCell.executeNotebok model
 
         UpdateDeclarationsDictionary ->
@@ -493,9 +496,6 @@ update msg model =
                 ( { model | currentBook = newBook, books = List.Extra.setIf (\b -> b.id == newBook.id) newBook model.books }
                 , sendToBackend (SaveNotebook newBook)
                 )
-
-        ClearNotebookValues ->
-            Notebook.Update.clearNotebookValues model.currentBook model
 
         CancelDeleteNotebook ->
             ( { model | deleteNotebookState = WaitingToDeleteNotebook }, Cmd.none )

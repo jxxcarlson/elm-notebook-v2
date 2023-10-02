@@ -29,8 +29,15 @@ type alias Model =
 executeNotebok : Model -> ( Model, Cmd FrontendMsg )
 executeNotebok model_ =
     let
+        currentBook =
+            model_.currentBook
+
+        -- Close all cells
+        newBook =
+            { currentBook | cells = List.map (\cell -> { cell | value = CVNone, cellState = CSView }) currentBook.cells }
+
         model =
-            updateDeclarationsDictionary model_
+            updateDeclarationsDictionary { model_ | currentBook = newBook }
 
         n =
             List.length model.currentBook.cells
@@ -110,7 +117,7 @@ updateDeclarationsDictionaryWithCell cell model =
 
         Cell.CTCode ->
             case Notebook.Parser.classify cell.text of
-                Notebook.Parser.Expr sourceText ->
+                Notebook.Parser.Expr _ ->
                     model
 
                 Notebook.Parser.Decl name sourceText ->
