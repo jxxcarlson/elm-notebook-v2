@@ -54,9 +54,9 @@ viewSourceAndValue originalviewData cellContents cell =
                     ]
 
                 ( CSView, CTCode ) ->
-                    [ Element.Border.color (E.rgb 0.75 0.75 0.75)
+                    [ Element.Border.color (E.rgb 0 0 1.0)
                     , Element.Border.widthEach
-                        { bottom = 0
+                        { bottom = 1
                         , left = 0
                         , right = 0
                         , top = 1
