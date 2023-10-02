@@ -107,7 +107,7 @@ initEmptyEvalState : EvalState
 initEmptyEvalState =
     { decls = Dict.empty
     , types = Dict.empty
-    , imports = Dict.empty
+    , imports = Dict.fromList []
     }
 
 

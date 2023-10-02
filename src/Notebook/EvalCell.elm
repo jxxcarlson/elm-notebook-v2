@@ -34,10 +34,25 @@ executeNotebok model_ =
 
         -- Close all cells
         newBook =
-            { currentBook | cells = List.map (\cell -> { cell | value = CVNone, cellState = CSView }) currentBook.cells }
+            { currentBook
+                | cells =
+                    List.map
+                        (\cell ->
+                            { cell
+                                | value = CVNone
+                                , report = Nothing
+                                , replData = Nothing
+                                , cellState = CSView
+                            }
+                        )
+                        currentBook.cells
+            }
+
+        oldEvalState =
+            model_.evalState
 
         model =
-            updateDeclarationsDictionary { model_ | currentBook = newBook }
+            updateDeclarationsDictionary { model_ | currentBook = newBook, evalState = { oldEvalState | decls = Dict.empty } }
 
         n =
             List.length model.currentBook.cells
