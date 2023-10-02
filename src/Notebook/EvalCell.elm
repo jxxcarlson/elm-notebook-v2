@@ -6,7 +6,6 @@ module Notebook.EvalCell exposing
     )
 
 import Dict
-import Keyboard
 import List.Extra
 import Notebook.Book
 import Notebook.Cell as Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
@@ -21,6 +20,10 @@ import Types exposing (FrontendMsg)
 
 type alias Model =
     Types.FrontendModel
+
+
+
+-- EXECUTE NOTEBOOK
 
 
 executeNotebok : Model -> ( Model, Cmd FrontendMsg )
@@ -45,6 +48,30 @@ createDelayedCommand : Int -> Int -> Cmd FrontendMsg
 createDelayedCommand idx _ =
     Process.sleep (toFloat (idx * 50))
         |> Task.perform (\_ -> Types.ExecuteCell idx)
+
+
+executeCell : Int -> Model -> ( Model, Cmd FrontendMsg )
+executeCell cellIndex model =
+    case List.Extra.getAt cellIndex model.currentBook.cells of
+        Nothing ->
+            ( model, Cmd.none )
+
+        Just cell ->
+            case cell.tipe of
+                Cell.CTCode ->
+                    case Notebook.Parser.classify cell.text of
+                        Notebook.Parser.Expr sourceText ->
+                            ( model, Eval.requestEvaluation model.evalState cell sourceText )
+
+                        Notebook.Parser.Decl _ _ ->
+                            ( model, Cmd.none )
+
+                Cell.CTMarkdown ->
+                    ( model, Cmd.none )
+
+
+
+-- UPDATE DECLARATIONS DICTIONARY
 
 
 updateDeclarationsDictionary : Model -> Model
@@ -75,29 +102,23 @@ folder cellIndex model =
             updateDeclarationsDictionaryWithCell cell model
 
 
-processCell_ : Int -> Model -> ( Model, Cmd FrontendMsg )
-processCell_ cellIndex model =
-    processCell CSView cellIndex model
+updateDeclarationsDictionaryWithCell : Cell -> Model -> Model
+updateDeclarationsDictionaryWithCell cell model =
+    case cell.tipe of
+        Cell.CTMarkdown ->
+            model
+
+        Cell.CTCode ->
+            case Notebook.Parser.classify cell.text of
+                Notebook.Parser.Expr sourceText ->
+                    model
+
+                Notebook.Parser.Decl name sourceText ->
+                    { model | evalState = Eval.insertDeclaration name (name ++ " = " ++ sourceText ++ "\n") model.evalState }
 
 
-executeCell : Int -> Model -> ( Model, Cmd FrontendMsg )
-executeCell cellIndex model =
-    case List.Extra.getAt cellIndex model.currentBook.cells of
-        Nothing ->
-            ( model, Cmd.none )
 
-        Just cell ->
-            case cell.tipe of
-                Cell.CTCode ->
-                    case Notebook.Parser.classify cell.text of
-                        Notebook.Parser.Expr sourceText ->
-                            ( model, Eval.requestEvaluation model.evalState cell sourceText )
-
-                        Notebook.Parser.Decl _ _ ->
-                            ( model, Cmd.none )
-
-                Cell.CTMarkdown ->
-                    ( model, Cmd.none )
+-- PROCESS CELL
 
 
 processCell : CellState -> Int -> Model -> ( Model, Cmd FrontendMsg )
@@ -143,21 +164,6 @@ processCode model cell =
 
         Notebook.Parser.Decl name sourceText ->
             processNameAndExpr model cell name sourceText
-
-
-updateDeclarationsDictionaryWithCell : Cell -> Model -> Model
-updateDeclarationsDictionaryWithCell cell model =
-    case cell.tipe of
-        Cell.CTMarkdown ->
-            model
-
-        Cell.CTCode ->
-            case Notebook.Parser.classify cell.text of
-                Notebook.Parser.Expr sourceText ->
-                    model
-
-                Notebook.Parser.Decl name sourceText ->
-                    { model | evalState = Eval.insertDeclaration name (name ++ " = " ++ sourceText ++ "\n") model.evalState }
 
 
 processExpr : Model -> Cell -> String -> ( Model, Cmd FrontendMsg )
@@ -209,14 +215,3 @@ processNameAndExpr model cell name expr =
             Eval.insertDeclaration name (name ++ " = " ++ expr ++ "\n") model.evalState
     in
     ( { model | evalState = newEvalState }, Cmd.none )
-
-
-ppp =
-    { decls =
-        Dict.fromList
-            [ ( "inc x", "inc x  =  x + 1\n" )
-            , ( "numbers", "numbers  =  List.range 1 20\n" )
-            ]
-    , imports = Dict.fromList []
-    , types = Dict.fromList []
-    }
