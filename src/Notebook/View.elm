@@ -211,7 +211,13 @@ viewSuccess viewData cell =
     in
     case cell.value of
         CVNone ->
-            E.none
+            E.el
+                [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+                , View.Style.monospace
+                ]
+                (par realWidth
+                    [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) "Nothing" ]
+                )
 
         CVString str ->
             case Notebook.Parser.classify cell.text of

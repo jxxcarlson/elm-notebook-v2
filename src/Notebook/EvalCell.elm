@@ -32,7 +32,7 @@ executeNotebok model_ =
         currentBook =
             model_.currentBook
 
-        -- Close all cells
+        -- Close all cells and set report and replData to Nothing
         newBook =
             { currentBook
                 | cells =
