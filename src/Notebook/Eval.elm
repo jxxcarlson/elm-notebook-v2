@@ -107,8 +107,17 @@ initEmptyEvalState : EvalState
 initEmptyEvalState =
     { decls = Dict.empty
     , types = Dict.empty
-    , imports = Dict.fromList []
+    , imports = Dict.empty
     }
+
+
+
+--initEmptyEvalState : EvalState
+--initEmptyEvalState =
+--    { decls = Dict.empty
+--    , types = Dict.empty
+--    , imports = Dict.fromList [ ( "List.Extra", "import List.Extra\n" ) ]
+--    }
 
 
 encodeExpr : EvalState -> String -> Encode.Value
