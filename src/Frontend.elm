@@ -352,14 +352,10 @@ update msg model =
             Notebook.EvalCell.executeNotebok model
 
         UpdateDeclarationsDictionary ->
-            Notebook.EvalCell.updateDeclarationsDictionary model
+            ( Notebook.EvalCell.updateDeclarationsDictionary model, Cmd.none )
 
-        ProcessCell k ->
-            let
-                ( newModel, cmd ) =
-                    Notebook.EvalCell.processCell_ k model
-            in
-            ( newModel, cmd )
+        ExecuteCell k ->
+            Notebook.EvalCell.executeCell k model
 
         ToggleCellLock cell ->
             ( Notebook.Update.toggleCellLock cell model, Cmd.none )
@@ -464,6 +460,7 @@ update msg model =
                             Notebook.Book.initializeCellState book |> (\b -> { b | dirty = False })
 
                         books =
+                            -- TODO: WTF!?
                             model.books
                                 |> List.Extra.setIf (\b -> b.id == currentBook.id) currentBook
                                 |> List.Extra.setIf (\b -> b.id == previousBook.id) previousBook
@@ -471,7 +468,7 @@ update msg model =
                         user =
                             { user_ | currentNotebookId = Just book.id }
 
-                        ( newModel, _ ) =
+                        newModel =
                             Notebook.EvalCell.updateDeclarationsDictionary { model | currentBook = currentBook }
                     in
                     ( { newModel
@@ -677,7 +674,7 @@ updateFromBackend msg model =
                     else
                         xbook :: books
 
-                ( newModel, _ ) =
+                newModel =
                     Notebook.EvalCell.updateDeclarationsDictionary { model | currentBook = book }
             in
             ( { newModel | currentBook = book, books = addOrReplaceBook book model.books }, Cmd.none )

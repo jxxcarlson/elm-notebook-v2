@@ -160,7 +160,7 @@ type FrontendMsg
       -- CELL
     | ExecuteNoteook
     | UpdateDeclarationsDictionary
-    | ProcessCell Int
+    | ExecuteCell Int
     | ToggleCellLock Cell
     | ChangeCellInsertionDirection Notebook.Types.CellDirection
     | NewCodeCell CellState Int

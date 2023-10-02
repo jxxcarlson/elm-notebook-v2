@@ -1,7 +1,7 @@
 module Notebook.EvalCell exposing
-    ( executeNotebok
+    ( executeCell
+    , executeNotebok
     , processCell
-    , processCell_
     , updateDeclarationsDictionary
     )
 
@@ -24,33 +24,30 @@ type alias Model =
 
 
 executeNotebok : Model -> ( Model, Cmd FrontendMsg )
-executeNotebok model =
+executeNotebok model_ =
     let
+        model =
+            updateDeclarationsDictionary model_
+
         n =
             List.length model.currentBook.cells
 
         indices =
             List.range 0 n
 
-        oldEvalState =
-            model.evalState
-
-        newEvalState =
-            { oldEvalState | decls = Dict.empty }
-
         commands =
             List.indexedMap createDelayedCommand indices
     in
-    ( { model | evalState = newEvalState }, Cmd.batch commands )
+    ( model, Cmd.batch commands )
 
 
 createDelayedCommand : Int -> Int -> Cmd FrontendMsg
 createDelayedCommand idx _ =
     Process.sleep (toFloat (idx * 50))
-        |> Task.perform (\_ -> Types.ProcessCell idx)
+        |> Task.perform (\_ -> Types.ExecuteCell idx)
 
 
-updateDeclarationsDictionary : Model -> ( Model, Cmd FrontendMsg )
+updateDeclarationsDictionary : Model -> Model
 updateDeclarationsDictionary model =
     let
         n =
@@ -64,25 +61,43 @@ updateDeclarationsDictionary model =
 
         newEvalState =
             { oldEvalState | decls = Dict.empty }
-
-        ( newModel, commands ) =
-            List.foldl folder ( { model | evalState = newEvalState }, [] ) indices
     in
-    ( newModel, Cmd.batch commands )
+    List.foldl folder { model | evalState = newEvalState } indices
 
 
-folder : Int -> ( Model, List (Cmd FrontendMsg) ) -> ( Model, List (Cmd FrontendMsg) )
-folder k ( model, cmds ) =
-    let
-        ( model_, cmd ) =
-            processCell_ k model
-    in
-    ( model_, cmd :: cmds )
+folder : Int -> Model -> Model
+folder cellIndex model =
+    case List.Extra.getAt cellIndex model.currentBook.cells of
+        Nothing ->
+            model
+
+        Just cell ->
+            updateDeclarationsDictionaryWithCell cell model
 
 
 processCell_ : Int -> Model -> ( Model, Cmd FrontendMsg )
 processCell_ cellIndex model =
     processCell CSView cellIndex model
+
+
+executeCell : Int -> Model -> ( Model, Cmd FrontendMsg )
+executeCell cellIndex model =
+    case List.Extra.getAt cellIndex model.currentBook.cells of
+        Nothing ->
+            ( model, Cmd.none )
+
+        Just cell ->
+            case cell.tipe of
+                Cell.CTCode ->
+                    case Notebook.Parser.classify cell.text of
+                        Notebook.Parser.Expr sourceText ->
+                            ( model, Eval.requestEvaluation model.evalState cell sourceText )
+
+                        Notebook.Parser.Decl _ _ ->
+                            ( model, Cmd.none )
+
+                Cell.CTMarkdown ->
+                    ( model, Cmd.none )
 
 
 processCell : CellState -> Int -> Model -> ( Model, Cmd FrontendMsg )
@@ -120,6 +135,7 @@ processMarkdown model cell =
     ( { model | currentBook = newBook }, Cmd.none )
 
 
+processCode : Model -> Cell -> ( Model, Cmd FrontendMsg )
 processCode model cell =
     case Notebook.Parser.classify cell.text of
         Notebook.Parser.Expr sourceText ->
@@ -127,6 +143,21 @@ processCode model cell =
 
         Notebook.Parser.Decl name sourceText ->
             processNameAndExpr model cell name sourceText
+
+
+updateDeclarationsDictionaryWithCell : Cell -> Model -> Model
+updateDeclarationsDictionaryWithCell cell model =
+    case cell.tipe of
+        Cell.CTMarkdown ->
+            model
+
+        Cell.CTCode ->
+            case Notebook.Parser.classify cell.text of
+                Notebook.Parser.Expr sourceText ->
+                    model
+
+                Notebook.Parser.Decl name sourceText ->
+                    { model | evalState = Eval.insertDeclaration name (name ++ " = " ++ sourceText ++ "\n") model.evalState }
 
 
 processExpr : Model -> Cell -> String -> ( Model, Cmd FrontendMsg )
