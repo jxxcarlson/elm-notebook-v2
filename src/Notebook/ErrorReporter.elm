@@ -224,7 +224,7 @@ adjustErrorLocation errorOffset messageItem =
                             String.fromInt offset ++ "|"
 
                         replacement =
-                            String.fromInt (offset - errorOffset)
+                            String.fromInt (offset - errorOffset) ++ "| "
                     in
                     Plain (String.replace target replacement str)
 
