@@ -1,5 +1,6 @@
 import * as evalJs from './elm-pkg-js/eval-js';
 import * as testPorts from './elm-pkg-js/test-ports';
+import * as coloredText from './elm-pkg-js/colored-text';
 
 exports.init = async function init(app) {
   // @WARNING: this only runs for Lamdera production deploys!
@@ -8,4 +9,5 @@ exports.init = async function init(app) {
 
   evalJs.init(app)
   testPorts.init(app)
+  coloredText.init(app)
 }

@@ -152,9 +152,8 @@ update msg model =
         ReceivedFromJS str ->
             Frontend.ElmCompilerInterop.receiveReplDataFromJS model str
 
-        ReceiveHtmlData _ ->
-            ( model, Cmd.none )
-
+        --ReceiveHtmlData _ ->
+        --    ( model, Cmd.none )
         GotReply cell result ->
             Frontend.ElmCompilerInterop.handleReplyFromElmCompiler model cell result
 

@@ -9,7 +9,7 @@ import Types exposing (FrontendModel, FrontendMsg)
 import UILibrary.Color as Color
 import View.Body
 import View.BodyNotSignedIn
-import View.Color
+import View.CustomElement as CE
 import View.Footer
 import View.Geometry
 import View.Header
@@ -32,6 +32,8 @@ mainColumn : Model -> Element FrontendMsg
 mainColumn model =
     E.column (mainColumnStyle model)
         [ View.Header.view model
+
+        -- TEST:  E.el [ E.centerX ] (CE.niceColor "Hi there!" "red")
         , case model.currentUser of
             Nothing ->
                 View.BodyNotSignedIn.view model

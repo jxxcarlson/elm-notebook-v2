@@ -152,7 +152,7 @@ type FrontendMsg
       -- Notebook
     | GotReply Cell (Result Http.Error String)
     | ReceivedFromJS String
-    | ReceiveHtmlData Decode.Value
+      --| ReceiveHtmlData Decode.Value
       -- DATA
     | AskToListDataSets DataSetDescription
     | AskToSaveDataSet Notebook.DataSet.DataSetMetaData
