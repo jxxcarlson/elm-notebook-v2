@@ -103,21 +103,26 @@ initEvalState =
     }
 
 
-initEmptyEvalState : EvalState
-initEmptyEvalState =
-    { decls = Dict.empty
-    , types = Dict.empty
-    , imports = Dict.empty
-    }
-
-
 
 --initEmptyEvalState : EvalState
 --initEmptyEvalState =
 --    { decls = Dict.empty
 --    , types = Dict.empty
---    , imports = Dict.fromList [ ( "List.Extra", "import List.Extra\n" ) ]
+--    , imports = Dict.empty
 --    }
+
+
+initEmptyEvalState : EvalState
+initEmptyEvalState =
+    { decls = Dict.empty
+    , types = Dict.empty
+    , imports =
+        Dict.fromList
+            [ ( "List.Extra", "import List.Extra\n" )
+            , ( "Svg", "import  Svg exposing(..)\n" )
+            , ( "Svg.Attributes", "import  Svg.Attributes exposing(..)\n" )
+            ]
+    }
 
 
 encodeExpr : EvalState -> String -> Encode.Value
