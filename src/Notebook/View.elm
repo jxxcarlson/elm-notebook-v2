@@ -224,7 +224,6 @@ viewSuccess viewData cell =
                         )
 
                 Notebook.Parser.Decl _ _ ->
-                    -- E.el [ E.height (E.px 30), E.width (E.px 100), E.paddingXY 24 12 ] (E.text "Ok")
                     E.none
 
         CVString str ->
@@ -233,7 +232,6 @@ viewSuccess viewData cell =
                     viewExpr cell str realWidth
 
                 Notebook.Parser.Decl _ _ ->
-                    -- E.el [ E.height (E.px 30), E.width (E.px 100), E.paddingXY 24 12 ] (E.text "Ok")
                     E.none
 
         CVMarkdown str ->
@@ -244,39 +242,42 @@ viewSuccess viewData cell =
 
 viewExpr : Cell -> String -> Int -> Element msg
 viewExpr cell str realWidth =
-    if Maybe.map .tipe cell.replData == Just "Html.Html msg" then
-        case Maybe.map .value cell.replData of
-            Nothing ->
-                E.el
-                    [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-                    , View.Style.monospace
-                    ]
-                    (par realWidth
-                        [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) "HTML??" ]
-                    )
+    case Maybe.map .tipe cell.replData of
+        Just "Html.Html msg" ->
+            case Maybe.map .value cell.replData of
+                Nothing ->
+                    viewNoHtml cell realWidth
 
-            Just replString ->
-                let
-                    normal =
-                        False
-                in
-                if normal then
-                    E.el
-                        [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-                        , View.Style.monospace
-                        ]
-                        (E.el []
-                            (E.html <| Html.div [] [ Html.text (String.fromInt <| String.length <| replString) ])
-                        )
+                Just replString ->
+                    viewHtml replString realWidth
 
-                else
-                    E.el
-                        [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-                        , View.Style.monospace
-                        ]
-                        (par realWidth
-                            [ CE.coloredText "HTML" "red" ]
-                        )
+        _ ->
+            viewStringValue cell str realWidth
+
+
+viewNoHtml cell realWidth =
+    E.el
+        [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+        , View.Style.monospace
+        ]
+        (par realWidth
+            [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) "HTML??" ]
+        )
+
+
+viewHtml replString realWidth =
+    let
+        normal =
+            False
+    in
+    if normal then
+        E.el
+            [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+            , View.Style.monospace
+            ]
+            (E.el []
+                (E.html <| Html.div [] [ Html.text (String.fromInt <| String.length <| replString) ])
+            )
 
     else
         E.el
@@ -284,8 +285,18 @@ viewExpr cell str realWidth =
             , View.Style.monospace
             ]
             (par realWidth
-                [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) str ]
+                [ CE.coloredText "HTML" "red" ]
             )
+
+
+viewStringValue cell str realWidth =
+    E.el
+        [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+        , View.Style.monospace
+        ]
+        (par realWidth
+            [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) str ]
+        )
 
 
 par width =
