@@ -7,7 +7,7 @@ import Browser.Navigation exposing (Key)
 import Dict exposing (Dict)
 import File exposing (File)
 import Http
-import Json.Decode
+import Json.Decode as Decode
 import Keyboard
 import Lamdera exposing (ClientId)
 import Notebook.Book exposing (Book)
@@ -152,6 +152,7 @@ type FrontendMsg
       -- Notebook
     | GotReply Cell (Result Http.Error String)
     | ReceivedFromJS String
+    | ReceiveHtmlData Decode.Value
       -- DATA
     | AskToListDataSets DataSetDescription
     | AskToSaveDataSet Notebook.DataSet.DataSetMetaData

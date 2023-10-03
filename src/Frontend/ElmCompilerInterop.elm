@@ -24,6 +24,10 @@ receiveReplDataFromJS : Model -> String -> ( Model, Cmd Msg )
 receiveReplDataFromJS model str =
     case Codec.decodeString Notebook.Eval.replDataCodec str of
         Ok replData ->
+            let
+                _ =
+                    Debug.log "@@TYPE" replData.tipe
+            in
             case model.currentCell of
                 Nothing ->
                     ( { model | message = "Error: no cell found or ReceivedFromJS" }, Cmd.none )
