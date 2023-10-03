@@ -173,7 +173,7 @@ updateFromFrontend sessionId clientId msg model =
             Backend.Update.getClonedNotebook model username slug clientId
 
         Types.GetPulledNotebook username origin slug id ->
-            Backend.Update.getPublicNotebook model clientId username origin id
+            Backend.Update.pullNotebook model clientId username origin id
 
         Types.SaveNotebook book ->
             let
