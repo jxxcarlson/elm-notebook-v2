@@ -692,6 +692,9 @@ updateFromBackend msg model =
                 book =
                     Notebook.Book.initializeCellState book_
 
+                newModel =
+                    Notebook.EvalCell.updateDeclarationsDictionary { model | currentBook = book }
+
                 addOrReplaceBook xbook books =
                     if List.any (\b -> b.id == xbook.id) books then
                         List.Extra.setIf (\b -> b.id == xbook.id) xbook books
@@ -699,10 +702,9 @@ updateFromBackend msg model =
                     else
                         xbook :: books
             in
-            ( { model
+            ( { newModel
                 | currentUser = Just currentUser
                 , showNotebooks = ShowPublicNotebooks
-                , currentBook = book
                 , books = addOrReplaceBook book model.books
               }
             , sendToBackend (GetPublicNotebooks (Just book) currentUser.username)
@@ -715,7 +717,11 @@ updateFromBackend msg model =
                     ( model, Cmd.none )
 
                 Just book ->
-                    ( { model | books = books, currentBook = book }, Cmd.none )
+                    let
+                        newModel =
+                            Notebook.EvalCell.updateDeclarationsDictionary { model | currentBook = book }
+                    in
+                    ( { newModel | books = books }, Cmd.none )
 
 
 view : Model -> { title : String, body : List (Html.Html FrontendMsg) }
