@@ -16,7 +16,8 @@ exports.init = async function(app) {
 
           // Define an onmessage handler to receive messages from the worker
           myWorker.onmessage = (e) => {
-              // console.log('FROM WORKER', e.data);
+              console.log('FROM WORKER', e.data);
+              console.log('FROM WORKER, STRINGIFIED', JSON.stringify(e.data) )
               app.ports.receiveFromJS.send(JSON.stringify(e.data));
           };
 
