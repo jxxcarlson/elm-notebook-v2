@@ -230,48 +230,7 @@ viewSuccess viewData cell =
         CVString str ->
             case Notebook.Parser.classify cell.text of
                 Notebook.Parser.Expr _ ->
-                    if Maybe.map .tipe cell.replData == Just "Html.Html msg" then
-                        case Maybe.map .value cell.replData of
-                            Nothing ->
-                                E.el
-                                    [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-                                    , View.Style.monospace
-                                    ]
-                                    (par realWidth
-                                        [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) "HTML??" ]
-                                    )
-
-                            Just replString ->
-                                let
-                                    normal =
-                                        False
-                                in
-                                if normal then
-                                    E.el
-                                        [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-                                        , View.Style.monospace
-                                        ]
-                                        (E.el []
-                                            (E.html <| Html.div [] [ Html.text (String.fromInt <| String.length <| replString) ])
-                                        )
-
-                                else
-                                    E.el
-                                        [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-                                        , View.Style.monospace
-                                        ]
-                                        (par realWidth
-                                            [ CE.coloredText "HTML" "red" ]
-                                        )
-
-                    else
-                        E.el
-                            [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-                            , View.Style.monospace
-                            ]
-                            (par realWidth
-                                [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) str ]
-                            )
+                    viewExpr cell str realWidth
 
                 Notebook.Parser.Decl _ _ ->
                     -- E.el [ E.height (E.px 30), E.width (E.px 100), E.paddingXY 24 12 ] (E.text "Ok")
