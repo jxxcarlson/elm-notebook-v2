@@ -20,6 +20,7 @@ import UILibrary.Button as Button
 import UILibrary.Color as Color
 import View.Button exposing (runCell)
 import View.CellThemed
+import View.CustomElement as CE
 import View.Style
 import View.Utility
 
@@ -241,13 +242,27 @@ viewSuccess viewData cell =
                                     )
 
                             Just replString ->
-                                E.el
-                                    [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-                                    , View.Style.monospace
-                                    ]
-                                    (E.el []
-                                        (E.html <| Html.div [] [ Html.text (String.fromInt <| String.length <| replString) ])
-                                    )
+                                let
+                                    normal =
+                                        False
+                                in
+                                if normal then
+                                    E.el
+                                        [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+                                        , View.Style.monospace
+                                        ]
+                                        (E.el []
+                                            (E.html <| Html.div [] [ Html.text (String.fromInt <| String.length <| replString) ])
+                                        )
+
+                                else
+                                    E.el
+                                        [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+                                        , View.Style.monospace
+                                        ]
+                                        (par realWidth
+                                            [ CE.coloredText "HTML" "red" ]
+                                        )
 
                     else
                         E.el
@@ -266,6 +281,52 @@ viewSuccess viewData cell =
             par realWidth
                 -- TODO: fix this outrageous hack
                 [ E.none ]
+
+
+viewExpr : Cell -> String -> Int -> Element msg
+viewExpr cell str realWidth =
+    if Maybe.map .tipe cell.replData == Just "Html.Html msg" then
+        case Maybe.map .value cell.replData of
+            Nothing ->
+                E.el
+                    [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+                    , View.Style.monospace
+                    ]
+                    (par realWidth
+                        [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) "HTML??" ]
+                    )
+
+            Just replString ->
+                let
+                    normal =
+                        False
+                in
+                if normal then
+                    E.el
+                        [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+                        , View.Style.monospace
+                        ]
+                        (E.el []
+                            (E.html <| Html.div [] [ Html.text (String.fromInt <| String.length <| replString) ])
+                        )
+
+                else
+                    E.el
+                        [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+                        , View.Style.monospace
+                        ]
+                        (par realWidth
+                            [ CE.coloredText "HTML" "red" ]
+                        )
+
+    else
+        E.el
+            [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+            , View.Style.monospace
+            ]
+            (par realWidth
+                [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) str ]
+            )
 
 
 par width =
