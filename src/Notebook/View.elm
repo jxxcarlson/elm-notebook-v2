@@ -242,20 +242,8 @@ viewSuccess viewData cell =
 
 viewExpr : ViewData -> Cell -> String -> Int -> Element msg
 viewExpr viewData cell str realWidth =
-    let
-        _ =
-            Debug.log "@!@viewExpr, TIPE of REPL_DATA" (Maybe.map .tipe cell.replData)
-    in
     case Maybe.map .tipe cell.replData of
-        --Just "Html.Html msg" ->
         Nothing ->
-            let
-                _ =
-                    Debug.log "@!@viewExpr" "NOTHING"
-
-                _ =
-                    Debug.log "@@viewExpr" viewData.jsCodeDict
-            in
             case Dict.get cell.id viewData.jsCodeDict of
                 Nothing ->
                     CE.coloredText "No HTML (1)" "red"
@@ -264,13 +252,6 @@ viewExpr viewData cell str realWidth =
                     viewHtml jsString realWidth
 
         Just "Html.Html msg" ->
-            let
-                _ =
-                    Debug.log "@!@viewExpr" "Html.Html msg"
-
-                _ =
-                    Debug.log "@@viewExpr" viewData.jsCodeDict
-            in
             case Dict.get cell.id viewData.jsCodeDict of
                 Nothing ->
                     CE.coloredText "No HTML (2)" "red"
