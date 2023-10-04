@@ -32,6 +32,10 @@ view model =
                 [ E.paragraph [ E.spacing 8 ]
                     [ E.text "Elm Notebook is a web app for writing and running Elm code. "
                     , E.text "Cells contain either text or Elm code. "
+                    , E.el [ Font.italic, Font.color (E.rgb 0.65 0.65 1.0) ] (E.text "For the time being, ")
+                    , E.el [ Font.italic, Font.color (E.rgb 0.65 0.65 1.0) ] (E.text "Elm Notebook cannot run any functions which produce graphics ")
+                    , E.el [ Font.italic, Font.color (E.rgb 0.65 0.65 1.0) ] (E.text "or Html output.  However, stay tuned.  We are working on this. ")
+                    , E.text "Look at the public notebook 'About Packages' for information about using packages in Elm Notebook."
                     ]
                 , E.column [ E.spacing 6 ]
                     [ E.image [ E.width (E.px 600), E.centerX, E.centerY ]

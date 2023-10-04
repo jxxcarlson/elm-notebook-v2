@@ -37,6 +37,8 @@ requestEvaluation : EvalState -> Cell -> String -> Cmd FrontendMsg
 requestEvaluation evalState cell expr =
     Http.post
         { url = "http://localhost:8000/repl"
+
+        -- url = "http://repl.lamdera.com/api/repl"
         , body = Http.jsonBody (encodeExpr evalState expr)
         , expect = Http.expectString (Types.GotReply cell)
         }
