@@ -58,6 +58,7 @@ type alias FrontendModel =
 
     -- NOTEBOOKS II
     , kvDict : Dict String String
+    , jsCodeDict : Dict String String
     , books : List Book
     , currentCell : Maybe Cell
     , cellInsertionDirection : Notebook.Types.CellDirection

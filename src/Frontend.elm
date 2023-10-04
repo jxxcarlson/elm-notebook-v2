@@ -103,6 +103,7 @@ init url key =
 
       -- NOTEBOOKS
       , kvDict = Dict.empty
+      , jsCodeDict = Dict.empty
       , books = []
       , currentCell = Nothing
       , cellInsertionDirection = Notebook.Types.Down
