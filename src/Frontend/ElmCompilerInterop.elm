@@ -4,6 +4,7 @@ module Frontend.ElmCompilerInterop exposing
     )
 
 import Codec
+import Dict
 import Notebook.Book
 import Notebook.Cell exposing (CellValue(..))
 import Notebook.Eval
@@ -22,6 +23,10 @@ type alias Msg =
 
 receiveReplDataFromJS : Model -> String -> ( Model, Cmd Msg )
 receiveReplDataFromJS model str =
+    let
+        _ =
+            Debug.log "@@receiveReplDataFromJS" str
+    in
     case Codec.decodeString Notebook.Eval.replDataCodec str of
         Ok replData ->
             let
@@ -39,8 +44,17 @@ receiveReplDataFromJS model str =
 
                         newBook =
                             Notebook.Book.replaceCell newCell model.currentBook
+
+                        newJsCodeDict =
+                            Dict.insert newCell.id replData.value model.jsCodeDict
                     in
-                    ( { model | currentCell = Nothing, currentBook = newBook }, Cmd.none )
+                    ( { model
+                        | currentCell = Just newCell
+                        , currentBook = newBook
+                        , jsCodeDict = newJsCodeDict
+                      }
+                    , Cmd.none
+                    )
 
         Err _ ->
             ( { model | message = "Error evaluating Elm code" }, Cmd.none )
@@ -74,9 +88,14 @@ handleReplyFromElmCompiler model cell result =
                 )
 
             else
+                let
+                    _ =
+                        Debug.log "@@Sending data to JS" "<str>"
+                in
                 ( { model
                     | currentCell = Just cell
                     , currentBook = Notebook.Book.replaceCell { cell | replData = Nothing } model.currentBook
+                    , jsCodeDict = Dict.insert cell.id str model.jsCodeDict
                   }
                 , Ports.sendDataToJS str
                 )

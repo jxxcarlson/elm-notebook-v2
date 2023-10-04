@@ -160,7 +160,7 @@ initializeCellState book =
 
 type alias ViewData =
     { book : Book
-    , kvDict : Dict String String
+    , jsCodeDict : Dict String String
     , width : Int
     , ticks : Int
     , cellDirection : Notebook.Types.CellDirection

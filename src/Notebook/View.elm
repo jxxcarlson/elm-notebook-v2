@@ -1,12 +1,12 @@
 module Notebook.View exposing (view)
 
+import Dict
 import Element as E exposing (Element)
 import Element.Background as Background
 import Element.Border
 import Element.Events
 import Element.Font as Font
 import Element.Input
-import Html
 import Html.Attributes as HA
 import List.Extra
 import Notebook.Book exposing (ViewData)
@@ -220,16 +220,20 @@ viewSuccess viewData cell =
                         , View.Style.monospace
                         ]
                         (par realWidth
-                            [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) "Nothing" ]
+                            [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) "(CVNone) Nothing" ]
                         )
 
                 Notebook.Parser.Decl _ _ ->
                     E.none
 
         CVString str ->
+            let
+                _ =
+                    Debug.log "@@CV_String" str
+            in
             case Notebook.Parser.classify cell.text of
                 Notebook.Parser.Expr _ ->
-                    viewExpr cell str realWidth
+                    viewExpr viewData cell str realWidth
 
                 Notebook.Parser.Decl _ _ ->
                     E.none
@@ -240,16 +244,21 @@ viewSuccess viewData cell =
                 [ E.none ]
 
 
-viewExpr : Cell -> String -> Int -> Element msg
-viewExpr cell str realWidth =
+viewExpr : ViewData -> Cell -> String -> Int -> Element msg
+viewExpr viewData cell str realWidth =
     case Maybe.map .tipe cell.replData of
         Just "Html.Html msg" ->
-            case Maybe.map .value cell.replData of
-                Nothing ->
-                    viewNoHtml cell realWidth
-
-                Just replString ->
-                    viewHtml replString realWidth
+            let
+                _ =
+                    Debug.log "@@HTML" "Cell"
+            in
+            -- case Maybe.map .value cell.replData of
+            --Nothing ->
+            --    viewNoHtml cell realWidth
+            --
+            --Just replString ->
+            --    viewHtml replString realWidth
+            viewHtml (Dict.get cell.id viewData.jsCodeDict |> Maybe.withDefault "???@@@???") realWidth
 
         _ ->
             viewStringValue cell str realWidth
@@ -267,16 +276,16 @@ viewNoHtml cell realWidth =
 
 viewHtml replString realWidth =
     let
-        normal =
-            False
+        theRealDeal =
+            True
     in
-    if normal then
+    if theRealDeal then
         E.el
             [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
             , View.Style.monospace
             ]
             (E.el []
-                (E.html <| Html.div [] [ Html.text (String.fromInt <| String.length <| replString) ])
+                (CE.renderJavascript replString)
             )
 
     else
@@ -290,6 +299,10 @@ viewHtml replString realWidth =
 
 
 viewStringValue cell str realWidth =
+    let
+        _ =
+            Debug.log "@@viewStringValue" str
+    in
     E.el
         [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
         , View.Style.monospace

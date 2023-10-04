@@ -4,7 +4,8 @@ exports.init = async function(app) {
 
     app.ports.sendDataToJS.subscribe(function(data) {
       // Check if the Web Worker feature is available in the browser
-      // console.log("DATA_FROM_ELM", data)
+      console.log("DATA_FROM_ELM", data)
+
       if (window.Worker) {
 
           // Create a Blob from the JavaScript code (string) and create a URL for it
