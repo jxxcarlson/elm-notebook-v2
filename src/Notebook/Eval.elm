@@ -121,8 +121,6 @@ initEmptyEvalState =
     , imports =
         Dict.fromList
             [ ( "List.Extra", "import List.Extra\n" )
-            , ( "Svg", "import  Svg exposing(..)\n" )
-            , ( "Svg.Attributes", "import  Svg.Attributes exposing(..)\n" )
             ]
     }
 
