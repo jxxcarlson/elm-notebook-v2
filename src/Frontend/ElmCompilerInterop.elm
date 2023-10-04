@@ -63,6 +63,10 @@ receiveReplDataFromJS model str =
 handleReplyFromElmCompiler model cell result =
     case result of
         Ok str ->
+            let
+                _ =
+                    Debug.log "@@handleReplyFromElmCompiler" str
+            in
             if Notebook.Eval.hasReplError str then
                 let
                     newCell =
@@ -90,7 +94,7 @@ handleReplyFromElmCompiler model cell result =
             else
                 let
                     _ =
-                        Debug.log "@@Sending data to JS" "<str>"
+                        Debug.log "@@Sending data to JS" "!!!"
                 in
                 ( { model
                     | currentCell = Just cell
