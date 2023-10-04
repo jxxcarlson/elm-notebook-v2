@@ -227,10 +227,6 @@ viewSuccess viewData cell =
                     E.none
 
         CVString str ->
-            let
-                _ =
-                    Debug.log "@@CV_String" str
-            in
             case Notebook.Parser.classify cell.text of
                 Notebook.Parser.Expr _ ->
                     viewExpr viewData cell str realWidth
@@ -250,7 +246,7 @@ viewExpr viewData cell str realWidth =
         Just "Html.Html msg" ->
             let
                 _ =
-                    Debug.log "@@HTML" "Cell"
+                    Debug.log "@@viewExpr" "Html.Html msg"
             in
             -- case Maybe.map .value cell.replData of
             --Nothing ->
