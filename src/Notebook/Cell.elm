@@ -5,6 +5,7 @@ import Notebook.Types
 
 type alias Cell =
     { index : Int
+    , id : String
     , text : String
     , tipe : CellType
     , value : CellValue

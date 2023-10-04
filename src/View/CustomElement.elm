@@ -1,4 +1,4 @@
-module View.CustomElement exposing (coloredText)
+module View.CustomElement exposing (coloredText, renderJavascript)
 
 import Element exposing (Element)
 import Html exposing (Attribute, Html, node)
@@ -15,6 +15,19 @@ niceColor_ txt color =
     node "nice-color-text"
         [ attribute "text" txt
         , attribute "color" color
+        ]
+        []
+
+
+renderJavascript : String -> String -> Element msg
+renderJavascript txt color =
+    toElmUi <| renderJavascript_ txt color
+
+
+renderJavascript_ : String -> String -> Html msg
+renderJavascript_ txt color =
+    node "eval-js-to-html"
+        [ attribute "sourceText" txt
         ]
         []
 

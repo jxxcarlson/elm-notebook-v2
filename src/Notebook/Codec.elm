@@ -43,6 +43,7 @@ cellCodec : Codec Cell
 cellCodec =
     Codec.object Cell
         |> Codec.field "index" .index Codec.int
+        |> Codec.field "id" .id Codec.string
         |> Codec.field "text" .text Codec.string
         |> Codec.field "tipe" .tipe cellTypeCodec
         |> Codec.field "value" .value cellValueCodec

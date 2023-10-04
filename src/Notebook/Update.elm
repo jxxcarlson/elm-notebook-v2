@@ -126,6 +126,7 @@ makeNewCell model cellState cellType index =
 
                     Notebook.Types.Up ->
                         index
+            , id = String.fromInt index ++ "NewCell"
             , text = "# New cell (" ++ String.fromInt (index + 2) ++ ") "
             , value = CVNone
             , tipe = cellType
