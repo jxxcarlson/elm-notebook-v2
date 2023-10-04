@@ -10,13 +10,16 @@ exports.init = async function(app) {
         console.log("@!@!eval-js-to-html connectedCallback")
 
         // Get the JS sourceText attribute or use a default value
-        const text = this.getAttribute('sourceText') || 'console.log("No sourceText attribute")';
+        // const text = this.getAttribute('sourceText') || 'console.log("No sourceText attribute")';
+        const text = this.getAttribute('sourceText') || 'no-go';
 
 
 
-        if (window.Worker) {
+        if (window.Worker && text != 'no-go') {
 
               console.log("@!@!eval-js-to-html window.Worker")
+
+              console.log("@!@!text", text)
 
               // Create a Blob from the JavaScript code (string) and create a URL for it
               var blob = new Blob([text.replace('_Debug_toAnsiString(true,','_Debug_toAnsiString(false,' )], { type: 'application/javascript' });
@@ -27,8 +30,8 @@ exports.init = async function(app) {
 
               // Define an onmessage handler to receive messages from the worker
               myWorker.onmessage = (e) => {
-                  console.log('@!@!FROM WORKER', e.sourceText);
-                  this.innerHTML = `<p>e.sourceText.value</p>`
+                  console.log('@!@!FROM WORKER', e.data);
+                  this.innerHTML = `<p>${e.data}</p>`
               };
 
               // Define an onerror handler to catch errors from the worker
