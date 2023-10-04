@@ -251,18 +251,32 @@ viewExpr viewData cell str realWidth =
         Nothing ->
             let
                 _ =
+                    Debug.log "@!@viewExpr" "NOTHING"
+
+                _ =
+                    Debug.log "@@viewExpr" viewData.jsCodeDict
+            in
+            case Dict.get cell.id viewData.jsCodeDict of
+                Nothing ->
+                    CE.coloredText "No HTML (1)" "red"
+
+                Just jsString ->
+                    viewHtml jsString realWidth
+
+        Just "Html.Html msg" ->
+            let
+                _ =
                     Debug.log "@!@viewExpr" "Html.Html msg"
 
                 _ =
                     Debug.log "@@viewExpr" viewData.jsCodeDict
             in
-            -- case Maybe.map .value cell.replData of
-            --Nothing ->
-            --    viewNoHtml cell realWidth
-            --
-            --Just replString ->
-            --    viewHtml replString realWidth
-            viewHtml (Dict.get cell.id viewData.jsCodeDict |> Maybe.withDefault "123" |> Debug.log "@@viewHtml (from Dict)") realWidth
+            case Dict.get cell.id viewData.jsCodeDict of
+                Nothing ->
+                    CE.coloredText "No HTML (2)" "red"
+
+                Just jsString ->
+                    viewHtml jsString realWidth
 
         _ ->
             viewStringValue cell str realWidth
@@ -278,32 +292,35 @@ viewNoHtml cell realWidth =
         )
 
 
-viewHtml replString realWidth =
-    let
-        theRealDeal =
-            True
-    in
-    if theRealDeal then
-        let
-            _ =
-                Debug.log "@!@viewHtml (2)" 666
-        in
-        E.el
-            [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-            , View.Style.monospace
-            ]
-            (E.el []
-                (CE.renderJavascript replString)
-            )
+viewHtml jsString realWidth =
+    --let
+    --    theRealDeal =
+    --        True
+    --in
+    --if theRealDeal then
+    --    let
+    --        _ =
+    --            Debug.log "@!@viewHtml (2)" 666
+    --    in
+    E.el
+        [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+        , View.Style.monospace
+        ]
+        (E.el []
+            (CE.renderJavascript jsString)
+        )
 
-    else
-        E.el
-            [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-            , View.Style.monospace
-            ]
-            (par realWidth
-                [ CE.coloredText "HTML" "red" ]
-            )
+
+
+--
+--else
+--    E.el
+--        [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+--        , View.Style.monospace
+--        ]
+--        (par realWidth
+--            [ CE.coloredText "HTML" "red" ]
+--        )
 
 
 viewStringValue cell str realWidth =
