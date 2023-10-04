@@ -10,10 +10,12 @@ exports.init = async function(app) {
         // Get the JS sourceText attribute or use a default value
         const text = this.getAttribute('sourceText') || 'console.log("No sourceText attribute")';
 
+
+
         if (window.Worker) {
 
               // Create a Blob from the JavaScript code (string) and create a URL for it
-              var blob = new Blob([sourceText.replace('_Debug_toAnsiString(true,','_Debug_toAnsiString(false,' )], { type: 'application/javascript' });
+              var blob = new Blob([text.replace('_Debug_toAnsiString(true,','_Debug_toAnsiString(false,' )], { type: 'application/javascript' });
               var url = URL.createObjectURL(blob);
 
               // Instantiate a new Web Worker object with the blob URL
