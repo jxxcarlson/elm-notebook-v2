@@ -19,13 +19,13 @@ niceColor_ txt color =
         []
 
 
-renderJavascript : String -> String -> Element msg
-renderJavascript txt color =
-    toElmUi <| renderJavascript_ txt color
+renderJavascript : String -> Element msg
+renderJavascript txt =
+    toElmUi <| renderJavascript_ txt
 
 
-renderJavascript_ : String -> String -> Html msg
-renderJavascript_ txt color =
+renderJavascript_ : String -> Html msg
+renderJavascript_ txt =
     node "eval-js-to-html"
         [ attribute "sourceText" txt
         ]
