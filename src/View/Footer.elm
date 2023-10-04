@@ -1,5 +1,6 @@
 module View.Footer exposing (view)
 
+import Dict
 import Element as E exposing (Element)
 import Element.Font as Font
 import Predicate
@@ -49,6 +50,7 @@ view model =
             Just _ ->
                 [ View.Utility.showIfIsAdmin model (Button.adminPopup model)
                 , View.Utility.showIfIsAdmin model Button.runTask
+                , E.el [ Font.color (E.rgb 1 1 1) ] (E.text <| "jsCodeDict: " ++ String.fromInt (Dict.size model.jsCodeDict))
                 , messageRow model
                 , View.Utility.showIf (Predicate.regularUser model) Button.importNotebook
                 , View.Utility.showIf (Predicate.regularUser model) Button.exportNotebook
