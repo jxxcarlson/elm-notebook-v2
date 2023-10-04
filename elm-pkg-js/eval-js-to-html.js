@@ -8,7 +8,7 @@ exports.init = async function(app) {
       connectedCallback() {
 
         // Get the JS sourceText attribute or use a default value
-        const sourceText = this.getAttribute('sourceText') || 'console.log("No sourceText attribute")';
+        const text = this.getAttribute('sourceText') || 'console.log("No sourceText attribute")';
 
         if (window.Worker) {
 
@@ -21,8 +21,8 @@ exports.init = async function(app) {
 
               // Define an onmessage handler to receive messages from the worker
               myWorker.onmessage = (e) => {
-                  console.log('FROM WORKER', e.data);
-                  this.innerHTML = <p>${e.data}</p>`
+                  console.log('FROM WORKER', e.sourceText);
+                  this.innerHTML = `<p>e.sourceText.value</p>`
               };
 
               // Define an onerror handler to catch errors from the worker
