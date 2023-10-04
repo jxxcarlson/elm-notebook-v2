@@ -23,7 +23,7 @@ renderJavascript : String -> Element msg
 renderJavascript txt =
     let
         _ =
-            Debug.log "@!@! Rendering Javascript: " 666
+            Debug.log "@!@   Rendering Javascript: " 666
     in
     toElmUi <| renderJavascript_ txt
 
