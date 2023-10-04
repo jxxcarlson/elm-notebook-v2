@@ -7,12 +7,16 @@ exports.init = async function(app) {
       // Called when element is inserted in DOM
       connectedCallback() {
 
+        console.log("@!@!eval-js-to-html connectedCallback")
+
         // Get the JS sourceText attribute or use a default value
         const text = this.getAttribute('sourceText') || 'console.log("No sourceText attribute")';
 
 
 
         if (window.Worker) {
+
+              console.log("@!@!eval-js-to-html window.Worker")
 
               // Create a Blob from the JavaScript code (string) and create a URL for it
               var blob = new Blob([text.replace('_Debug_toAnsiString(true,','_Debug_toAnsiString(false,' )], { type: 'application/javascript' });
@@ -23,18 +27,18 @@ exports.init = async function(app) {
 
               // Define an onmessage handler to receive messages from the worker
               myWorker.onmessage = (e) => {
-                  console.log('FROM WORKER', e.sourceText);
+                  console.log('@!@!FROM WORKER', e.sourceText);
                   this.innerHTML = `<p>e.sourceText.value</p>`
               };
 
               // Define an onerror handler to catch errors from the worker
               myWorker.onerror = (e) => {
-                  console.error('Error from worker:', e.message);
+                  console.error('@!@!Error from worker:', e.message);
                   this.innerHTML = `<p>Error from Worker</p>`
               };
           } // end if
            else {
-              console.error('Web Worker is not supported in your browser.');
+              console.error('@!@!Web Worker is not supported in your browser.');
               this.innerHTML = `<p>Web Worker is not supported in your browser.</p>`
           } // end else
 

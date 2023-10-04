@@ -276,6 +276,10 @@ viewHtml replString realWidth =
             True
     in
     if theRealDeal then
+        let
+            _ =
+                Debug.log "@!@viewHtml (2)" 666
+        in
         E.el
             [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
             , View.Style.monospace
