@@ -101,7 +101,11 @@ handleReplyFromElmCompiler model cell result =
                     , currentBook = Notebook.Book.replaceCell { cell | replData = Nothing } model.currentBook
                     , jsCodeDict = Dict.insert cell.id str model.jsCodeDict
                   }
-                , Ports.sendDataToJS str
+                , if String.contains "svg" cell.text then
+                    Cmd.none
+
+                  else
+                    Ports.sendDataToJS str
                 )
 
         Err _ ->

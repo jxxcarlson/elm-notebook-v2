@@ -242,11 +242,19 @@ viewSuccess viewData cell =
 
 viewExpr : ViewData -> Cell -> String -> Int -> Element msg
 viewExpr viewData cell str realWidth =
+    let
+        _ =
+            Debug.log "@!@viewExpr, TIPE of REPL_DATA" (Maybe.map .tipe cell.replData)
+    in
     case Maybe.map .tipe cell.replData of
-        Just "Html.Html msg" ->
+        --Just "Html.Html msg" ->
+        Nothing ->
             let
                 _ =
-                    Debug.log "@@viewExpr" "Html.Html msg"
+                    Debug.log "@!@viewExpr" "Html.Html msg"
+
+                _ =
+                    Debug.log "@@viewExpr" viewData.jsCodeDict
             in
             -- case Maybe.map .value cell.replData of
             --Nothing ->
@@ -254,7 +262,7 @@ viewExpr viewData cell str realWidth =
             --
             --Just replString ->
             --    viewHtml replString realWidth
-            viewHtml (Dict.get cell.id viewData.jsCodeDict |> Maybe.withDefault "???@@@???") realWidth
+            viewHtml (Dict.get cell.id viewData.jsCodeDict |> Maybe.withDefault "123" |> Debug.log "@@viewHtml (from Dict)") realWidth
 
         _ ->
             viewStringValue cell str realWidth
@@ -299,16 +307,15 @@ viewHtml replString realWidth =
 
 
 viewStringValue cell str realWidth =
-    let
-        _ =
-            Debug.log "@@viewStringValue" str
-    in
     E.el
         [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
         , View.Style.monospace
         ]
         (par realWidth
-            [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) str ]
+            [ View.CellThemed.renderFull cell.tipe
+                (scale 1.0 realWidth)
+                ((Maybe.map .tipe cell.replData |> Maybe.withDefault "??") ++ ": " ++ str)
+            ]
         )
 
 
