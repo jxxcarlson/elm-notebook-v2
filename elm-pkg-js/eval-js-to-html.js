@@ -31,7 +31,8 @@ exports.init = async function(app) {
               // Define an onmessage handler to receive messages from the worker
               myWorker.onmessage = (e) => {
                   console.log('@!@!FROM WORKER', e.data);
-                  this.innerHTML = `<p>${e.data}</p>`
+                  // this.innerHTML = `<p>${e.data}</p>`
+                  this.innerHTML = `<p>Hello!</p>`
               };
 
               // Define an onerror handler to catch errors from the worker
