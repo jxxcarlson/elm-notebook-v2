@@ -170,7 +170,7 @@ viewNotebook model =
     let
         viewData =
             { book = model.currentBook
-            , kvDict = model.kvDict
+            , jsCodeDict = model.jsCodeDict
             , width = View.Geometry.notebookWidth model
             , ticks = model.tickCount
             , cellDirection = model.cellInsertionDirection
