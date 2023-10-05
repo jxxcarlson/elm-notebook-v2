@@ -82,6 +82,7 @@ updateElmJsonDependenciesAndThenSendPackageList model =
                 |> List.map Dict.toList
                 |> List.concat
                 |> List.Extra.uniqueBy Tuple.first
+                |> List.filter (\( name, version ) -> not <| List.member name [ "elm/core", "elm/json" ])
                 |> List.map (\( name, version ) -> { name = name, version = version })
                 |> Debug.log "PACKAGES"
 
