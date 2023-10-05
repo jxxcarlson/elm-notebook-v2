@@ -1,9 +1,9 @@
-module Notebook.Codec exposing (exportBook, importBook)
+module Notebook.Codec exposing (encodePackageList, exportBook, importBook)
 
 import Codec exposing (Codec, Error, Value)
 import Notebook.Book exposing (Book)
 import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
-import Notebook.Types exposing (MessageItem(..), ReplData, StyledString)
+import Notebook.Types exposing (MessageItem(..), Package, ReplData, StyledString)
 import Time
 
 
@@ -15,6 +15,24 @@ exportBook book =
 importBook : String -> Result Error Book
 importBook str =
     Codec.decodeString bookCodec str
+
+
+encodePackageList : List Package -> Value
+encodePackageList packageList =
+    Codec.encodeToValue packageListCodec packageList
+
+
+packageListCodec : Codec (List Package)
+packageListCodec =
+    Codec.list packageCodec
+
+
+packageCodec : Codec Package
+packageCodec =
+    Codec.object Package
+        |> Codec.field "name" .name Codec.string
+        |> Codec.field "version" .version Codec.string
+        |> Codec.buildObject
 
 
 bookCodec : Codec Book

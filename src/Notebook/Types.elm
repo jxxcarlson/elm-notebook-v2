@@ -2,11 +2,23 @@ module Notebook.Types exposing
     ( CellDirection(..)
     , EvalState
     , MessageItem(..)
+    , Package
+    , PackageList
     , ReplData
     , StyledString
     )
 
 import Dict exposing (Dict)
+
+
+type alias PackageList =
+    List Package
+
+
+type alias Package =
+    { name : String
+    , version : String
+    }
 
 
 type alias EvalState =

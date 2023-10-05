@@ -70,6 +70,17 @@ handlePopups model popupState =
                 , Cmd.none
                 )
 
+        PackageListPopup ->
+            if model.popupState == PackageListPopup then
+                ( { model | popupState = NoPopup }, Cmd.none )
+
+            else
+                ( { model
+                    | popupState = PackageListPopup
+                  }
+                , Cmd.none
+                )
+
         ManualPopup ->
             if model.popupState == ManualPopup then
                 ( { model | popupState = NoPopup }, Cmd.none )

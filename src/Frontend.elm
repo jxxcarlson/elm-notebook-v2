@@ -348,6 +348,14 @@ update msg model =
                     )
 
         -- CELLS, NOTEBOOKS
+        PackageListSent result ->
+            case result of
+                Err _ ->
+                    ( { model | message = "Error sending package list" }, Cmd.none )
+
+                Ok () ->
+                    ( { model | message = "Package list accepted" }, Cmd.none )
+
         ClearNotebookValues ->
             Notebook.Update.clearNotebookValues model.currentBook model
 

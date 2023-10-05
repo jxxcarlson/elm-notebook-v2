@@ -158,6 +158,7 @@ type FrontendMsg
     | AskToCreateDataSet
     | AskToDeleteDataSet Notebook.DataSet.DataSetMetaData
       -- CELL
+    | PackageListSent (Result Http.Error ())
     | ClearNotebookValues
     | ExecuteNotebook
     | UpdateDeclarationsDictionary
@@ -231,6 +232,7 @@ type PopupState
     | NewDataSetPopup
     | EditDataSetPopup Notebook.DataSet.DataSetMetaData
     | SignUpPopup
+    | PackageListPopup
     | NewNotebookPopup
     | StateEditorPopup
     | ViewPublicDataSetsPopup
