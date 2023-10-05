@@ -31,6 +31,7 @@ type alias ElmPackageSummary =
     { dependencies : Dict String String
     , exposedModules : List String
     , name : String
+    , version : String
     }
 
 

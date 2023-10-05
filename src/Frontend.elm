@@ -33,6 +33,7 @@ import Notebook.Types exposing (MessageItem(..))
 import Notebook.Update
 import Ports
 import Predicate
+import Process
 import Random
 import Task
 import Time
@@ -153,6 +154,13 @@ update msg model =
             )
 
         -- ELM COMPILER/JS INTEROP
+        ExecuteDelayedFunction ->
+            let
+                ( newModel, cmd ) =
+                    Notebook.Package.nowSendPackageList model
+            in
+            ( newModel, Cmd.batch [ cmd ] )
+
         ExecuteCell k ->
             Notebook.EvalCell.executeCell k model
 
@@ -375,12 +383,10 @@ update msg model =
 
         -- CELLS, NOTEBOOKS
         SubmitPackageList ->
-            --  ( model, Notebook.Package.sendPackageList (Notebook.Package.makePackageList model) )
             Notebook.Package.updateElmJsonDependencies model
 
         SubmitTest ->
-            -- Notebook.Package.updateElmJsonDependencies model
-            Notebook.Package.updateElmJsonDependenciesAndThenSendPackageList model
+            ( model, Cmd.none )
 
         PackageListSent result ->
             case result of

@@ -39,63 +39,34 @@ mergeDictionaries dict1 dict2 =
 
 
 
---- https://raw.githubusercontent.com/elm-file/master/elm.json
+--elmJsonDecoder : Decoder (Dict String String)
+--elmJsonDecoder =
+--    Decode.field "dependencies" (Decode.dict Decode.string)
 
 
-elmJsonDecoder : Decoder (Dict String String)
-elmJsonDecoder =
-    Decode.field "dependencies" (Decode.dict Decode.string)
-
-
-split str =
-    case str |> String.split ":" of
-        [ a, b ] ->
-            Just { name = String.trim a, version = String.trim b }
-
-        _ ->
-            Nothing
-
-
-makePackageList : Types.FrontendModel -> List { name : String, version : String }
+makePackageList : Types.FrontendModel -> List String
 makePackageList model =
     model.inputPackages
-        |> Debug.log "Raw package list"
         |> String.trim
         |> String.lines
-        |> List.filter (\line -> line /= "" && String.contains ":" line)
-        |> List.map (\line -> split line)
-        |> List.filterMap identity
-        |> Debug.log "packageList"
 
 
-updateElmJsonDependenciesAndThenSendPackageList : Types.FrontendModel -> ( Types.FrontendModel, Cmd Types.FrontendMsg )
-updateElmJsonDependenciesAndThenSendPackageList model =
+nowSendPackageList : Types.FrontendModel -> ( Types.FrontendModel, Cmd Types.FrontendMsg )
+nowSendPackageList model =
     let
-        ( model1, cmd1 ) =
-            updateElmJsonDependencies model
-
         packages : List { name : String, version : String }
         packages =
-            model1.elmJsonDependencies
+            model.elmJsonDependencies
                 |> Dict.values
-                |> List.map .dependencies
-                |> List.map Dict.toList
-                |> List.concat
-                |> List.Extra.uniqueBy Tuple.first
-                |> List.filter (\( name, version ) -> not <| List.member name [ "elm/core", "elm/json" ])
-                |> List.map (\( name, version ) -> { name = name, version = version })
-                |> Debug.log "PACKAGES"
-
-        _ =
-            Debug.log "Number of packages to send" (List.length packages)
+                |> List.map (\value -> { name = value.name, version = value.version })
     in
-    ( model1, Cmd.batch [ sendPackageList packages, cmd1 ] )
+    ( model, sendPackageList packages )
 
 
 updateElmJsonDependencies : Types.FrontendModel -> ( Types.FrontendModel, Cmd Types.FrontendMsg )
 updateElmJsonDependencies model =
     let
-        packageList : List { name : String, version : String }
+        packageList : List String
         packageList =
             makePackageList model
 
@@ -103,24 +74,23 @@ updateElmJsonDependencies model =
             packageList |> List.length
 
         indices =
-            List.range 0 n |> Debug.log "@@indices"
+            List.range 0 (n - 1)
 
         commands =
             List.map2 (\packageItem idx -> createDelayedCommand packageItem idx) packageList indices
 
-        _ =
-            Debug.log "commands" (List.length commands)
+        delayInMs =
+            (n + 1) * 50 |> toFloat
+
+        delayCmd =
+            Process.sleep delayInMs |> Task.perform (always Types.ExecuteDelayedFunction)
     in
-    ( model, Cmd.batch commands )
-
-
-
--- createDelayedCommand : { name : String, version : String } -> Int -> Cmd Types.FrontendMsg
+    ( model, Cmd.batch <| delayCmd :: commands )
 
 
 createDelayedCommand packageItem idx =
     Process.sleep (toFloat (idx * 50))
-        |> Task.perform (\_ -> Types.FetchDependencies packageItem.name)
+        |> Task.perform (\_ -> Types.FetchDependencies packageItem)
 
 
 elmPackageDecoder : Decoder Notebook.Types.ElmPackage
@@ -155,3 +125,4 @@ elmPackageSummaryDecoder =
         |> required "dependencies" (Decode.dict Decode.string)
         |> required "exposed-modules" (Decode.list Decode.string)
         |> required "name" Decode.string
+        |> required "version" Decode.string

@@ -154,6 +154,7 @@ type FrontendMsg
     | InputAuthor String
     | InputInitialStateValue String
       -- Notebook
+    | ExecuteDelayedFunction
     | GotElmJsonDict (Result Http.Error Notebook.Types.ElmPackageSummary)
     | GotReply Cell (Result Http.Error String)
     | ReceivedFromJS String
