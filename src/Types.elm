@@ -170,7 +170,7 @@ type FrontendMsg
     | ExecuteNotebook
     | UpdateDeclarationsDictionary
     | ExecuteCell Int
-    | FetchDependencies Int
+    | FetchDependencies String
     | ToggleCellLock Cell
     | ChangeCellInsertionDirection Notebook.Types.CellDirection
     | NewCodeCell CellState Int

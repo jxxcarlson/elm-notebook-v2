@@ -4,6 +4,7 @@ import Dict exposing (Dict)
 import Http
 import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Pipeline as Pipeline exposing (required)
+import List.Extra
 import Notebook.Codec
 import Notebook.Types
 import Process
@@ -30,6 +31,11 @@ fetchElmJson package =
         { url = url
         , expect = Http.expectJson Types.GotElmJsonDict elmPackageSummaryDecoder
         }
+
+
+mergeDictionaries : Dict comparable b -> Dict comparable b -> Dict comparable b
+mergeDictionaries dict1 dict2 =
+    Dict.fromList (Dict.toList dict1 ++ Dict.toList dict2)
 
 
 
@@ -62,9 +68,33 @@ makePackageList model =
         |> Debug.log "packageList"
 
 
+updateElmJsonDependenciesAndThenSendPackageList : Types.FrontendModel -> ( Types.FrontendModel, Cmd Types.FrontendMsg )
+updateElmJsonDependenciesAndThenSendPackageList model =
+    let
+        ( model1, cmd1 ) =
+            updateElmJsonDependencies model
+
+        packages : List { name : String, version : String }
+        packages =
+            model1.elmJsonDependencies
+                |> Dict.values
+                |> List.map .dependencies
+                |> List.map Dict.toList
+                |> List.concat
+                |> List.Extra.uniqueBy Tuple.first
+                |> List.map (\( name, version ) -> { name = name, version = version })
+                |> Debug.log "PACKAGES"
+
+        _ =
+            Debug.log "Number of packages to send" (List.length packages)
+    in
+    ( model1, Cmd.batch [ sendPackageList packages, cmd1 ] )
+
+
 updateElmJsonDependencies : Types.FrontendModel -> ( Types.FrontendModel, Cmd Types.FrontendMsg )
 updateElmJsonDependencies model =
     let
+        packageList : List { name : String, version : String }
         packageList =
             makePackageList model
 
@@ -72,18 +102,24 @@ updateElmJsonDependencies model =
             packageList |> List.length
 
         indices =
-            List.range 0 n
+            List.range 0 n |> Debug.log "@@indices"
 
         commands =
-            List.indexedMap createDelayedCommand indices
+            List.map2 (\packageItem idx -> createDelayedCommand packageItem idx) packageList indices
+
+        _ =
+            Debug.log "commands" (List.length commands)
     in
     ( model, Cmd.batch commands )
 
 
-createDelayedCommand : Int -> Int -> Cmd Types.FrontendMsg
-createDelayedCommand idx _ =
+
+-- createDelayedCommand : { name : String, version : String } -> Int -> Cmd Types.FrontendMsg
+
+
+createDelayedCommand packageItem idx =
     Process.sleep (toFloat (idx * 50))
-        |> Task.perform (\_ -> Types.FetchDependencies idx)
+        |> Task.perform (\_ -> Types.FetchDependencies packageItem.name)
 
 
 elmPackageDecoder : Decoder Notebook.Types.ElmPackage

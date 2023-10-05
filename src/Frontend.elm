@@ -153,8 +153,14 @@ update msg model =
             )
 
         -- ELM COMPILER/JS INTEROP
+        ExecuteCell k ->
+            Notebook.EvalCell.executeCell k model
+
         ReceivedFromJS str ->
             Frontend.ElmCompilerInterop.receiveReplDataFromJS model str
+
+        FetchDependencies packageName ->
+            ( model, Notebook.Package.fetchElmJson packageName )
 
         GotElmJsonDict result ->
             case result of
@@ -162,7 +168,12 @@ update msg model =
                     ( { model | message = "Error retrieving elm.json dependencies" }, Cmd.none )
 
                 Ok data ->
-                    ( { model | elmJsonDependencies = Dict.singleton data.name data |> Debug.log "Elm_Json_Dict" }, Cmd.none )
+                    ( { model
+                        | elmJsonDependencies =
+                            Notebook.Package.mergeDictionaries (Dict.singleton data.name data) model.elmJsonDependencies |> Debug.log "MERGED DICT"
+                      }
+                    , Cmd.none
+                    )
 
         GotReply cell result ->
             Frontend.ElmCompilerInterop.handleReplyFromElmCompiler model cell result
@@ -364,15 +375,12 @@ update msg model =
 
         -- CELLS, NOTEBOOKS
         SubmitPackageList ->
-            ( model, Notebook.Package.sendPackageList (Notebook.Package.makePackageList model) )
+            --  ( model, Notebook.Package.sendPackageList (Notebook.Package.makePackageList model) )
+            Notebook.Package.updateElmJsonDependencies model
 
         SubmitTest ->
-            case List.head (Notebook.Package.makePackageList model) of
-                Nothing ->
-                    ( model, Cmd.none )
-
-                Just item ->
-                    ( model, Notebook.Package.fetchElmJson item.name )
+            -- Notebook.Package.updateElmJsonDependencies model
+            Notebook.Package.updateElmJsonDependenciesAndThenSendPackageList model
 
         PackageListSent result ->
             case result of
@@ -400,12 +408,6 @@ update msg model =
 
         UpdateDeclarationsDictionary ->
             ( Notebook.EvalCell.updateDeclarationsDictionary model, Cmd.none )
-
-        ExecuteCell k ->
-            Notebook.EvalCell.executeCell k model
-
-        FetchDependencies k ->
-            ( model, Cmd.none )
 
         ToggleCellLock cell ->
             ( Notebook.Update.toggleCellLock cell model, Cmd.none )
