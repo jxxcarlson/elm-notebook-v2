@@ -28,6 +28,7 @@ import Notebook.Codec
 import Notebook.DataSet
 import Notebook.Eval
 import Notebook.EvalCell
+import Notebook.Package
 import Notebook.Types exposing (MessageItem(..))
 import Notebook.Update
 import Ports
@@ -95,6 +96,7 @@ init url key =
       , inputDescription = ""
       , inputComments = ""
       , inputData = ""
+      , inputPackages = ""
       , inputInitialStateValue = ""
 
       -- DATASETS
@@ -279,6 +281,9 @@ update msg model =
         InputData str ->
             ( { model | inputData = str }, Cmd.none )
 
+        InputPackages str ->
+            ( { model | inputPackages = str }, Cmd.none )
+
         InputInitialStateValue str ->
             ( { model | inputInitialStateValue = str }, Cmd.none )
 
@@ -348,13 +353,45 @@ update msg model =
                     )
 
         -- CELLS, NOTEBOOKS
+        SubmitPackageList ->
+            let
+                split str =
+                    case str |> String.split ":" of
+                        [ a, b ] ->
+                            Just { name = String.trim a, version = String.trim b }
+
+                        _ ->
+                            Nothing
+
+                packageList =
+                    model.inputPackages
+                        |> Debug.log "Raw package list"
+                        |> String.trim
+                        |> String.lines
+                        |> List.filter (\line -> line /= "" && String.contains ":" line)
+                        |> List.map (\line -> split line)
+                        |> List.filterMap identity
+                        |> Debug.log "packageList"
+            in
+            ( model, Notebook.Package.sendPackageList packageList )
+
         PackageListSent result ->
             case result of
                 Err _ ->
-                    ( { model | message = "Error sending package list" }, Cmd.none )
+                    ( { model
+                        | popupState = NoPopup
+                        , message = "Error sending package list"
+                      }
+                    , Cmd.none
+                    )
 
                 Ok () ->
-                    ( { model | message = "Package list accepted" }, Cmd.none )
+                    ( { model
+                        | popupState = NoPopup
+                        , message = "Package list accepted"
+                      }
+                    , Cmd.none
+                    )
 
         ClearNotebookValues ->
             Notebook.Update.clearNotebookValues model.currentBook model

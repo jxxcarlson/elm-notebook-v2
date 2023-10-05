@@ -1,6 +1,7 @@
 module Notebook.Package exposing (..)
 
 import Http
+import Notebook.Codec
 import Notebook.Types
 import Types
 

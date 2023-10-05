@@ -11,6 +11,7 @@ module View.Input exposing
     , password
     , passwordAgain
     , signupUsername
+    , submitPackageList
     , title
     , username
     )
@@ -94,6 +95,10 @@ comments model =
 
 data model =
     multiLineTemplate 500 200 "Data" InputData model.inputData
+
+
+submitPackageList model =
+    multiLineTemplate 500 600 "Packages" InputPackages model.inputPackages
 
 
 

@@ -18,15 +18,14 @@ view model =
                 [ Element.spacing 18
                 , View.Style.bgGray 0.4
                 , Element.padding 24
-                , Element.alignRight
+                , Element.centerX
+
+                --, Element.alignRight
                 , Element.moveUp (View.Geometry.appHeight model - 100 |> toFloat)
                 ]
-                [ View.Input.signupUsername model
-                , View.Input.email model
-                , View.Input.password model
-                , View.Input.passwordAgain model
+                [ View.Input.submitPackageList model
                 , Element.row [ Element.spacing 18 ]
-                    [ View.Button.setUpUser
+                    [ View.Button.submitPackageList
                     , View.Button.dismissPopup
                     ]
                 , Element.el [ Element.width Element.fill, Element.paddingXY 8 8, View.Style.bgGray 0 ] (Message.viewSmall 250 model)

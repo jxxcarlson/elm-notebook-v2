@@ -13,6 +13,7 @@ import View.Popup.EditDataSet
 import View.Popup.Manual
 import View.Popup.NewDataSet
 import View.Popup.NewNotebook
+import View.Popup.Packages
 import View.Popup.SignUp
 import View.Popup.StateEditor
 import View.Popup.ViewPrivateDataSets
@@ -34,7 +35,8 @@ view model =
         , E.inFront (View.Popup.NewDataSet.view model)
         , E.inFront (View.Popup.ViewPublicDataSets.view model)
         , E.inFront (View.Popup.ViewPrivateDataSets.view model)
-        , E.inFront (View.Popup.EditDataSet.view model)
+        , E.inFront (View.Popup.ViewPrivateDataSets.view model)
+        , E.inFront (View.Popup.Packages.view model)
         , E.inFront (View.Popup.StateEditor.view model)
         , View.Style.bgGray 0.0
         , E.spacing 12
@@ -49,6 +51,7 @@ view model =
             Just _ ->
                 [ View.Utility.showIfIsAdmin model (Button.adminPopup model)
                 , View.Utility.showIfIsAdmin model Button.runTask
+                , Button.packagesPopup model
                 , messageRow model
                 , View.Utility.showIf (Predicate.regularUser model) Button.importNotebook
                 , View.Utility.showIf (Predicate.regularUser model) Button.exportNotebook

@@ -20,6 +20,7 @@ module View.Button exposing
     , myNotebooks
     , newDataSet
     , newNotebook
+    , packagesPopup
     , public
     , publicNotebooks
     , pullNotebook
@@ -34,6 +35,7 @@ module View.Button exposing
     , signOut
     , signUp
     , stateEditor
+    , submitPackageList
     , toggleViewPrivateDataSets
     , toggleViewPublicDataSets
     , updateDeclarationsDictionary
@@ -366,6 +368,11 @@ setUpUser =
     buttonTemplate [] SignUp "Submit"
 
 
+submitPackageList : Element FrontendMsg
+submitPackageList =
+    buttonTemplate [] SubmitPackageList "Submit"
+
+
 
 -- ADMIN
 
@@ -373,6 +380,11 @@ setUpUser =
 adminPopup : FrontendModel -> Element FrontendMsg
 adminPopup model =
     buttonTemplate [] (ChangePopup AdminPopup) "Admin"
+
+
+packagesPopup : FrontendModel -> Element FrontendMsg
+packagesPopup model =
+    buttonTemplate [] (ChangePopup PackageListPopup) "Packages"
 
 
 runTask : Element FrontendMsg

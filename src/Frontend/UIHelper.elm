@@ -59,6 +59,13 @@ handlePopups model popupState =
             else
                 ( { model | popupState = NewNotebookPopup }, Cmd.none )
 
+        PackageListPopup ->
+            if model.popupState == PackageListPopup then
+                ( { model | popupState = NoPopup }, Cmd.none )
+
+            else
+                ( { model | popupState = PackageListPopup }, Cmd.none )
+
         StateEditorPopup ->
             if model.popupState == StateEditorPopup then
                 ( { model | popupState = NoPopup }, Cmd.none )
@@ -66,17 +73,6 @@ handlePopups model popupState =
             else
                 ( { model
                     | popupState = StateEditorPopup
-                  }
-                , Cmd.none
-                )
-
-        PackageListPopup ->
-            if model.popupState == PackageListPopup then
-                ( { model | popupState = NoPopup }, Cmd.none )
-
-            else
-                ( { model
-                    | popupState = PackageListPopup
                   }
                 , Cmd.none
                 )
