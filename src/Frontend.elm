@@ -161,8 +161,8 @@ update msg model =
                 Err _ ->
                     ( { model | message = "Error retrieving elm.json dependencies" }, Cmd.none )
 
-                Ok dict ->
-                    ( { model | elmJsonDependencies = dict }, Cmd.none )
+                Ok data ->
+                    ( { model | elmJsonDependencies = Dict.singleton data.name data |> Debug.log "Elm_Json_Dict" }, Cmd.none )
 
         GotReply cell result ->
             Frontend.ElmCompilerInterop.handleReplyFromElmCompiler model cell result
@@ -367,7 +367,12 @@ update msg model =
             ( model, Notebook.Package.sendPackageList (Notebook.Package.makePackageList model) )
 
         SubmitTest ->
-            ( model, Notebook.Package.sendPackageList (Notebook.Package.makePackageList model) )
+            case List.head (Notebook.Package.makePackageList model) of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just item ->
+                    ( model, Notebook.Package.fetchElmJson item.name )
 
         PackageListSent result ->
             case result of

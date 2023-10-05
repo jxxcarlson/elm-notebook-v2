@@ -58,7 +58,7 @@ type alias FrontendModel =
     , evalState : Notebook.Types.EvalState
 
     -- NOTEBOOKS II
-    , elmJsonDependencies : Dict String String
+    , elmJsonDependencies : Dict String Notebook.Types.ElmPackageSummary
     , elmJsonError : Maybe String
     , kvDict : Dict String String
     , books : List Book
@@ -154,7 +154,7 @@ type FrontendMsg
     | InputAuthor String
     | InputInitialStateValue String
       -- Notebook
-    | GotElmJsonDict (Result Http.Error (Dict String String))
+    | GotElmJsonDict (Result Http.Error Notebook.Types.ElmPackageSummary)
     | GotReply Cell (Result Http.Error String)
     | ReceivedFromJS String
       -- DATA

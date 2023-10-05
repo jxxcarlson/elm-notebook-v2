@@ -28,13 +28,17 @@ fetchElmJson package =
     in
     Http.get
         { url = url
-        , expect = Http.expectJson Types.GotElmJsonDict elmJsonDecoder
+        , expect = Http.expectJson Types.GotElmJsonDict elmPackageSummaryDecoder
         }
+
+
+
+--- https://raw.githubusercontent.com/elm-file/master/elm.json
 
 
 elmJsonDecoder : Decoder (Dict String String)
 elmJsonDecoder =
-    Decode.field "dependencies" (Decode.field "direct" (Decode.dict Decode.string))
+    Decode.field "dependencies" (Decode.dict Decode.string)
 
 
 split str =
@@ -96,6 +100,21 @@ elmPackageDecoder =
         |> required "test-dependencies" (Decode.dict Decode.string)
 
 
-exposedModulesDecoder : Decoder Notebook.Types.ExposedModules
+
+--- badBody = "Problem with the value at json.dependencies:\n\n    {\n        \"elm/bytes\": \"1.0.0 <= v < 2.0.0\",\n        \"elm/core\": \"1.0.1 <= v < 2.0.0\",\n        \"elm/json\": \"1.1.0 <= v < 2.0.0\",\n        \"elm/time\": \"1.0.0 <= v < 2.0.0\"\n    }\n\nExpecting an OBJECT with a field named `direct`"))
+--exposedModulesDecoder : Decoder Notebook.Types.ExposedModules
+--exposedModulesDecoder =
+--    Decode.dict (Decode.list Decode.string)
+
+
+exposedModulesDecoder : Decoder (List String)
 exposedModulesDecoder =
-    Decode.dict (Decode.list Decode.string)
+    Decode.field "exposed-modules" (Decode.list Decode.string)
+
+
+elmPackageSummaryDecoder : Decoder Notebook.Types.ElmPackageSummary
+elmPackageSummaryDecoder =
+    Decode.succeed Notebook.Types.ElmPackageSummary
+        |> required "dependencies" (Decode.dict Decode.string)
+        |> required "exposed-modules" (Decode.list Decode.string)
+        |> required "name" Decode.string

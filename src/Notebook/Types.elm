@@ -1,6 +1,7 @@
 module Notebook.Types exposing
     ( CellDirection(..)
     , ElmPackage
+    , ElmPackageSummary
     , EvalState
     , ExposedModules
     , MessageItem(..)
@@ -19,10 +20,17 @@ type alias ElmPackage =
     , summary : String
     , license : String
     , version : String
-    , exposedModules : ExposedModules
+    , exposedModules : List String -- (not Exposed Modules)
     , elmVersion : String
     , dependencies : Dict String String
     , testDependencies : Dict String String
+    }
+
+
+type alias ElmPackageSummary =
+    { dependencies : Dict String String
+    , exposedModules : List String
+    , name : String
     }
 
 
