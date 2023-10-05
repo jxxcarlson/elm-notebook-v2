@@ -1,6 +1,6 @@
 module Notebook.EvalCell exposing
     ( executeCell
-    , executeNotebok
+    , executeNotebook
     , processCell
     , updateDeclarationsDictionary
     )
@@ -26,8 +26,8 @@ type alias Model =
 -- EXECUTE NOTEBOOK
 
 
-executeNotebok : Model -> ( Model, Cmd FrontendMsg )
-executeNotebok model_ =
+executeNotebook : Model -> ( Model, Cmd FrontendMsg )
+executeNotebook model_ =
     let
         currentBook =
             model_.currentBook

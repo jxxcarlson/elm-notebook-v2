@@ -73,6 +73,8 @@ init url key =
       , url = url
 
       -- NOTEBOOK (NEW)
+      , elmJsonDependencies = Dict.empty
+      , elmJsonError = Nothing
       , evalState = Notebook.Eval.initEmptyEvalState
       , message = "Welcome!"
       , messages = []
@@ -153,6 +155,14 @@ update msg model =
         -- ELM COMPILER/JS INTEROP
         ReceivedFromJS str ->
             Frontend.ElmCompilerInterop.receiveReplDataFromJS model str
+
+        GotElmJsonDict result ->
+            case result of
+                Err _ ->
+                    ( { model | message = "Error retrieving elm.json dependencies" }, Cmd.none )
+
+                Ok dict ->
+                    ( { model | elmJsonDependencies = dict }, Cmd.none )
 
         GotReply cell result ->
             Frontend.ElmCompilerInterop.handleReplyFromElmCompiler model cell result
@@ -397,13 +407,16 @@ update msg model =
             Notebook.Update.clearNotebookValues model.currentBook model
 
         ExecuteNotebook ->
-            Notebook.EvalCell.executeNotebok model
+            Notebook.EvalCell.executeNotebook model
 
         UpdateDeclarationsDictionary ->
             ( Notebook.EvalCell.updateDeclarationsDictionary model, Cmd.none )
 
         ExecuteCell k ->
             Notebook.EvalCell.executeCell k model
+
+        FetchDependencies k ->
+            ( model, Cmd.none )
 
         ToggleCellLock cell ->
             ( Notebook.Update.toggleCellLock cell model, Cmd.none )

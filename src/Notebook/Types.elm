@@ -11,6 +11,12 @@ module Notebook.Types exposing
 import Dict exposing (Dict)
 
 
+
+--
+--type alias ElmJsonDict =
+--    Dict String String
+
+
 type alias PackageList =
     List Package
 
