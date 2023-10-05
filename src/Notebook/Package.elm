@@ -3,7 +3,7 @@ module Notebook.Package exposing (..)
 import Dict exposing (Dict)
 import Http
 import Json.Decode as Decode exposing (Decoder)
-import Json.Decode.Pipeline exposing (required)
+import Json.Decode.Pipeline as Pipeline exposing (required)
 import Notebook.Codec
 import Notebook.Types
 import Process
@@ -80,3 +80,22 @@ createDelayedCommand : Int -> Int -> Cmd Types.FrontendMsg
 createDelayedCommand idx _ =
     Process.sleep (toFloat (idx * 50))
         |> Task.perform (\_ -> Types.FetchDependencies idx)
+
+
+elmPackageDecoder : Decoder Notebook.Types.ElmPackage
+elmPackageDecoder =
+    Decode.succeed Notebook.Types.ElmPackage
+        |> required "type" Decode.string
+        |> required "name" Decode.string
+        |> required "summary" Decode.string
+        |> required "license" Decode.string
+        |> required "version" Decode.string
+        |> required "exposed-modules" exposedModulesDecoder
+        |> required "elm-version" Decode.string
+        |> required "dependencies" (Decode.dict Decode.string)
+        |> required "test-dependencies" (Decode.dict Decode.string)
+
+
+exposedModulesDecoder : Decoder Notebook.Types.ExposedModules
+exposedModulesDecoder =
+    Decode.dict (Decode.list Decode.string)

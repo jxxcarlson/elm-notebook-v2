@@ -36,6 +36,7 @@ module View.Button exposing
     , signUp
     , stateEditor
     , submitPackageList
+    , submitTest
     , toggleViewPrivateDataSets
     , toggleViewPublicDataSets
     , updateDeclarationsDictionary
@@ -371,6 +372,11 @@ setUpUser =
 submitPackageList : Element FrontendMsg
 submitPackageList =
     buttonTemplate [] SubmitPackageList "Submit"
+
+
+submitTest : Element FrontendMsg
+submitTest =
+    buttonTemplate [] SubmitTest "Test"
 
 
 

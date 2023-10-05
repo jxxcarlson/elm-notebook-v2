@@ -1,6 +1,8 @@
 module Notebook.Types exposing
     ( CellDirection(..)
+    , ElmPackage
     , EvalState
+    , ExposedModules
     , MessageItem(..)
     , Package
     , PackageList
@@ -9,6 +11,23 @@ module Notebook.Types exposing
     )
 
 import Dict exposing (Dict)
+
+
+type alias ElmPackage =
+    { packageType : String
+    , name : String
+    , summary : String
+    , license : String
+    , version : String
+    , exposedModules : ExposedModules
+    , elmVersion : String
+    , dependencies : Dict String String
+    , testDependencies : Dict String String
+    }
+
+
+type alias ExposedModules =
+    Dict String (List String)
 
 
 

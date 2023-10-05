@@ -364,26 +364,10 @@ update msg model =
 
         -- CELLS, NOTEBOOKS
         SubmitPackageList ->
-            let
-                split str =
-                    case str |> String.split ":" of
-                        [ a, b ] ->
-                            Just { name = String.trim a, version = String.trim b }
+            ( model, Notebook.Package.sendPackageList (Notebook.Package.makePackageList model) )
 
-                        _ ->
-                            Nothing
-
-                packageList =
-                    model.inputPackages
-                        |> Debug.log "Raw package list"
-                        |> String.trim
-                        |> String.lines
-                        |> List.filter (\line -> line /= "" && String.contains ":" line)
-                        |> List.map (\line -> split line)
-                        |> List.filterMap identity
-                        |> Debug.log "packageList"
-            in
-            ( model, Notebook.Package.sendPackageList packageList )
+        SubmitTest ->
+            ( model, Notebook.Package.sendPackageList (Notebook.Package.makePackageList model) )
 
         PackageListSent result ->
             case result of

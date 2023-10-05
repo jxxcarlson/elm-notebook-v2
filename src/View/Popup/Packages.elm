@@ -26,6 +26,7 @@ view model =
                 [ View.Input.submitPackageList model
                 , Element.row [ Element.spacing 18 ]
                     [ View.Button.submitPackageList
+                    , View.Button.submitTest
                     , View.Button.dismissPopup
                     ]
                 , Element.el [ Element.width Element.fill, Element.paddingXY 8 8, View.Style.bgGray 0 ] (Message.viewSmall 250 model)

@@ -164,6 +164,7 @@ type FrontendMsg
     | AskToDeleteDataSet Notebook.DataSet.DataSetMetaData
       -- CELL
     | SubmitPackageList
+    | SubmitTest
     | PackageListSent (Result Http.Error ())
     | ClearNotebookValues
     | ExecuteNotebook
