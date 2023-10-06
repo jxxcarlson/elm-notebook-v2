@@ -38,12 +38,6 @@ mergeDictionaries dict1 dict2 =
     Dict.fromList (Dict.toList dict1 ++ Dict.toList dict2)
 
 
-
---elmJsonDecoder : Decoder (Dict String String)
---elmJsonDecoder =
---    Decode.field "dependencies" (Decode.dict Decode.string)
-
-
 makePackageList : Types.FrontendModel -> List String
 makePackageList model =
     model.inputPackages

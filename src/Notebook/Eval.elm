@@ -5,6 +5,7 @@ module Notebook.Eval exposing
     , initEmptyEvalState
     , initEvalState
     , insertDeclaration
+    , makeEvalState
     , removeDeclaration
     , replDataCodec
     , replErrorOffset
@@ -33,13 +34,37 @@ replDataCodec =
         |> Codec.buildObject
 
 
-requestEvaluation : EvalState -> Cell -> String -> Cmd FrontendMsg
-requestEvaluation evalState cell expr =
+makeEvalState : Dict String Notebook.Types.ElmPackageSummary -> EvalState
+makeEvalState packageSummary =
+    let
+        exposedModules : List String
+        exposedModules =
+            Dict.values packageSummary
+                |> List.map .exposedModules
+                |> List.concat
+
+        imports =
+            exposedModules
+                |> List.map (\name -> ( name, "import " ++ name ++ "\n" ))
+                |> Dict.fromList
+    in
+    { decls = Dict.empty
+    , types = Dict.empty
+    , imports =
+        Dict.fromList
+            [ ( "List.Extra", "import List.Extra\n" )
+            ]
+    }
+        |> Debug.log "EvalState"
+
+
+requestEvaluation : Dict String Notebook.Types.ElmPackageSummary -> Cell -> String -> Cmd FrontendMsg
+requestEvaluation elmJsonDependencies cell expr =
     Http.post
         { -- url = "http://localhost:8000/repl"
           -- url = "http://repl.lamdera.com/api/repl"
           url = "http://localhost:8000/repl"
-        , body = Http.jsonBody (encodeExpr evalState expr)
+        , body = Http.jsonBody (encodeExpr (makeEvalState elmJsonDependencies) expr)
         , expect = Http.expectString (Types.GotReply cell)
         }
 
@@ -92,30 +117,16 @@ displayItem ( k, v ) =
         ]
 
 
-initEvalState : EvalState
-initEvalState =
-    { decls =
-        Dict.fromList
-            [ ( "inc", "inc x = x + 1\n" )
-            , ( "foo", "foo = 123\n" )
-            , ( "bar", "bar = 456\n" )
-            ]
-    , types = Dict.fromList []
-    , imports = Dict.fromList [ ( "elm-community/list-extra", "import List.Extra\n" ) ]
+initEmptyEvalState : EvalState
+initEmptyEvalState =
+    { decls = Dict.empty
+    , types = Dict.empty
+    , imports = Dict.empty
     }
 
 
-
---initEmptyEvalState : EvalState
---initEmptyEvalState =
---    { decls = Dict.empty
---    , types = Dict.empty
---    , imports = Dict.empty
---    }
-
-
-initEmptyEvalState : EvalState
-initEmptyEvalState =
+initEvalState : EvalState
+initEvalState =
     { decls = Dict.empty
     , types = Dict.empty
     , imports =

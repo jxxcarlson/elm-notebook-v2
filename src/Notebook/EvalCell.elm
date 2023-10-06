@@ -83,7 +83,7 @@ executeCell cellIndex model =
                 Cell.CTCode ->
                     case Notebook.Parser.classify cell.text of
                         Notebook.Parser.Expr sourceText ->
-                            ( model, Eval.requestEvaluation model.evalState cell sourceText )
+                            ( model, Eval.requestEvaluation model.elmJsonDependencies cell sourceText )
 
                         Notebook.Parser.Decl _ _ ->
                             ( model, Cmd.none )
@@ -197,7 +197,7 @@ processExpr model cell sourceText =
         processRemoveCmd model sourceText
 
     else
-        ( model, Eval.requestEvaluation model.evalState cell sourceText )
+        ( model, Eval.requestEvaluation model.elmJsonDependencies cell sourceText )
 
 
 processClearCmd model =
