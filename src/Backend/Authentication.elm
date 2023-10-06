@@ -113,6 +113,13 @@ signIn model clientId username encryptedPassword =
                 ( model
                 , Cmd.batch
                     [ Lamdera.sendToFrontend clientId (SendUser userData.user)
+                    , Lamdera.sendToFrontend clientId
+                        (GotUsersPackageDictInfo
+                            (Dict.get user.username model.usernameToNotebookPackageSummaryDict
+                                |> Maybe.withDefault Dict.empty
+                                |> Debug.log "GotUsersPackageDictInfo(BE)"
+                            )
+                        )
                     , curentBookCmd
                     , Backend.Data.getListOfDataSets clientId model Types.PublicDatasets
                     , Backend.Data.getListOfDataSets clientId model (Types.UserDatasets user.username)

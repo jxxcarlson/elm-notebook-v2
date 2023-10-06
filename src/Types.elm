@@ -58,7 +58,8 @@ type alias FrontendModel =
     , evalState : Notebook.Types.EvalState
 
     -- NOTEBOOKS II
-    , elmJsonDependencies : Dict String Notebook.Types.ElmPackageSummary
+    , notebookIdsToElmPackageSummaryDict : DictNoteBookIdsToElmPackageSummaryDict
+    , currentElmJsonDependencies : DictPackageNameToElmPackageSummary
     , elmJsonError : Maybe String
     , kvDict : Dict String String
     , books : List Book
@@ -108,7 +109,8 @@ type alias BackendModel =
 
     -- NOTEBOOK
     , dataSetLibrary : Dict String Notebook.DataSet.DataSet
-    , userToNoteBookDict : UserToNoteBookDict
+    , userToNoteBookDict : UserToNotebookDict
+    , usernameToNotebookPackageSummaryDict : DictUsernameToDictNoteBookIdsToElmPackageSummaryDict
     , slugDict : Dict.Dict String NotebookRecord -- keys are slugs, values are notebook ids
 
     -- USER
@@ -116,6 +118,24 @@ type alias BackendModel =
 
     -- DOCUMENT
     }
+
+
+type alias DictPackageNameToElmPackageSummary =
+    -- keys = package name
+    -- values = ElmPackageSummary
+    Dict String Notebook.Types.ElmPackageSummary
+
+
+type alias DictNoteBookIdsToElmPackageSummaryDict =
+    -- keys = notebook id
+    -- values = ElmPackageSummaryDict
+    Dict String DictPackageNameToElmPackageSummary
+
+
+type alias DictUsernameToDictNoteBookIdsToElmPackageSummaryDict =
+    -- keys = username
+    -- values = NoteBookPackageSummaryDict
+    Dict String DictNoteBookIdsToElmPackageSummaryDict
 
 
 type ShowNotebooks
@@ -267,6 +287,7 @@ type ToBackend
       -- String1 is the DataSet identifier, String2 is the variable in which to store it.
     | GetDataSetForDownload String -- Int is the index of the requesting cell,
       -- NOTEBOOK
+    | SaveElmJsonDependenciesBE String DictNoteBookIdsToElmPackageSummaryDict
     | CreateNotebook String String -- authorname title
     | ImportNewBook String Book
     | SaveNotebook Book
@@ -302,6 +323,7 @@ type ToFrontend
     | GotData Int String Notebook.DataSet.DataSet
     | GotDataForDownload Notebook.DataSet.DataSet
       -- NOTEBOOK
+    | GotUsersPackageDictInfo DictNoteBookIdsToElmPackageSummaryDict -- DictPackageNameToElmPackageSummary
     | GotNotebook Book
     | GotPublicNotebook Book
     | GotNotebooks (Maybe Book) (List Book)
@@ -338,7 +360,7 @@ type alias NoteBookDict =
 
 {-| UserToNotebookDict is the master dictionary for all notebooks
 -}
-type alias UserToNoteBookDict =
+type alias UserToNotebookDict =
     Dict.Dict Username NoteBookDict
 
 

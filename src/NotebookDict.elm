@@ -29,7 +29,7 @@ type NotebookDataError
 --        |> Dict.fromList
 
 
-remove : Types.Username -> String -> Types.UserToNoteBookDict -> Types.UserToNoteBookDict
+remove : Types.Username -> String -> Types.UserToNotebookDict -> Types.UserToNotebookDict
 remove username_ identifier userToNoteBookDict =
     case Dict.get username_ userToNoteBookDict of
         Nothing ->
@@ -44,7 +44,7 @@ remove username_ identifier userToNoteBookDict =
     Find a notebook by username and identifier.
 
 -}
-lookup : Types.Username -> String -> Types.UserToNoteBookDict -> Result NotebookDataError Book
+lookup : Types.Username -> String -> Types.UserToNotebookDict -> Result NotebookDataError Book
 lookup username_ identifier userToNotbookDict =
     case Dict.get username_ userToNotbookDict of
         Nothing ->
@@ -68,7 +68,7 @@ lookup username_ identifier userToNotbookDict =
     Return all notebooks belonging to a user.
 
 -}
-allForUser : Types.Username -> Types.UserToNoteBookDict -> List Book
+allForUser : Types.Username -> Types.UserToNotebookDict -> List Book
 allForUser username_ dict =
     case Dict.get username_ dict of
         Nothing ->
@@ -78,7 +78,7 @@ allForUser username_ dict =
             Dict.values notebookDict
 
 
-allPublicWithAuthor : Types.Username -> Types.UserToNoteBookDict -> List Book
+allPublicWithAuthor : Types.Username -> Types.UserToNotebookDict -> List Book
 allPublicWithAuthor username dict =
     dict
         |> Dict.values
@@ -87,7 +87,7 @@ allPublicWithAuthor username dict =
         |> List.filter (\book -> book.public && book.author /= username)
 
 
-allPublic : Types.UserToNoteBookDict -> List Book
+allPublic : Types.UserToNotebookDict -> List Book
 allPublic dict =
     dict
         |> Dict.values
@@ -101,7 +101,7 @@ allPublic dict =
     Insert a notebook for a user into the master dictionary.
 
 -}
-insert : Types.Username -> String -> Book -> Types.UserToNoteBookDict -> Types.UserToNoteBookDict
+insert : Types.Username -> String -> Book -> Types.UserToNotebookDict -> Types.UserToNotebookDict
 insert username_ identifier notebook userToNotebookDict =
     case Dict.get username_ userToNotebookDict of
         Nothing ->

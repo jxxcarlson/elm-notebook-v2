@@ -34,7 +34,7 @@ view model =
                     , Background.color (E.rgb 1 1 1)
                     , E.spacing 12
                     ]
-                    (viewPackage model.elmJsonDependencies)
+                    (viewPackage model.currentElmJsonDependencies)
                 , E.row [ E.spacing 18 ]
                     [ View.Button.submitPackageList
 

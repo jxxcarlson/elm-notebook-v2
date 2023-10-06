@@ -74,7 +74,8 @@ init url key =
       , url = url
 
       -- NOTEBOOK (NEW)
-      , elmJsonDependencies = Dict.empty
+      , notebookIdsToElmPackageSummaryDict = Dict.empty
+      , currentElmJsonDependencies = Dict.empty
       , elmJsonError = Nothing
       , evalState = Notebook.Eval.initEmptyEvalState
       , message = "Welcome!"
@@ -176,12 +177,26 @@ update msg model =
                     ( { model | message = "Error retrieving elm.json dependencies" }, Cmd.none )
 
                 Ok data ->
-                    ( { model
-                        | elmJsonDependencies =
-                            Notebook.Package.mergeDictionaries (Dict.singleton data.name data) model.elmJsonDependencies |> Debug.log "MERGED DICT"
-                      }
-                    , Cmd.none
-                    )
+                    case model.currentUser of
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                        Just user ->
+                            let
+                                elmJsonDependencies =
+                                    Notebook.Package.mergeDictionaries (Dict.singleton data.name data) model.currentElmJsonDependencies
+                                        |> Debug.log "FOR_USER_ELM_JSON_DEPENDENCIES(@FE)"
+
+                                notebookIdsToElmPackageSummaryDict =
+                                    Dict.insert model.currentBook.id elmJsonDependencies model.notebookIdsToElmPackageSummaryDict
+                                        |> Debug.log "INSERTED_FOR_USER(@FE)"
+                            in
+                            ( { model
+                                | currentElmJsonDependencies = elmJsonDependencies
+                                , notebookIdsToElmPackageSummaryDict = notebookIdsToElmPackageSummaryDict
+                              }
+                            , sendToBackend (SaveElmJsonDependenciesBE user.username notebookIdsToElmPackageSummaryDict)
+                            )
 
         GotReply cell result ->
             Frontend.ElmCompilerInterop.handleReplyFromElmCompiler model cell result
@@ -526,8 +541,12 @@ update msg model =
                         user =
                             { user_ | currentNotebookId = Just book.id }
 
+                        currentElmJsonDependencies =
+                            Dict.get currentBook.id model.notebookIdsToElmPackageSummaryDict |> Maybe.withDefault Dict.empty |> Debug.log "currentElmJsonDependencies_FOR_USER"
+
                         newModel =
-                            Notebook.EvalCell.updateDeclarationsDictionary { model | currentBook = currentBook }
+                            Notebook.EvalCell.updateDeclarationsDictionary
+                                { model | currentBook = currentBook, currentElmJsonDependencies = currentElmJsonDependencies }
                     in
                     ( { newModel
                         | currentUser = Just user
@@ -717,6 +736,18 @@ updateFromBackend msg model =
             ( model, File.Download.string (String.replace "." "-" dataSet.identifier ++ ".csv") "text/csv" dataSet.data )
 
         -- NOTEBOOKS
+        GotUsersPackageDictInfo notebookIdsToElmPackageSummaryDict ->
+            let
+                currentElmJsonDependencies =
+                    Dict.get model.currentBook.id notebookIdsToElmPackageSummaryDict |> Maybe.withDefault Dict.empty |> Debug.log "currentElmJsonDependencies_FOR_USER"
+            in
+            ( { model
+                | notebookIdsToElmPackageSummaryDict = notebookIdsToElmPackageSummaryDict
+                , currentElmJsonDependencies = currentElmJsonDependencies
+              }
+            , Cmd.none
+            )
+
         GotNotebook book_ ->
             let
                 book =

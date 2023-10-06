@@ -45,6 +45,7 @@ init =
       , currentTime = Time.millisToPosix 0
 
       -- NOTEBOOK
+      , usernameToNotebookPackageSummaryDict = Dict.empty
       , dataSetLibrary = Dict.empty
       , userToNoteBookDict = Dict.empty
       , slugDict = Dict.empty
@@ -92,8 +93,6 @@ updateFromFrontend sessionId clientId msg model =
         Types.UpdateUserWith user ->
             ( { model | authenticationDict = Authentication.updateUser user model.authenticationDict }, Cmd.none )
 
-        --SignInBE username encryptedPassword ->
-        --    Backend.Authentication.signIn model sessionId clientId username encryptedPassword
         Types.SignInBEDev ->
             Backend.Authentication.signIn model clientId "localuser" (Authentication.encryptForTransit "asdfasdf")
 
@@ -157,8 +156,29 @@ updateFromFrontend sessionId clientId msg model =
             Backend.Data.createDataSet model clientId dataSet_
 
         -- NOTEBOOKS
+        Types.SaveElmJsonDependenciesBE username elmJsonDependenciesFromUser ->
+            ( { model
+                | usernameToNotebookPackageSummaryDict =
+                    Dict.insert username elmJsonDependenciesFromUser (model.usernameToNotebookPackageSummaryDict |> Debug.log "DICT_TO_INSERT_FOR_USER")
+                        |> Debug.log "INSERTED_ELM_JSON_DEPENDENCIES_FOR_USER"
+              }
+            , Cmd.none
+            )
+
         Types.GetUsersNotebooks username ->
-            ( model, sendToFrontend clientId (GotNotebooks Nothing (NotebookDict.allForUser username model.userToNoteBookDict)) )
+            let
+                _ =
+                    Debug.log "GetUsersNotebooks" username
+
+                notebooks =
+                    NotebookDict.allForUser username model.userToNoteBookDict
+            in
+            ( model
+            , Cmd.batch
+                [ sendToFrontend clientId (GotNotebooks Nothing notebooks)
+                , sendToFrontend clientId (GotUsersPackageDictInfo (Dict.get username model.usernameToNotebookPackageSummaryDict |> Maybe.withDefault Dict.empty))
+                ]
+            )
 
         Types.GetPublicNotebook slug ->
             Backend.Notebook.getPublicNotebook model clientId slug
