@@ -98,7 +98,7 @@ data model =
 
 
 submitPackageList model =
-    multiLineTemplate 500 600 "Packages" InputPackages model.inputPackages
+    multiLineTemplate 500 300 "Packages" InputPackages model.inputPackages
 
 
 
