@@ -34,8 +34,8 @@ fetchElmJson package =
 
 
 mergeDictionaries : Dict comparable b -> Dict comparable b -> Dict comparable b
-mergeDictionaries dict1 dict2 =
-    Dict.fromList (Dict.toList dict1 ++ Dict.toList dict2)
+mergeDictionaries newDict oldDict =
+    Dict.fromList (Dict.toList newDict ++ Dict.toList oldDict)
 
 
 makePackageList : Types.FrontendModel -> List String
