@@ -60,8 +60,6 @@ requestEvaluation elmJsonDependencies evalState cell expr =
         { -- url = "http://localhost:8000/repl"
           -- url = "http://repl.lamdera.com/api/repl"
           url = "http://localhost:8000/repl"
-
-        --, body = Http.jsonBody (encodeExpr (makeEvalState elmJsonDependencies) expr)
         , body = Http.jsonBody (encodeExpr (updateEvalStateWithPackages elmJsonDependencies evalState) expr)
         , expect = Http.expectString (Types.GotReply cell)
         }
