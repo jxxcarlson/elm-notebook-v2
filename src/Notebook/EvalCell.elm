@@ -83,7 +83,7 @@ executeCell cellIndex model =
                 Cell.CTCode ->
                     case Notebook.Parser.classify cell.text of
                         Notebook.Parser.Expr sourceText ->
-                            ( model, Eval.requestEvaluation model.currentElmJsonDependencies cell sourceText )
+                            ( model, Eval.requestEvaluation model.currentElmJsonDependencies model.evalState cell sourceText )
 
                         Notebook.Parser.Decl _ _ ->
                             ( model, Cmd.none )
@@ -197,7 +197,7 @@ processExpr model cell sourceText =
         processRemoveCmd model sourceText
 
     else
-        ( model, Eval.requestEvaluation model.currentElmJsonDependencies cell sourceText )
+        ( model, Eval.requestEvaluation model.currentElmJsonDependencies model.evalState cell sourceText )
 
 
 processClearCmd model =
@@ -234,6 +234,6 @@ processNameAndExpr : Model -> Cell -> String -> String -> ( Model, Cmd FrontendM
 processNameAndExpr model cell name expr =
     let
         newEvalState =
-            Eval.insertDeclaration name (name ++ " = " ++ expr ++ "\n") model.evalState
+            Eval.insertDeclaration name (name ++ " = " ++ expr ++ "\n") model.evalState |> Debug.log "EVAL STATE, new Declaration"
     in
     ( { model | evalState = newEvalState }, Cmd.none )

@@ -3,14 +3,13 @@ module Notebook.Eval exposing
     , encodeExpr
     , hasReplError
     , initEmptyEvalState
-    , initEvalState
     , insertDeclaration
-    , makeEvalState
     , removeDeclaration
     , replDataCodec
     , replErrorOffset
     , reportError
     , requestEvaluation
+    , updateEvalStateWithPackages
     )
 
 import Codec exposing (Codec, Value)
@@ -34,8 +33,8 @@ replDataCodec =
         |> Codec.buildObject
 
 
-makeEvalState : Dict String Notebook.Types.ElmPackageSummary -> EvalState
-makeEvalState packageSummary =
+updateEvalStateWithPackages : Dict String Notebook.Types.ElmPackageSummary -> EvalState -> EvalState
+updateEvalStateWithPackages packageSummary evalState =
     let
         exposedModules : List String
         exposedModules =
@@ -48,23 +47,22 @@ makeEvalState packageSummary =
                 |> List.map (\name -> ( name, "import " ++ name ++ "\n" ))
                 |> Dict.fromList
     in
-    { decls = Dict.empty
+    { decls = evalState.decls
     , types = Dict.empty
-    , imports =
-        Dict.fromList
-            [ ( "List.Extra", "import List.Extra\n" )
-            ]
+    , imports = imports
     }
         |> Debug.log "EvalState"
 
 
-requestEvaluation : Dict String Notebook.Types.ElmPackageSummary -> Cell -> String -> Cmd FrontendMsg
-requestEvaluation elmJsonDependencies cell expr =
+requestEvaluation : Dict String Notebook.Types.ElmPackageSummary -> EvalState -> Cell -> String -> Cmd FrontendMsg
+requestEvaluation elmJsonDependencies evalState cell expr =
     Http.post
         { -- url = "http://localhost:8000/repl"
           -- url = "http://repl.lamdera.com/api/repl"
           url = "http://localhost:8000/repl"
-        , body = Http.jsonBody (encodeExpr (makeEvalState elmJsonDependencies) expr)
+
+        --, body = Http.jsonBody (encodeExpr (makeEvalState elmJsonDependencies) expr)
+        , body = Http.jsonBody (encodeExpr (updateEvalStateWithPackages elmJsonDependencies evalState) expr)
         , expect = Http.expectString (Types.GotReply cell)
         }
 
@@ -122,17 +120,6 @@ initEmptyEvalState =
     { decls = Dict.empty
     , types = Dict.empty
     , imports = Dict.empty
-    }
-
-
-initEvalState : EvalState
-initEvalState =
-    { decls = Dict.empty
-    , types = Dict.empty
-    , imports =
-        Dict.fromList
-            [ ( "List.Extra", "import List.Extra\n" )
-            ]
     }
 
 
