@@ -62,7 +62,7 @@ updateElmJsonDependencies model =
     let
         packageList : List String
         packageList =
-            makePackageList model
+            makePackageList model |> Debug.log "MAKE_PACKAGE_LIST"
 
         n =
             packageList |> List.length
