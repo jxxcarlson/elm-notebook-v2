@@ -9,6 +9,7 @@ module Notebook.Types exposing
     , PackageList
     , ReplData
     , StyledString
+    , cleanElmPackageSummary
     )
 
 import Dict exposing (Dict)
@@ -33,6 +34,11 @@ type alias ElmPackageSummary =
     , name : String
     , version : String
     }
+
+
+cleanElmPackageSummary : ElmPackageSummary -> ElmPackageSummary
+cleanElmPackageSummary summary =
+    { summary | dependencies = Dict.remove "elm/core" summary.dependencies } |> Debug.log "CLEAN_DEPENDENCIES"
 
 
 type alias ExposedModules =

@@ -184,7 +184,7 @@ update msg model =
                         Just user ->
                             let
                                 elmJsonDependencies =
-                                    Notebook.Package.mergeDictionaries (Dict.singleton data.name data) model.currentElmJsonDependencies
+                                    Notebook.Package.mergeDictionaries (Dict.singleton data.name (Notebook.Types.cleanElmPackageSummary data)) model.currentElmJsonDependencies
                                         |> Debug.log "FOR_USER_ELM_JSON_DEPENDENCIES(@FE)"
 
                                 notebookIdsToElmPackageSummaryDict =
