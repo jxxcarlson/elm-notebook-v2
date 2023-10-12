@@ -215,7 +215,10 @@ processCode model cell =
                     processExpr model cell sourceText
 
                 Notebook.Parser.Decl name sourceText ->
-                    processNameAndExpr model cell name sourceText
+                    processDeclaration model cell name sourceText
+
+                Notebook.Parser.Import name sourceText ->
+                    processImport model cell name sourceText
 
                 _ ->
                     ( { model | message = "Unimplemented (parse import or type (33))" }, Cmd.none )
@@ -263,10 +266,19 @@ processRemoveCmd model expr =
             ( model, Cmd.none )
 
 
-processNameAndExpr : Model -> Cell -> String -> String -> ( Model, Cmd FrontendMsg )
-processNameAndExpr model cell name expr =
+processDeclaration : Model -> Cell -> String -> String -> ( Model, Cmd FrontendMsg )
+processDeclaration model cell name expr =
     let
         newEvalState =
-            Eval.insertDeclaration name (name ++ " = " ++ expr ++ "\n") model.evalState |> Debug.log "EVAL STATE, new Declaration"
+            Eval.insertDeclaration name (name ++ " = " ++ expr ++ "\n") model.evalState |> Debug.log "EVAL_STATE, new Declaration"
+    in
+    ( { model | evalState = newEvalState }, Cmd.none )
+
+
+processImport : Model -> Cell -> String -> String -> ( Model, Cmd FrontendMsg )
+processImport model cell name expr =
+    let
+        newEvalState =
+            Eval.insertImport name ("import " ++ name ++ " " ++ expr ++ "\n") model.evalState |> Debug.log "EVAL_STATE, new import"
     in
     ( { model | evalState = newEvalState }, Cmd.none )

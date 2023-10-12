@@ -545,15 +545,14 @@ update msg model =
                         user =
                             { user_ | currentNotebookId = Just book.id }
 
-                        currentElmJsonDependencies : Types.DictPackageNameToElmPackageSummary
-                        currentElmJsonDependencies =
-                            Dict.get currentBook.id (model.notebookIdsToElmPackageSummaryDict |> Debug.log "ALL_DEPENDENCIES (1)")
-                                |> Maybe.withDefault Dict.empty
-                                |> Debug.log "currentElmJsonDependencies_FOR_USER"
-
+                        --currentElmJsonDependencies : Types.DictPackageNameToElmPackageSummary
+                        --currentElmJsonDependencies =
+                        --    Dict.get currentBook.id (model.notebookIdsToElmPackageSummaryDict |> Debug.log "ALL_DEPENDENCIES (1)")
+                        --        |> Maybe.withDefault Dict.empty
+                        --        |> Debug.log "currentElmJsonDependencies_FOR_USER"
                         newModel =
                             Notebook.EvalCell.updateDeclarationsDictionary
-                                { model | currentBook = currentBook, currentElmJsonDependencies = currentElmJsonDependencies }
+                                { model | currentBook = currentBook }
                     in
                     ( { newModel
                         | currentUser = Just user

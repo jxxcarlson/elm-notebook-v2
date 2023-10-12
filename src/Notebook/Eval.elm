@@ -4,6 +4,7 @@ module Notebook.Eval exposing
     , hasReplError
     , initEmptyEvalState
     , insertDeclaration
+    , insertImport
     , removeDeclaration
     , replDataCodec
     , replErrorOffset
@@ -61,7 +62,9 @@ requestEvaluation elmJsonDependencies evalState cell expr =
         { -- url = "http://localhost:8000/repl"
           -- url = "http://repl.lamdera.com/api/repl"
           url = "http://localhost:8000/repl"
-        , body = Http.jsonBody (encodeExpr (updateEvalStateWithPackages elmJsonDependencies evalState) expr)
+
+        -- , body = Http.jsonBody (encodeExpr (updateEvalStateWithPackages elmJsonDependencies evalState) expr)
+        , body = Http.jsonBody (encodeExpr evalState expr)
         , expect = Http.expectString (Types.GotReply cell)
         }
 
@@ -89,6 +92,14 @@ removeDeclaration name evalState =
     { evalState
         | decls =
             Dict.remove name evalState.decls
+    }
+
+
+insertImport : String -> String -> EvalState -> EvalState
+insertImport name value evalState =
+    { evalState
+        | imports =
+            Dict.insert (String.trim name) value evalState.imports
     }
 
 

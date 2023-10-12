@@ -62,7 +62,7 @@ declarationsParser =
         |. symbol "="
         |. spaces
         |= getOffset
-        |. chompUntilEndOr "\n"
+        |. chompUntilEndOr "\n\n"
         |= getOffset
         |= getSource
 
