@@ -58,8 +58,8 @@ updateEvalStateWithPackages packageSummary evalState =
         |> Debug.log "EvalState"
 
 
-requestEvaluation : Dict String Notebook.Types.ElmPackageSummary -> EvalState -> Cell -> String -> Cmd FrontendMsg
-requestEvaluation elmJsonDependencies evalState cell expr =
+requestEvaluation : EvalState -> Cell -> String -> Cmd FrontendMsg
+requestEvaluation evalState cell expr =
     Http.post
         { url =
             case Env.mode of
