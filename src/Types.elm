@@ -186,7 +186,7 @@ type FrontendMsg
       -- CELL
     | SubmitPackageList
     | SubmitTest
-    | PackageListSent (Result Http.Error ())
+    | PackageListSent (Result Http.Error String)
     | ClearNotebookValues
     | ExecuteNotebook
     | UpdateDeclarationsDictionary
