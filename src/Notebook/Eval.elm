@@ -61,11 +61,7 @@ requestEvaluation : Dict String Notebook.Types.ElmPackageSummary -> EvalState ->
 requestEvaluation elmJsonDependencies evalState cell expr =
     Http.post
         { -- url = "http://localhost:8000/repl"
-          -- url = "http://repl.lamdera.com/api/repl"
-          -- url = "http://repl.lamdera.com/api/repl"
-          url = "http://localhost:8000/repl"
-
-        -- , body = Http.jsonBody (encodeExpr (updateEvalStateWithPackages elmJsonDependencies evalState) expr)
+          url = "https://repl.lamdera.com/repl"
         , body = Http.jsonBody (encodeExpr evalState expr)
         , expect = Http.expectString (Types.GotReply cell)
         }
