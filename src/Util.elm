@@ -1,5 +1,6 @@
 module Util exposing
-    ( firstPart
+    ( compressSpaces
+    , firstPart
     , getChunks
     , insertInList
     , roundTo
@@ -7,6 +8,24 @@ module Util exposing
     )
 
 import List.Extra
+import Regex exposing (Regex, replace)
+
+
+{-| Replace multiple spaces with a single space
+-}
+compressSpaces : String -> String
+compressSpaces str =
+    userReplace " +" (\_ -> " ") str
+
+
+userReplace : String -> (Regex.Match -> String) -> String -> String
+userReplace userRegex replacer string =
+    case Regex.fromString userRegex of
+        Nothing ->
+            string
+
+        Just regex ->
+            Regex.replace regex replacer string
 
 
 roundTo : Int -> Float -> Float
