@@ -433,7 +433,7 @@ update msg model =
             Notebook.EvalCell.executeNotebook model
 
         UpdateDeclarationsDictionary ->
-            ( Notebook.EvalCell.updateDeclarationsDictionary model, Cmd.none )
+            ( { model | evalState = Notebook.EvalCell.updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState }, Cmd.none )
 
         ToggleCellLock cell ->
             ( Notebook.Update.toggleCellLock cell model, Cmd.none )
@@ -546,14 +546,8 @@ update msg model =
                         user =
                             { user_ | currentNotebookId = Just book.id }
 
-                        --currentElmJsonDependencies : Types.DictPackageNameToElmPackageSummary
-                        --currentElmJsonDependencies =
-                        --    Dict.get currentBook.id (model.notebookIdsToElmPackageSummaryDict |> Debug.log "ALL_DEPENDENCIES (1)")
-                        --        |> Maybe.withDefault Dict.empty
-                        --        |> Debug.log "currentElmJsonDependencies_FOR_USER"
                         newModel =
-                            Notebook.EvalCell.updateDeclarationsDictionary
-                                { model | currentBook = currentBook }
+                            { model | evalState = Notebook.EvalCell.updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState, currentBook = currentBook }
                     in
                     ( { newModel
                         | currentUser = Just user
@@ -771,11 +765,10 @@ updateFromBackend msg model =
                         xbook :: books
 
                 newModel =
-                    Notebook.EvalCell.updateDeclarationsDictionary { model | currentBook = book }
+                    { model | evalState = Notebook.EvalCell.updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState, currentBook = book }
             in
             ( { newModel
-                | evalState = Notebook.Types.emptyEvalState
-                , currentBook = book
+                | currentBook = book
                 , books = addOrReplaceBook book model.books
               }
             , Cmd.none
@@ -795,7 +788,7 @@ updateFromBackend msg model =
                     Notebook.Book.initializeCellState book_
 
                 newModel =
-                    Notebook.EvalCell.updateDeclarationsDictionary { model | currentBook = book }
+                    { model | evalState = Notebook.EvalCell.updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState, currentBook = book }
 
                 addOrReplaceBook xbook books =
                     if List.any (\b -> b.id == xbook.id) books then
@@ -818,12 +811,12 @@ updateFromBackend msg model =
                 Nothing ->
                     ( model, Cmd.none )
 
-                Just book ->
+                Just currentBook ->
                     let
                         newModel =
-                            Notebook.EvalCell.updateDeclarationsDictionary { model | currentBook = book }
+                            { model | evalState = Notebook.EvalCell.updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState, currentBook = currentBook }
                     in
-                    ( { newModel | books = books }, Cmd.none )
+                    ( { newModel | books = books, currentBook = currentBook }, Cmd.none )
 
 
 view : Model -> { title : String, body : List (Html.Html FrontendMsg) }
