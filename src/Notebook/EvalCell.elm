@@ -82,20 +82,28 @@ executeCell cellIndex model =
             case cell.tipe of
                 Cell.CTCode ->
                     case Notebook.Parser.classify cell.text of
-                        Notebook.Parser.Expr sourceText ->
-                            let
-                                cleanCell =
-                                    { cell | report = Nothing, replData = Nothing, value = CVNone }
+                        Err _ ->
+                            ( { model | message = "Parse error (Cell)" }, Cmd.none )
 
-                                cleanBook =
-                                    Notebook.CellHelper.updateBookWithCell cleanCell model.currentBook
-                            in
-                            ( { model | currentCell = Just cleanCell, currentBook = cleanBook }
-                            , Eval.requestEvaluation model.currentElmJsonDependencies model.evalState cell sourceText
-                            )
+                        Ok classif ->
+                            case classif of
+                                Notebook.Parser.Expr sourceText ->
+                                    let
+                                        cleanCell =
+                                            { cell | report = Nothing, replData = Nothing, value = CVNone }
 
-                        Notebook.Parser.Decl _ _ ->
-                            ( model, Cmd.none )
+                                        cleanBook =
+                                            Notebook.CellHelper.updateBookWithCell cleanCell model.currentBook
+                                    in
+                                    ( { model | currentCell = Just cleanCell, currentBook = cleanBook }
+                                    , Eval.requestEvaluation model.currentElmJsonDependencies model.evalState cell sourceText
+                                    )
+
+                                Notebook.Parser.Decl _ _ ->
+                                    ( model, Cmd.none )
+
+                                _ ->
+                                    ( { model | message = "Unimplemented (parse import or type)" }, Cmd.none )
 
                 Cell.CTMarkdown ->
                     ( model, Cmd.none )
@@ -141,11 +149,19 @@ updateDeclarationsDictionaryWithCell cell model =
 
         Cell.CTCode ->
             case Notebook.Parser.classify cell.text of
-                Notebook.Parser.Expr _ ->
-                    model
+                Err _ ->
+                    { model | message = "Parse error (11)" }
 
-                Notebook.Parser.Decl name sourceText ->
-                    { model | evalState = Eval.insertDeclaration name (name ++ " = " ++ sourceText ++ "\n") model.evalState }
+                Ok classif ->
+                    case classif of
+                        Notebook.Parser.Expr _ ->
+                            model
+
+                        Notebook.Parser.Decl name sourceText ->
+                            { model | evalState = Eval.insertDeclaration name (name ++ " = " ++ sourceText ++ "\n") model.evalState }
+
+                        _ ->
+                            { model | message = "Unimplemented (parse import or type (2))" }
 
 
 
@@ -190,11 +206,19 @@ processMarkdown model cell =
 processCode : Model -> Cell -> ( Model, Cmd FrontendMsg )
 processCode model cell =
     case Notebook.Parser.classify cell.text of
-        Notebook.Parser.Expr sourceText ->
-            processExpr model cell sourceText
+        Err _ ->
+            ( { model | message = "Parse error (22)3" }, Cmd.none )
 
-        Notebook.Parser.Decl name sourceText ->
-            processNameAndExpr model cell name sourceText
+        Ok classif ->
+            case classif of
+                Notebook.Parser.Expr sourceText ->
+                    processExpr model cell sourceText
+
+                Notebook.Parser.Decl name sourceText ->
+                    processNameAndExpr model cell name sourceText
+
+                _ ->
+                    ( { model | message = "Unimplemented (parse import or type (33))" }, Cmd.none )
 
 
 processExpr : Model -> Cell -> String -> ( Model, Cmd FrontendMsg )

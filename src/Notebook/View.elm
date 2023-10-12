@@ -212,33 +212,49 @@ viewSuccess viewData cell =
     case cell.value of
         CVNone ->
             case Notebook.Parser.classify cell.text of
-                Notebook.Parser.Expr _ ->
-                    E.el
-                        [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-                        , View.Style.monospace
-                        ]
-                        (par realWidth
-                            [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) "Nothing" ]
-                        )
-
-                Notebook.Parser.Decl _ _ ->
-                    -- E.el [ E.height (E.px 30), E.width (E.px 100), E.paddingXY 24 12 ] (E.text "Ok")
+                Err _ ->
                     E.none
+
+                Ok classif ->
+                    case classif of
+                        Notebook.Parser.Expr _ ->
+                            E.el
+                                [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+                                , View.Style.monospace
+                                ]
+                                (par realWidth
+                                    [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) "Nothing" ]
+                                )
+
+                        Notebook.Parser.Decl _ _ ->
+                            -- E.el [ E.height (E.px 30), E.width (E.px 100), E.paddingXY 24 12 ] (E.text "Ok")
+                            E.none
+
+                        _ ->
+                            E.none
 
         CVString str ->
             case Notebook.Parser.classify cell.text of
-                Notebook.Parser.Expr _ ->
-                    E.el
-                        [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-                        , View.Style.monospace
-                        ]
-                        (par realWidth
-                            [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) str ]
-                        )
-
-                Notebook.Parser.Decl _ _ ->
-                    -- E.el [ E.height (E.px 30), E.width (E.px 100), E.paddingXY 24 12 ] (E.text "Ok")
+                Err _ ->
                     E.none
+
+                Ok classif ->
+                    case classif of
+                        Notebook.Parser.Expr _ ->
+                            E.el
+                                [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+                                , View.Style.monospace
+                                ]
+                                (par realWidth
+                                    [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) str ]
+                                )
+
+                        Notebook.Parser.Decl _ _ ->
+                            -- E.el [ E.height (E.px 30), E.width (E.px 100), E.paddingXY 24 12 ] (E.text "Ok")
+                            E.none
+
+                        _ ->
+                            E.none
 
         CVMarkdown str ->
             par realWidth
