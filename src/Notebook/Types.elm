@@ -10,6 +10,7 @@ module Notebook.Types exposing
     , ReplData
     , StyledString
     , cleanElmPackageSummary
+    , emptyEvalState
     )
 
 import Dict exposing (Dict)
@@ -65,6 +66,14 @@ type alias EvalState =
     { decls : Dict String String
     , types : Dict String String
     , imports : Dict String String
+    }
+
+
+emptyEvalState : EvalState
+emptyEvalState =
+    { decls = Dict.empty
+    , types = Dict.empty
+    , imports = Dict.empty
     }
 
 
