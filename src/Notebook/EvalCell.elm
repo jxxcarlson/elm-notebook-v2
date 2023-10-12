@@ -239,7 +239,7 @@ processExpr model cell sourceText =
         processRemoveCmd model sourceText
 
     else
-        ( model, Eval.requestEvaluation model.currentElmJsonDependencies model.evalState cell sourceText )
+        ( model, Eval.requestEvaluation model.evalState cell sourceText )
 
 
 processClearCmd model =
