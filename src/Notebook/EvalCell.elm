@@ -96,14 +96,14 @@ executeCell cellIndex model =
                                             Notebook.CellHelper.updateBookWithCell cleanCell model.currentBook
                                     in
                                     ( { model | currentCell = Just cleanCell, currentBook = cleanBook }
-                                    , Eval.requestEvaluation model.currentElmJsonDependencies model.evalState cell sourceText
+                                    , Eval.requestEvaluation model.evalState cell sourceText
                                     )
 
                                 Notebook.Parser.Decl _ _ ->
                                     ( model, Cmd.none )
 
                                 _ ->
-                                    ( { model | message = "Unimplemented (parse import or type)" }, Cmd.none )
+                                    ( model, Cmd.none )
 
                 Cell.CTMarkdown ->
                     ( model, Cmd.none )
