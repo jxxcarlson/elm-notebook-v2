@@ -83,7 +83,16 @@ executeCell cellIndex model =
                 Cell.CTCode ->
                     case Notebook.Parser.classify cell.text of
                         Notebook.Parser.Expr sourceText ->
-                            ( model, Eval.requestEvaluation model.currentElmJsonDependencies model.evalState cell sourceText )
+                            let
+                                cleanCell =
+                                    { cell | report = Nothing, replData = Nothing, value = CVNone }
+
+                                cleanBook =
+                                    Notebook.CellHelper.updateBookWithCell cleanCell model.currentBook
+                            in
+                            ( { model | currentCell = Just cleanCell, currentBook = cleanBook }
+                            , Eval.requestEvaluation model.currentElmJsonDependencies model.evalState cell sourceText
+                            )
 
                         Notebook.Parser.Decl _ _ ->
                             ( model, Cmd.none )
