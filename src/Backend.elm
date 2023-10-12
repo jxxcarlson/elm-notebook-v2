@@ -167,9 +167,6 @@ updateFromFrontend sessionId clientId msg model =
 
         Types.GetUsersNotebooks username ->
             let
-                _ =
-                    Debug.log "GetUsersNotebooks" username
-
                 notebooks =
                     NotebookDict.allForUser username model.userToNoteBookDict
             in
