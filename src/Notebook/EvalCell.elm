@@ -2,7 +2,7 @@ module Notebook.EvalCell exposing
     ( executeCell
     , executeNotebook
     , processCell
-    , updateDeclarationsDictionary
+    , updateEvalStateWithCells
     )
 
 import Dict
@@ -48,11 +48,20 @@ executeNotebook model_ =
                         currentBook.cells
             }
 
-        oldEvalState =
-            model_.evalState
+        newEvalState =
+            updateEvalStateWithCells newBook.cells Notebook.Types.emptyEvalState
+
+        _ =
+            Debug.log "__TYPES, from book" newEvalState.types
+
+        _ =
+            Debug.log "__IMPORTS, from book" newEvalState.imports
+
+        _ =
+            Debug.log "__DECLS, from book" newEvalState.decls
 
         model =
-            updateDeclarationsDictionary { model_ | currentBook = newBook, evalState = { oldEvalState | decls = Dict.empty } }
+            { model_ | currentBook = newBook, evalState = newEvalState }
 
         n =
             List.length model.currentBook.cells
@@ -113,58 +122,38 @@ executeCell cellIndex model =
 -- UPDATE DECLARATIONS DICTIONARY
 
 
-updateDeclarationsDictionary : Model -> Model
-updateDeclarationsDictionary model =
-    let
-        n =
-            List.length model.currentBook.cells
-
-        indices =
-            List.range 0 n
-
-        oldEvalState =
-            model.evalState
-
-        newEvalState =
-            { oldEvalState | decls = Dict.empty }
-    in
-    List.foldl folder { model | evalState = newEvalState |> Debug.log "!EVAL_STATE, updated declarations dictionary" } indices
+updateEvalStateWithCells : List Cell -> EvalState -> EvalState
+updateEvalStateWithCells cells evalState =
+    List.foldl updateEvalStateWithCell evalState cells
 
 
-folder : Int -> Model -> Model
-folder cellIndex model =
-    case List.Extra.getAt cellIndex model.currentBook.cells of
-        Nothing ->
-            model
-
-        Just cell ->
-            updateDeclarationsDictionaryWithCell cell model
-
-
-updateDeclarationsDictionaryWithCell : Cell -> Model -> Model
-updateDeclarationsDictionaryWithCell cell model =
+updateEvalStateWithCell : Cell -> EvalState -> EvalState
+updateEvalStateWithCell cell evalState =
     case cell.tipe of
         Cell.CTMarkdown ->
-            model
+            evalState
 
         Cell.CTCode ->
             case Notebook.Parser.classify cell.text of
                 Err _ ->
-                    { model | message = "Parse error (11)" }
+                    evalState
 
                 Ok classif ->
                     case classif of
                         Notebook.Parser.Expr _ ->
-                            model
+                            evalState
 
                         Notebook.Parser.Decl name sourceText ->
-                            { model | evalState = Eval.insertDeclaration name (name ++ " = " ++ sourceText ++ "\n") model.evalState }
+                            Eval.insertDeclaration name (name ++ " = " ++ sourceText ++ "\n") evalState
 
                         Notebook.Parser.ElmType name expr ->
-                            { model | evalState = Eval.insertTypeDeclaration name ("type " ++ name ++ " = " ++ expr ++ "\n") model.evalState }
+                            Eval.insertTypeDeclaration name ("type " ++ name ++ " = " ++ expr ++ "\n") evalState
+
+                        Notebook.Parser.TypeAlias name expr ->
+                            Eval.insertTypeDeclaration name ("type alias " ++ name ++ " = " ++ expr ++ "\n") evalState
 
                         _ ->
-                            { model | message = "Unimplemented (parse import or type (2))" }
+                            evalState
 
 
 
