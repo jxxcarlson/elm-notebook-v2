@@ -62,7 +62,7 @@ clearNotebookValues book model =
                         book.cells
             }
     in
-    ( { model | currentBook = newBook, currentElmJsonDependencies = Dict.empty }, Lamdera.sendToBackend (Types.SaveNotebook newBook) )
+    ( { model | evalState = Notebook.Types.emptyEvalState, currentBook = newBook, currentElmJsonDependencies = Dict.empty }, Lamdera.sendToBackend (Types.SaveNotebook newBook) )
 
 
 

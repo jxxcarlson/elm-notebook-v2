@@ -558,6 +558,7 @@ update msg model =
                     ( { newModel
                         | currentUser = Just user
                         , books = newModel.books
+                        , evalState = Notebook.Types.emptyEvalState
                       }
                     , Cmd.batch [ sendToBackend (UpdateUserWith user), sendToBackend (SaveNotebook previousBook) ]
                     )
@@ -772,7 +773,13 @@ updateFromBackend msg model =
                 newModel =
                     Notebook.EvalCell.updateDeclarationsDictionary { model | currentBook = book }
             in
-            ( { newModel | currentBook = book, books = addOrReplaceBook book model.books }, Cmd.none )
+            ( { newModel
+                | evalState = Notebook.Types.emptyEvalState
+                , currentBook = book
+                , books = addOrReplaceBook book model.books
+              }
+            , Cmd.none
+            )
 
         GotPublicNotebook book_ ->
             let
