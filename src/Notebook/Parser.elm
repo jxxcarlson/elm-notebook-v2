@@ -3,6 +3,7 @@ module Notebook.Parser exposing
     , classify
     , expressionParser
     , getErrorOffset
+    , importParser
     , replItemParser
     , typeAliasParser
     )

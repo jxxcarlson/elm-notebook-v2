@@ -33,11 +33,6 @@ fetchElmJson package =
         }
 
 
-mergeDictionaries : Dict comparable b -> Dict comparable b -> Dict comparable b
-mergeDictionaries newDict oldDict =
-    Dict.fromList (Dict.toList newDict ++ Dict.toList oldDict)
-
-
 makePackageList : Types.FrontendModel -> List String
 makePackageList model =
     model.inputPackages

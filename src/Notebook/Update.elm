@@ -34,6 +34,7 @@ executed only if it also appears in the list 'commands'.
 --        , VisualType(..)
 --        )
 
+import Dict
 import Lamdera
 import List.Extra
 import Notebook.Book exposing (Book)
@@ -47,9 +48,21 @@ clearNotebookValues : Book -> FrontendModel -> ( FrontendModel, Cmd FrontendMsg 
 clearNotebookValues book model =
     let
         newBook =
-            { book | cells = List.map (\cell -> { cell | value = CVNone, cellState = CSView, report = Nothing, replData = Nothing }) book.cells }
+            { book
+                | cells =
+                    List.map
+                        (\cell ->
+                            { cell
+                                | value = CVNone
+                                , cellState = CSView
+                                , report = Nothing
+                                , replData = Nothing
+                            }
+                        )
+                        book.cells
+            }
     in
-    ( { model | currentBook = newBook }, Lamdera.sendToBackend (Types.SaveNotebook newBook) )
+    ( { model | currentBook = newBook, currentElmJsonDependencies = Dict.empty }, Lamdera.sendToBackend (Types.SaveNotebook newBook) )
 
 
 

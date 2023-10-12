@@ -5,6 +5,7 @@ module Notebook.Eval exposing
     , initEmptyEvalState
     , insertDeclaration
     , insertImport
+    , insertTypeDeclaration
     , removeDeclaration
     , replDataCodec
     , replErrorOffset
@@ -61,6 +62,7 @@ requestEvaluation elmJsonDependencies evalState cell expr =
     Http.post
         { -- url = "http://localhost:8000/repl"
           -- url = "http://repl.lamdera.com/api/repl"
+          -- url = "http://repl.lamdera.com/api/repl"
           url = "http://localhost:8000/repl"
 
         -- , body = Http.jsonBody (encodeExpr (updateEvalStateWithPackages elmJsonDependencies evalState) expr)
@@ -100,6 +102,14 @@ insertImport name value evalState =
     { evalState
         | imports =
             Dict.insert (String.trim name) value evalState.imports
+    }
+
+
+insertTypeDeclaration : String -> String -> EvalState -> EvalState
+insertTypeDeclaration name value evalState =
+    { evalState
+        | types =
+            Dict.insert (String.trim name) value evalState.types
     }
 
 
@@ -149,7 +159,7 @@ encodeExpr evalState expr =
 
         --, ( "imports", Encode.dict identity Encode.string (treeImport |> Debug.log "ENCODE_IMPORTS") )
         --, ( "types", Encode.dict identity Encode.string (evalState.types |> Debug.log "ENCODE_TYPES") )
-        , ( "types", Encode.dict identity Encode.string (typeDict |> Debug.log "ENCODE_TYPES") )
+        , ( "types", Encode.dict identity Encode.string (evalState.imports |> Debug.log "ENCODE_TYPES") )
         , ( "decls", Encode.dict identity Encode.string (evalState.decls |> Debug.log "ENCODE_DECLS") )
         ]
 

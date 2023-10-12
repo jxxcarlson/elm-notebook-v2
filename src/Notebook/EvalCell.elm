@@ -128,7 +128,7 @@ updateDeclarationsDictionary model =
         newEvalState =
             { oldEvalState | decls = Dict.empty }
     in
-    List.foldl folder { model | evalState = newEvalState } indices
+    List.foldl folder { model | evalState = newEvalState |> Debug.log "!EVAL_STATE, updated declarations dictionary" } indices
 
 
 folder : Int -> Model -> Model
@@ -159,6 +159,9 @@ updateDeclarationsDictionaryWithCell cell model =
 
                         Notebook.Parser.Decl name sourceText ->
                             { model | evalState = Eval.insertDeclaration name (name ++ " = " ++ sourceText ++ "\n") model.evalState }
+
+                        Notebook.Parser.ElmType name expr ->
+                            { model | evalState = Eval.insertTypeDeclaration name ("type " ++ name ++ " = " ++ expr ++ "\n") model.evalState }
 
                         _ ->
                             { model | message = "Unimplemented (parse import or type (2))" }
@@ -220,8 +223,11 @@ processCode model cell =
                 Notebook.Parser.Import name sourceText ->
                     processImport model cell name sourceText
 
-                _ ->
-                    ( { model | message = "Unimplemented (parse import or type (33))" }, Cmd.none )
+                Notebook.Parser.TypeAlias name sourceText ->
+                    processTypeDeclaration model cell name sourceText
+
+                Notebook.Parser.ElmType name sourceText ->
+                    processTypeDeclaration model cell name sourceText
 
 
 processExpr : Model -> Cell -> String -> ( Model, Cmd FrontendMsg )
@@ -280,5 +286,14 @@ processImport model cell name expr =
     let
         newEvalState =
             Eval.insertImport name ("import " ++ name ++ " " ++ expr ++ "\n") model.evalState |> Debug.log "EVAL_STATE, new import"
+    in
+    ( { model | evalState = newEvalState }, Cmd.none )
+
+
+processTypeDeclaration : Model -> Cell -> String -> String -> ( Model, Cmd FrontendMsg )
+processTypeDeclaration model cell name expr =
+    let
+        newEvalState =
+            Eval.insertTypeDeclaration name ("type " ++ name ++ " = " ++ expr ++ "\n") model.evalState |> Debug.log "EVAL_STATE, new import"
     in
     ( { model | evalState = newEvalState }, Cmd.none )

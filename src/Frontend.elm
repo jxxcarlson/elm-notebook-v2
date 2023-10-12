@@ -40,6 +40,7 @@ import Time
 import Types exposing (AppMode(..), AppState(..), ClockState(..), DeleteNotebookState(..), FrontendModel, FrontendMsg(..), MessageStatus(..), PopupState(..), ShowNotebooks(..), SignupState(..), ToBackend(..), ToFrontend(..))
 import Url exposing (Url)
 import User
+import Util
 import View.Main
 
 
@@ -188,7 +189,7 @@ update msg model =
                         Just user ->
                             let
                                 elmJsonDependencies =
-                                    Notebook.Package.mergeDictionaries (Dict.singleton data.name (Notebook.Types.cleanElmPackageSummary data)) model.currentElmJsonDependencies
+                                    Util.mergeDictionaries (Dict.singleton data.name (Notebook.Types.cleanElmPackageSummary data)) model.currentElmJsonDependencies
                                         |> Debug.log "FOR_USER_ELM_JSON_DEPENDENCIES(@FE)"
 
                                 notebookIdsToElmPackageSummaryDict =

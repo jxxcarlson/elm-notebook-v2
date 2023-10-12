@@ -56,7 +56,7 @@ declarations model user =
             , E.width (E.px <| View.Geometry.sidePanelWidth model)
             , E.scrollbarY
             ]
-            (Notebook.Eval.displayDictionary model.evalState.decls)
+            (Notebook.Eval.displayDictionary (Util.mergeDictionaries model.evalState.types model.evalState.decls))
         ]
 
 

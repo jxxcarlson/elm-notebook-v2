@@ -3,12 +3,19 @@ module Util exposing
     , firstPart
     , getChunks
     , insertInList
+    , mergeDictionaries
     , roundTo
     , secondPart
     )
 
+import Dict exposing (Dict)
 import List.Extra
 import Regex exposing (Regex, replace)
+
+
+mergeDictionaries : Dict comparable b -> Dict comparable b -> Dict comparable b
+mergeDictionaries newDict oldDict =
+    Dict.fromList (Dict.toList newDict ++ Dict.toList oldDict)
 
 
 {-| Replace multiple spaces with a single space
