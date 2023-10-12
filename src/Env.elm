@@ -19,7 +19,7 @@ dummyConfigItem =
 
 
 transitKey =
-    "1f0d8b16-9689-4310-829d-7e0e86abe325"
+    "1f0d8b16-9689-xy77-829d-7e0e86abe325"
 
 
 backendAuthKey =

@@ -18,6 +18,7 @@ import Codec exposing (Codec, Value)
 import Dict exposing (Dict)
 import Element as E exposing (Element)
 import Element.Font as Font
+import Env exposing (Mode(..))
 import Http
 import Json.Encode as Encode
 import Notebook.Cell exposing (Cell)
@@ -60,8 +61,13 @@ updateEvalStateWithPackages packageSummary evalState =
 requestEvaluation : Dict String Notebook.Types.ElmPackageSummary -> EvalState -> Cell -> String -> Cmd FrontendMsg
 requestEvaluation elmJsonDependencies evalState cell expr =
     Http.post
-        { -- url = "http://localhost:8000/repl"
-          url = "https://repl.lamdera.com/repl"
+        { url =
+            case Env.mode of
+                Production ->
+                    "https://repl.lamdera.com/repl"
+
+                Development ->
+                    "http://localhost:8000/repl"
         , body = Http.jsonBody (encodeExpr evalState expr)
         , expect = Http.expectString (Types.GotReply cell)
         }
