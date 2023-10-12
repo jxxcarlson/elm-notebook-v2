@@ -20,6 +20,10 @@ import Types
 -}
 sendPackageList : Notebook.Types.PackageList -> Cmd Types.FrontendMsg
 sendPackageList packageList =
+    let
+        _ =
+            Debug.log "SEND_PACKAGE_LIST" packageList
+    in
     Http.post
         { url =
             case Env.mode of
@@ -78,7 +82,7 @@ updateElmJsonDependencies model =
             List.range 0 (n - 1)
 
         commands =
-            List.map2 (\packageItem idx -> createDelayedCommand packageItem idx) packageList indices
+            List.map2 (\packageItem idx -> createDelayedCommand (packageItem |> Debug.log "_PACKAGE ITEM") idx) packageList indices
 
         delayInMs =
             (n + 1) * 50 |> toFloat
