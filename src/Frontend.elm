@@ -177,6 +177,10 @@ update msg model =
                     ( { model | message = "Error retrieving elm.json dependencies" }, Cmd.none )
 
                 Ok data ->
+                    let
+                        _ =
+                            Debug.log "GOT_ElmJSON_DICT" data
+                    in
                     case model.currentUser of
                         Nothing ->
                             ( model, Cmd.none )
@@ -543,7 +547,9 @@ update msg model =
 
                         currentElmJsonDependencies : Types.DictPackageNameToElmPackageSummary
                         currentElmJsonDependencies =
-                            Dict.get currentBook.id model.notebookIdsToElmPackageSummaryDict |> Maybe.withDefault Dict.empty |> Debug.log "currentElmJsonDependencies_FOR_USER"
+                            Dict.get currentBook.id (model.notebookIdsToElmPackageSummaryDict |> Debug.log "ALL_DEPENDENCIES (1)")
+                                |> Maybe.withDefault Dict.empty
+                                |> Debug.log "currentElmJsonDependencies_FOR_USER"
 
                         newModel =
                             Notebook.EvalCell.updateDeclarationsDictionary
@@ -740,7 +746,9 @@ updateFromBackend msg model =
         GotUsersPackageDictInfo notebookIdsToElmPackageSummaryDict ->
             let
                 currentElmJsonDependencies =
-                    Dict.get model.currentBook.id notebookIdsToElmPackageSummaryDict |> Maybe.withDefault Dict.empty |> Debug.log "currentElmJsonDependencies_FOR_USER"
+                    Dict.get model.currentBook.id (notebookIdsToElmPackageSummaryDict |> Debug.log "ALL_DEPENDENCIES (2)")
+                        |> Maybe.withDefault Dict.empty
+                        |> Debug.log "currentElmJsonDependencies_FOR_USER"
             in
             ( { model
                 | notebookIdsToElmPackageSummaryDict = notebookIdsToElmPackageSummaryDict

@@ -22,6 +22,7 @@ import Notebook.Cell exposing (Cell)
 import Notebook.ErrorReporter as ErrorReporter
 import Notebook.Types exposing (EvalState, MessageItem(..), ReplData)
 import Types exposing (FrontendMsg)
+import Util
 
 
 replDataCodec : Codec ReplData
@@ -121,13 +122,19 @@ initEmptyEvalState =
     }
 
 
+treeImport =
+    Dict.fromList [ ( "Tree", "import Tree\n" ) ]
+
+
 encodeExpr : EvalState -> String -> Encode.Value
 encodeExpr evalState expr =
     Encode.object
-        [ ( "entry", Encode.string expr )
-        , ( "imports", Encode.dict identity Encode.string evalState.imports )
-        , ( "types", Encode.dict identity Encode.string evalState.types )
-        , ( "decls", Encode.dict identity Encode.string evalState.decls )
+        [ ( "entry", Encode.string (expr |> String.replace "\n" " " |> Util.compressSpaces |> Debug.log "ENCODE_EXPR") )
+        , ( "imports", Encode.dict identity Encode.string (evalState.imports |> Debug.log "ENCODE_IMPORTS") )
+
+        --, ( "imports", Encode.dict identity Encode.string (treeImport |> Debug.log "ENCODE_IMPORTS") )
+        , ( "types", Encode.dict identity Encode.string (evalState.types |> Debug.log "ENCODE_TYPES") )
+        , ( "decls", Encode.dict identity Encode.string (evalState.decls |> Debug.log "ENCODE_DECLS") )
         ]
 
 
