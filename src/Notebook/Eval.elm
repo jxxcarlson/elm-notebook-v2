@@ -161,7 +161,7 @@ encodeExpr evalState expr =
 
         --, ( "imports", Encode.dict identity Encode.string (treeImport |> Debug.log "ENCODE_IMPORTS") )
         --, ( "types", Encode.dict identity Encode.string (evalState.types |> Debug.log "ENCODE_TYPES") )
-        , ( "types", Encode.dict identity Encode.string (evalState.imports |> Debug.log "ENCODE_TYPES") )
+        , ( "types", Encode.dict identity Encode.string (evalState.types |> Debug.log "ENCODE_TYPES") )
         , ( "decls", Encode.dict identity Encode.string (evalState.decls |> Debug.log "ENCODE_DECLS") )
         ]
 
