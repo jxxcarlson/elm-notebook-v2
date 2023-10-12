@@ -224,7 +224,7 @@ processCode model cell =
                     processImport model cell name sourceText
 
                 Notebook.Parser.TypeAlias name sourceText ->
-                    processTypeDeclaration model cell name sourceText
+                    processTypeAliasDeclaration model cell name sourceText
 
                 Notebook.Parser.ElmType name sourceText ->
                     processTypeDeclaration model cell name sourceText
@@ -294,6 +294,15 @@ processTypeDeclaration : Model -> Cell -> String -> String -> ( Model, Cmd Front
 processTypeDeclaration model cell name expr =
     let
         newEvalState =
-            Eval.insertTypeDeclaration name ("type " ++ name ++ " = " ++ expr ++ "\n") model.evalState |> Debug.log "EVAL_STATE, new import"
+            Eval.insertTypeDeclaration name ("type " ++ name ++ " = " ++ expr ++ "\n") model.evalState |> Debug.log "EVAL_STATE, new type"
+    in
+    ( { model | evalState = newEvalState }, Cmd.none )
+
+
+processTypeAliasDeclaration : Model -> Cell -> String -> String -> ( Model, Cmd FrontendMsg )
+processTypeAliasDeclaration model cell name expr =
+    let
+        newEvalState =
+            Eval.insertTypeDeclaration name ("type alias " ++ name ++ " = " ++ expr ++ "\n") model.evalState |> Debug.log "EVAL_STATE, new type alias"
     in
     ( { model | evalState = newEvalState }, Cmd.none )
