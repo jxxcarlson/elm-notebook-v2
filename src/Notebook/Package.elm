@@ -13,6 +13,11 @@ import Task
 import Types
 
 
+{-| This function talks to the Elm compiler via
+
+    Endpoint.Package.handlePost :: Snap ()
+
+-}
 sendPackageList : Notebook.Types.PackageList -> Cmd Types.FrontendMsg
 sendPackageList packageList =
     Http.post
@@ -24,7 +29,7 @@ sendPackageList packageList =
                 Development ->
                     "http://localhost:8000/packageList"
         , body = Http.jsonBody (Notebook.Codec.encodePackageList packageList)
-        , expect = Http.expectWhatever Types.PackageListSent
+        , expect = Http.expectString Types.PackageListSent
         }
 
 

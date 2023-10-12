@@ -413,15 +413,15 @@ update msg model =
                 Err _ ->
                     ( { model
                         | popupState = NoPopup
-                        , message = "Error sending package list"
+                        , message = "Could not decode JSON"
                       }
                     , Cmd.none
                     )
 
-                Ok () ->
+                Ok str ->
                     ( { model
                         | popupState = NoPopup
-                        , message = "Package list accepted"
+                        , message = str
                       }
                     , Cmd.none
                     )
