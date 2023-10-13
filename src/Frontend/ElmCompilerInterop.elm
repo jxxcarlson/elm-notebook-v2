@@ -59,16 +59,6 @@ handleReplyFromElmCompiler model cell result =
                 , Cmd.none
                 )
 
-            else if str == "indent" then
-                ( { model
-                    | currentBook =
-                        Notebook.Book.setReplDataAt model.currentCellIndex
-                            (Just [ Notebook.Types.Plain "ERROR — maybe indentation, maybe something else." ])
-                            model.currentBook
-                  }
-                , Cmd.none
-                )
-
             else
                 ( { model
                     | currentCell = Just cell

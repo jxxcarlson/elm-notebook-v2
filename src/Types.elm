@@ -58,8 +58,7 @@ type alias FrontendModel =
     , evalState : Notebook.Types.EvalState
 
     -- NOTEBOOKS II
-    , notebookIdsToElmPackageSummaryDict : DictNoteBookIdsToElmPackageSummaryDict
-    , currentElmJsonDependencies : DictPackageNameToElmPackageSummary
+    , packageDict : PackageDict
     , elmJsonError : Maybe String
     , kvDict : Dict String String
     , books : List Book
@@ -110,7 +109,7 @@ type alias BackendModel =
     -- NOTEBOOK
     , dataSetLibrary : Dict String Notebook.DataSet.DataSet
     , userToNoteBookDict : UserToNotebookDict
-    , usernameToNotebookPackageSummaryDict : DictUsernameToDictNoteBookIdsToElmPackageSummaryDict
+    , usernameToNotebookPackageSummaryDict : UsernameToPackageDictDict
     , slugDict : Dict.Dict String NotebookRecord -- keys are slugs, values are notebook ids
 
     -- USER
@@ -120,22 +119,18 @@ type alias BackendModel =
     }
 
 
-type alias DictPackageNameToElmPackageSummary =
+type alias PackageDict =
     -- keys = package name
     -- values = ElmPackageSummary
+    -- user's elm.json dependencies
     Dict String Notebook.Types.ElmPackageSummary
 
 
-type alias DictNoteBookIdsToElmPackageSummaryDict =
-    -- keys = notebook id
-    -- values = ElmPackageSummaryDict
-    Dict String DictPackageNameToElmPackageSummary
-
-
-type alias DictUsernameToDictNoteBookIdsToElmPackageSummaryDict =
+type alias UsernameToPackageDictDict =
     -- keys = username
-    -- values = NoteBookPackageSummaryDict
-    Dict String DictNoteBookIdsToElmPackageSummaryDict
+    -- values = DictPackageNameToElmPackageSummary
+    -- user to store user's elm.json dependencies
+    Dict String PackageDict
 
 
 type ShowNotebooks
@@ -287,7 +282,7 @@ type ToBackend
       -- String1 is the DataSet identifier, String2 is the variable in which to store it.
     | GetDataSetForDownload String -- Int is the index of the requesting cell,
       -- NOTEBOOK
-    | SaveElmJsonDependenciesBE String DictNoteBookIdsToElmPackageSummaryDict
+    | SaveElmJsonDependenciesBE String PackageDict
     | CreateNotebook String String -- authorname title
     | ImportNewBook String Book
     | SaveNotebook Book
@@ -323,7 +318,7 @@ type ToFrontend
     | GotData Int String Notebook.DataSet.DataSet
     | GotDataForDownload Notebook.DataSet.DataSet
       -- NOTEBOOK
-    | GotUsersPackageDictInfo DictNoteBookIdsToElmPackageSummaryDict -- DictPackageNameToElmPackageSummary
+    | GotPackageDict PackageDict
     | GotNotebook Book
     | GotPublicNotebook Book
     | GotNotebooks (Maybe Book) (List Book)

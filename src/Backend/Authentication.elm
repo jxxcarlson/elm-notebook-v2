@@ -114,7 +114,7 @@ signIn model clientId username encryptedPassword =
                 , Cmd.batch
                     [ Lamdera.sendToFrontend clientId (SendUser userData.user)
                     , Lamdera.sendToFrontend clientId
-                        (GotUsersPackageDictInfo
+                        (GotPackageDict
                             (Dict.get user.username model.usernameToNotebookPackageSummaryDict
                                 |> Maybe.withDefault Dict.empty
                                 |> Debug.log "GotUsersPackageDictInfo(BE)"

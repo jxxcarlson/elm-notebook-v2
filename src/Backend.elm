@@ -173,7 +173,7 @@ updateFromFrontend sessionId clientId msg model =
             ( model
             , Cmd.batch
                 [ sendToFrontend clientId (GotNotebooks Nothing notebooks)
-                , sendToFrontend clientId (GotUsersPackageDictInfo (Dict.get username model.usernameToNotebookPackageSummaryDict |> Maybe.withDefault Dict.empty))
+                , sendToFrontend clientId (GotPackageDict (Dict.get username model.usernameToNotebookPackageSummaryDict |> Maybe.withDefault Dict.empty))
                 ]
             )
 

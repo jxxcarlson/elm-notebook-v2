@@ -61,7 +61,7 @@ nowSendPackageList model =
     let
         packages : List { name : String, version : String }
         packages =
-            model.currentElmJsonDependencies
+            model.packageDict
                 |> Dict.values
                 |> List.map (\value -> { name = value.name, version = value.version })
     in

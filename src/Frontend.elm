@@ -75,8 +75,7 @@ init url key =
       , url = url
 
       -- NOTEBOOK (NEW)
-      , notebookIdsToElmPackageSummaryDict = Dict.empty
-      , currentElmJsonDependencies = Dict.empty
+      , packageDict = Dict.empty
       , elmJsonError = Nothing
       , evalState = Notebook.Eval.initEmptyEvalState
       , message = "Welcome!"
@@ -189,18 +188,13 @@ update msg model =
                         Just user ->
                             let
                                 elmJsonDependencies =
-                                    Util.mergeDictionaries (Dict.singleton data.name (Notebook.Types.cleanElmPackageSummary data)) model.currentElmJsonDependencies
+                                    Util.mergeDictionaries (Dict.singleton data.name (Notebook.Types.cleanElmPackageSummary data)) model.packageDict
                                         |> Debug.log "FOR_USER_ELM_JSON_DEPENDENCIES(@FE)"
-
-                                notebookIdsToElmPackageSummaryDict =
-                                    Dict.insert model.currentBook.id elmJsonDependencies model.notebookIdsToElmPackageSummaryDict
-                                        |> Debug.log "INSERTED_FOR_USER(@FE)"
                             in
                             ( { model
-                                | currentElmJsonDependencies = elmJsonDependencies
-                                , notebookIdsToElmPackageSummaryDict = notebookIdsToElmPackageSummaryDict
+                                | packageDict = elmJsonDependencies
                               }
-                            , sendToBackend (SaveElmJsonDependenciesBE user.username notebookIdsToElmPackageSummaryDict)
+                            , sendToBackend (SaveElmJsonDependenciesBE user.username elmJsonDependencies)
                             )
 
         GotReply cell result ->
@@ -738,19 +732,8 @@ updateFromBackend msg model =
             ( model, File.Download.string (String.replace "." "-" dataSet.identifier ++ ".csv") "text/csv" dataSet.data )
 
         -- NOTEBOOKS
-        GotUsersPackageDictInfo notebookIdsToElmPackageSummaryDict ->
-            let
-                currentElmJsonDependencies =
-                    Dict.get model.currentBook.id (notebookIdsToElmPackageSummaryDict |> Debug.log "ALL_DEPENDENCIES (2)")
-                        |> Maybe.withDefault Dict.empty
-                        |> Debug.log "currentElmJsonDependencies_FOR_USER"
-            in
-            ( { model
-                | notebookIdsToElmPackageSummaryDict = notebookIdsToElmPackageSummaryDict
-                , currentElmJsonDependencies = currentElmJsonDependencies
-              }
-            , Cmd.none
-            )
+        GotPackageDict packageDict ->
+            ( { model | packageDict = packageDict }, Cmd.none )
 
         GotNotebook book_ ->
             let
