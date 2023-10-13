@@ -55,8 +55,6 @@ type alias FrontendModel =
 
     -- NOTEBOOKS
     , evalState : Notebook.Types.EvalState
-
-    -- NOTEBOOKS II
     , packagesFromCompiler : List { name : String, version : String }
     , packageDict : PackageDict
     , elmJsonError : Maybe String

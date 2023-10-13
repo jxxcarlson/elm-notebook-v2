@@ -49,9 +49,10 @@ makePackageList model =
     model.inputPackages
         |> String.trim
         |> String.lines
+        |> (\x -> x ++ [ "" ])
 
 
-nowSendPackageList : Types.FrontendModel -> ( Types.FrontendModel, Cmd Types.FrontendMsg )
+nowSendPackageList : Types.FrontendModel -> Cmd Types.FrontendMsg
 nowSendPackageList model =
     let
         packages : List { name : String, version : String }
@@ -60,16 +61,12 @@ nowSendPackageList model =
                 |> Dict.values
                 |> List.map (\value -> { name = value.name, version = value.version })
     in
-    ( model, sendPackageList packages )
+    sendPackageList packages
 
 
-updateElmJsonDependencies : Types.FrontendModel -> ( Types.FrontendModel, Cmd Types.FrontendMsg )
-updateElmJsonDependencies model =
+installNewPackages : List String -> Cmd Types.FrontendMsg
+installNewPackages packageList =
     let
-        packageList : List String
-        packageList =
-            makePackageList model
-
         n =
             packageList |> List.length
 
@@ -82,10 +79,16 @@ updateElmJsonDependencies model =
         delayInMs =
             (n + 1) * 50 |> toFloat
 
+        delayInMs2 =
+            500 + (n + 1) * 50 |> toFloat
+
         delayCmd =
             Process.sleep delayInMs |> Task.perform (always Types.ExecuteDelayedFunction)
+
+        delayCmd2 =
+            Process.sleep delayInMs2 |> Task.perform (always Types.ExecuteDelayedFunction2)
     in
-    ( model, Cmd.batch <| delayCmd :: commands )
+    Cmd.batch <| delayCmd2 :: delayCmd :: commands
 
 
 createDelayedCommand packageItem idx =
