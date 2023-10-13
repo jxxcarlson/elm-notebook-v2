@@ -9,6 +9,7 @@ import Keyboard
 import Lamdera
 import Notebook.Cell
 import Notebook.EvalCell
+import Notebook.Package
 import Types exposing (PopupState(..))
 
 
@@ -64,7 +65,7 @@ handlePopups model popupState =
                 ( { model | popupState = NoPopup }, Cmd.none )
 
             else
-                ( { model | popupState = PackageListPopup }, Cmd.none )
+                ( { model | popupState = PackageListPopup }, Notebook.Package.requestPackagesFromCompiler )
 
         StateEditorPopup ->
             if model.popupState == StateEditorPopup then
