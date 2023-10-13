@@ -184,10 +184,6 @@ update msg model =
                     ( { model | message = "Error retrieving elm.json dependencies" }, Cmd.none )
 
                 Ok data ->
-                    let
-                        _ =
-                            Debug.log "GOT_ElmJSON_DICT" data
-                    in
                     case model.currentUser of
                         Nothing ->
                             ( model, Cmd.none )
@@ -196,7 +192,6 @@ update msg model =
                             let
                                 elmJsonDependencies =
                                     Util.mergeDictionaries (Dict.singleton data.name (Notebook.Types.cleanElmPackageSummary data)) model.packageDict
-                                        |> Debug.log "FOR_USER_ELM_JSON_DEPENDENCIES(@FE)"
                             in
                             ( { model
                                 | packageDict = elmJsonDependencies
@@ -409,14 +404,10 @@ update msg model =
         GotPackagesFromCompiler result ->
             case result of
                 Err e ->
-                    let
-                        _ =
-                            Debug.log "PACKAGES_COMPILER_ERROR" e
-                    in
                     ( { model | message = "Error retrieving package List from compiler" }, Cmd.none )
 
                 Ok packageList ->
-                    ( { model | packagesFromCompiler = packageList |> Debug.log "PACKAGES_COMPILER" }, Cmd.none )
+                    ( { model | packagesFromCompiler = packageList }, Cmd.none )
 
         SubmitPackageList ->
             Notebook.Package.updateElmJsonDependencies model
@@ -553,8 +544,7 @@ update msg model =
                         currentBook =
                             Notebook.Book.initializeCellState book |> (\b -> { b | dirty = False })
 
-                        books =
-                            -- TODO: WTF!?
+                        newBooks =
                             model.books
                                 |> List.Extra.setIf (\b -> b.id == currentBook.id) currentBook
                                 |> List.Extra.setIf (\b -> b.id == previousBook.id) previousBook
@@ -563,11 +553,14 @@ update msg model =
                             { user_ | currentNotebookId = Just book.id }
 
                         newModel =
-                            { model | evalState = Notebook.EvalCell.updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState, currentBook = currentBook }
+                            { model
+                                | -- evalState = Notebook.EvalCell.updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState
+                                  books = newBooks
+                                , currentBook = currentBook
+                            }
                     in
                     ( { newModel
                         | currentUser = Just user
-                        , books = newModel.books
                         , evalState = Notebook.Types.emptyEvalState
                       }
                     , Cmd.batch [ sendToBackend (UpdateUserWith user), sendToBackend (SaveNotebook previousBook) ]

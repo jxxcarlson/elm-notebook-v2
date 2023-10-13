@@ -160,7 +160,6 @@ updateFromFrontend sessionId clientId msg model =
             ( { model
                 | usernameToPackageDictDict =
                     Dict.insert username elmJsonDependenciesFromUser (model.usernameToPackageDictDict |> Debug.log "DICT_TO_INSERT_FOR_USER")
-                        |> Debug.log "INSERTED_ELM_JSON_DEPENDENCIES_FOR_USER"
               }
             , Cmd.none
             )

@@ -152,8 +152,8 @@ updateEvalStateWithCell cell evalState =
                         Notebook.Parser.TypeAlias name expr ->
                             Eval.insertTypeDeclaration name ("type alias " ++ name ++ " = " ++ expr ++ "\n") evalState
 
-                        _ ->
-                            evalState
+                        Notebook.Parser.Import name expr ->
+                            Eval.insertImport name ("import " ++ name ++ " " ++ expr ++ "\n") evalState |> Debug.log "EVAL_STATE, new import"
 
 
 

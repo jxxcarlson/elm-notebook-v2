@@ -117,7 +117,6 @@ signIn model clientId username encryptedPassword =
                         (GotPackageDict
                             (Dict.get user.username model.usernameToPackageDictDict
                                 |> Maybe.withDefault Dict.empty
-                                |> Debug.log "GotUsersPackageDictInfo(BE)"
                             )
                         )
                     , curentBookCmd
