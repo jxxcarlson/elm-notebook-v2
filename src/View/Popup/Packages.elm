@@ -52,7 +52,7 @@ view model =
 
 viewCompilerPackage : { name : String, version : String } -> Element Types.FrontendMsg
 viewCompilerPackage package =
-    E.row [ Font.size 12, E.spacing 14 ] [ E.el [ E.width (E.px 150) ] (E.text package.name), E.el [ E.width (E.px 60) ] (E.text package.version) ]
+    E.row [ Font.size 12, E.spacing 14 ] [ E.el [ E.width (E.px 190) ] (E.text package.name), E.el [ E.width (E.px 60) ] (E.text package.version) ]
 
 
 viewPackage : Dict String Notebook.Types.ElmPackageSummary -> List (Element Types.FrontendMsg)
