@@ -163,11 +163,10 @@ update msg model =
 
         -- ELM COMPILER/JS INTEROP
         ExecuteDelayedFunction ->
-            let
-                ( newModel, cmd ) =
-                    Notebook.Package.nowSendPackageList model
-            in
-            ( newModel, Cmd.batch [ cmd ] )
+            ( model, Notebook.Package.nowSendPackageList model )
+
+        ExecuteDelayedFunction2 ->
+            ( model, Notebook.Package.requestPackagesFromCompiler )
 
         ExecuteCell k ->
             Notebook.EvalCell.executeCell k model
