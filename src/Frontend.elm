@@ -409,7 +409,7 @@ update msg model =
                     ( { model | packagesFromCompiler = packageList }, Cmd.none )
 
         SubmitPackageList ->
-            Notebook.Package.updateElmJsonDependencies model
+            ( model, Notebook.Package.installNewPackages (Notebook.Package.makePackageList model) )
 
         SubmitTest ->
             ( model, Cmd.none )
@@ -418,16 +418,14 @@ update msg model =
             case result of
                 Err _ ->
                     ( { model
-                        | popupState = NoPopup
-                        , message = "Could not decode JSON"
+                        | message = "Could not decode JSON"
                       }
                     , Cmd.none
                     )
 
                 Ok str ->
                     ( { model
-                        | popupState = NoPopup
-                        , message = str
+                        | message = str
                       }
                     , Cmd.none
                     )
