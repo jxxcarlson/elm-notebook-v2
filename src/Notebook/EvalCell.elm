@@ -153,7 +153,7 @@ updateEvalStateWithCell cell evalState =
                             Eval.insertTypeDeclaration name ("type alias " ++ name ++ " = " ++ expr ++ "\n") evalState
 
                         Notebook.Parser.Import name expr ->
-                            Eval.insertImport name ("import " ++ name ++ " " ++ expr ++ "\n") evalState |> Debug.log "EVAL_STATE, new import"
+                            Eval.insertImport name ("import " ++ name ++ " " ++ expr ++ "\n") evalState
 
 
 
@@ -265,7 +265,7 @@ processDeclaration : Model -> Cell -> String -> String -> ( Model, Cmd FrontendM
 processDeclaration model cell name expr =
     let
         newEvalState =
-            Eval.insertDeclaration name (name ++ " = " ++ expr ++ "\n") model.evalState |> Debug.log "EVAL_STATE, new Declaration"
+            Eval.insertDeclaration name (name ++ " = " ++ expr ++ "\n") model.evalState
     in
     ( { model | evalState = newEvalState }, Cmd.none )
 
@@ -274,7 +274,7 @@ processImport : Model -> Cell -> String -> String -> ( Model, Cmd FrontendMsg )
 processImport model cell name expr =
     let
         newEvalState =
-            Eval.insertImport name ("import " ++ name ++ " " ++ expr ++ "\n") model.evalState |> Debug.log "EVAL_STATE, new import"
+            Eval.insertImport name ("import " ++ name ++ " " ++ expr ++ "\n") model.evalState
     in
     ( { model | evalState = newEvalState }, Cmd.none )
 
@@ -283,7 +283,7 @@ processTypeDeclaration : Model -> Cell -> String -> String -> ( Model, Cmd Front
 processTypeDeclaration model cell name expr =
     let
         newEvalState =
-            Eval.insertTypeDeclaration name ("type " ++ name ++ " = " ++ expr ++ "\n") model.evalState |> Debug.log "EVAL_STATE, new type"
+            Eval.insertTypeDeclaration name ("type " ++ name ++ " = " ++ expr ++ "\n") model.evalState
     in
     ( { model | evalState = newEvalState }, Cmd.none )
 
@@ -292,6 +292,6 @@ processTypeAliasDeclaration : Model -> Cell -> String -> String -> ( Model, Cmd 
 processTypeAliasDeclaration model cell name expr =
     let
         newEvalState =
-            Eval.insertTypeDeclaration name ("type alias " ++ name ++ " = " ++ expr ++ "\n") model.evalState |> Debug.log "EVAL_STATE, new type alias"
+            Eval.insertTypeDeclaration name ("type alias " ++ name ++ " = " ++ expr ++ "\n") model.evalState
     in
     ( { model | evalState = newEvalState }, Cmd.none )

@@ -55,7 +55,6 @@ updateEvalStateWithPackages packageSummary evalState =
     , types = Dict.empty
     , imports = imports
     }
-        |> Debug.log "EvalState"
 
 
 requestEvaluation : EvalState -> Cell -> String -> Cmd FrontendMsg
@@ -157,12 +156,9 @@ encodeExpr : EvalState -> String -> Encode.Value
 encodeExpr evalState expr =
     Encode.object
         [ ( "entry", Encode.string (expr |> removeComments |> String.replace "\n" " " |> Util.compressSpaces |> (\x -> x ++ "\n") |> Debug.log "ENCODE_EXPR") )
-        , ( "imports", Encode.dict identity Encode.string (evalState.imports |> Debug.log "ENCODE_IMPORTS") )
-
-        --, ( "imports", Encode.dict identity Encode.string (treeImport |> Debug.log "ENCODE_IMPORTS") )
-        --, ( "types", Encode.dict identity Encode.string (evalState.types |> Debug.log "ENCODE_TYPES") )
-        , ( "types", Encode.dict identity Encode.string (evalState.types |> Debug.log "ENCODE_TYPES") )
-        , ( "decls", Encode.dict identity Encode.string (evalState.decls |> Debug.log "ENCODE_DECLS") )
+        , ( "imports", Encode.dict identity Encode.string evalState.imports )
+        , ( "types", Encode.dict identity Encode.string evalState.types )
+        , ( "decls", Encode.dict identity Encode.string evalState.decls )
         ]
 
 

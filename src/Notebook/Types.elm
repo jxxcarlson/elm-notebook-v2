@@ -46,7 +46,7 @@ type alias ElmPackageSummary =
 
 cleanElmPackageSummary : ElmPackageSummary -> ElmPackageSummary
 cleanElmPackageSummary summary =
-    { summary | dependencies = Dict.remove "elm/core" summary.dependencies } |> Debug.log "CLEAN_DEPENDENCIES"
+    { summary | dependencies = Dict.remove "elm/core" summary.dependencies }
 
 
 type alias ExposedModules =
