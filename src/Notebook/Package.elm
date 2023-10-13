@@ -5,9 +5,8 @@ import Env exposing (Mode(..))
 import Http
 import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Pipeline as Pipeline exposing (required)
-import List.Extra
 import Notebook.Codec
-import Notebook.Types
+import Notebook.Types exposing (SimplePackageInfo)
 import Process
 import Task
 import Types
@@ -122,5 +121,34 @@ elmPackageSummaryDecoder =
     Decode.succeed Notebook.Types.ElmPackageSummary
         |> required "dependencies" (Decode.dict Decode.string)
         |> required "exposed-modules" (Decode.list Decode.string)
+        |> required "name" Decode.string
+        |> required "version" Decode.string
+
+
+requestPackagesFromCompiler : Cmd Types.FrontendMsg
+requestPackagesFromCompiler =
+    Http.post
+        { url =
+            case Env.mode of
+                Production ->
+                    "https://repl.lamdera.com/reportOnInstalledPackages"
+
+                Development ->
+                    "http://localhost:8000/reportOnInstalledPackages"
+        , body = Http.emptyBody
+        , expect = Http.expectJson Types.GotPackagesFromCompiler simplePackageListDecoder
+        }
+
+
+{-| ["{"name": "zwilias/elm-rosetree", "version": "1.5.0"}","{"name": "elm-community/maybe-extra", "version": "5.3.0"}","{"name": "elm/core", "version": "1.0.5"}","{"name": "elm-community/list-extra", "version": "8.7.0"}"]
+-}
+simplePackageListDecoder : Decoder (List SimplePackageInfo)
+simplePackageListDecoder =
+    Decode.list simplePackageInfoDecoder
+
+
+simplePackageInfoDecoder : Decoder SimplePackageInfo
+simplePackageInfoDecoder =
+    Decode.succeed SimplePackageInfo
         |> required "name" Decode.string
         |> required "version" Decode.string

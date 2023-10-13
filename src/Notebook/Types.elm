@@ -8,12 +8,19 @@ module Notebook.Types exposing
     , Package
     , PackageList
     , ReplData
+    , SimplePackageInfo
     , StyledString
     , cleanElmPackageSummary
     , emptyEvalState
     )
 
 import Dict exposing (Dict)
+
+
+type alias SimplePackageInfo =
+    { name : String
+    , version : String
+    }
 
 
 type alias ElmPackage =

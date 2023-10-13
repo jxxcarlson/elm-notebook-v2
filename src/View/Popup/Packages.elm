@@ -33,8 +33,10 @@ view model =
                     , E.scrollbarY
                     , Background.color (E.rgb 1 1 1)
                     , E.spacing 12
+                    , E.padding 24
                     ]
-                    (viewPackage model.packageDict)
+                    --(viewPackage model.packageDict)
+                    (E.el [ Font.size 12, Font.bold ] (E.text "Installed packages (Elm compiler)") :: List.map viewCompilerPackage model.packagesFromCompiler)
                 , E.row [ E.spacing 18 ]
                     [ View.Button.submitPackageList
 
@@ -46,6 +48,11 @@ view model =
 
         _ ->
             E.none
+
+
+viewCompilerPackage : { name : String, version : String } -> Element Types.FrontendMsg
+viewCompilerPackage package =
+    E.row [ Font.size 12, E.spacing 14 ] [ E.el [ E.width (E.px 150) ] (E.text package.name), E.el [ E.width (E.px 60) ] (E.text package.version) ]
 
 
 viewPackage : Dict String Notebook.Types.ElmPackageSummary -> List (Element Types.FrontendMsg)

@@ -6,7 +6,6 @@ import Browser exposing (UrlRequest(..))
 import Browser.Dom
 import Browser.Events
 import Browser.Navigation as Nav
-import Codec exposing (Codec, Value)
 import Dict
 import File
 import File.Download
@@ -16,6 +15,7 @@ import Frontend.ElmCompilerInterop
 import Frontend.Message
 import Frontend.UIHelper
 import Html exposing (Html)
+import Json.Decode
 import Keyboard
 import Lamdera exposing (sendToBackend)
 import List.Extra
@@ -75,6 +75,7 @@ init url key =
       , url = url
 
       -- NOTEBOOK (NEW)
+      , packagesFromCompiler = []
       , packageDict = Dict.empty
       , elmJsonError = Nothing
       , evalState = Notebook.Eval.initEmptyEvalState
@@ -136,7 +137,13 @@ init url key =
       , inputEmail = ""
       , inputTitle = ""
       }
-    , Cmd.batch [ Ports.sendData "Hello there!", setupWindow, sendToBackend GetRandomSeed, Navigation.urlAction url.path ]
+    , Cmd.batch
+        [ Ports.sendData "Hello there!"
+        , setupWindow
+        , sendToBackend GetRandomSeed
+        , Navigation.urlAction url.path
+        , Notebook.Package.requestPackagesFromCompiler
+        ]
     )
 
 
@@ -396,6 +403,21 @@ update msg model =
                     )
 
         -- CELLS, NOTEBOOKS
+        GetPackagesFromCompiler ->
+            ( model, Notebook.Package.requestPackagesFromCompiler )
+
+        GotPackagesFromCompiler result ->
+            case result of
+                Err e ->
+                    let
+                        _ =
+                            Debug.log "PACKAGES_COMPILER_ERROR" e
+                    in
+                    ( { model | message = "Error retrieving package List from compiler" }, Cmd.none )
+
+                Ok packageList ->
+                    ( { model | packagesFromCompiler = packageList |> Debug.log "PACKAGES_COMPILER" }, Cmd.none )
+
         SubmitPackageList ->
             Notebook.Package.updateElmJsonDependencies model
 

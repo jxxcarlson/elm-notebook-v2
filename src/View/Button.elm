@@ -12,6 +12,7 @@ module View.Button exposing
     , editTitle
     , executeNotebook
     , exportNotebook
+    , getPackagesFromCompiler
     , getRandomProbabilities
     , importNotebook
     , lockCell
@@ -123,6 +124,11 @@ clearNotebookValues =
 updateDeclarationsDictionary : Element FrontendMsg
 updateDeclarationsDictionary =
     Button.smallPrimary { msg = UpdateDeclarationsDictionary, status = Button.Active, label = Button.Text "Update", tooltipText = Nothing }
+
+
+getPackagesFromCompiler : Element FrontendMsg
+getPackagesFromCompiler =
+    Button.smallPrimary { msg = GetPackagesFromCompiler, status = Button.Active, label = Button.Text "Get packages from compiler", tooltipText = Nothing }
 
 
 runCell : CellState -> CellType -> Int -> Element FrontendMsg

@@ -13,7 +13,6 @@ import Lamdera exposing (ClientId)
 import Notebook.Book exposing (Book)
 import Notebook.Cell exposing (Cell, CellState(..), CellValue(..))
 import Notebook.DataSet
-import Notebook.ErrorReporter
 import Notebook.Types
 import Random
 import Time
@@ -58,6 +57,7 @@ type alias FrontendModel =
     , evalState : Notebook.Types.EvalState
 
     -- NOTEBOOKS II
+    , packagesFromCompiler : List { name : String, version : String }
     , packageDict : PackageDict
     , elmJsonError : Maybe String
     , kvDict : Dict String String
@@ -170,6 +170,8 @@ type FrontendMsg
     | InputInitialStateValue String
       -- Notebook
     | ExecuteDelayedFunction
+    | GetPackagesFromCompiler
+    | GotPackagesFromCompiler (Result Http.Error (List Notebook.Types.SimplePackageInfo))
     | GotElmJsonDict (Result Http.Error Notebook.Types.ElmPackageSummary)
     | GotReply Cell (Result Http.Error String)
     | ReceivedFromJS String
