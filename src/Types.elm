@@ -168,6 +168,7 @@ type FrontendMsg
     | InputInitialStateValue String
       -- Notebook
     | ExecuteDelayedFunction
+    | ExecuteDelayedFunction2
     | GetPackagesFromCompiler
     | GotPackagesFromCompiler (Result Http.Error (List Notebook.Types.SimplePackageInfo))
     | GotElmJsonDict (Result Http.Error Notebook.Types.ElmPackageSummary)
