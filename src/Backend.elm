@@ -45,7 +45,7 @@ init =
       , currentTime = Time.millisToPosix 0
 
       -- NOTEBOOK
-      , usernameToNotebookPackageSummaryDict = Dict.empty
+      , usernameToPackageDictDict = Dict.empty
       , dataSetLibrary = Dict.empty
       , userToNoteBookDict = Dict.empty
       , slugDict = Dict.empty
@@ -158,8 +158,8 @@ updateFromFrontend sessionId clientId msg model =
         -- NOTEBOOKS
         Types.SaveElmJsonDependenciesBE username elmJsonDependenciesFromUser ->
             ( { model
-                | usernameToNotebookPackageSummaryDict =
-                    Dict.insert username elmJsonDependenciesFromUser (model.usernameToNotebookPackageSummaryDict |> Debug.log "DICT_TO_INSERT_FOR_USER")
+                | usernameToPackageDictDict =
+                    Dict.insert username elmJsonDependenciesFromUser (model.usernameToPackageDictDict |> Debug.log "DICT_TO_INSERT_FOR_USER")
                         |> Debug.log "INSERTED_ELM_JSON_DEPENDENCIES_FOR_USER"
               }
             , Cmd.none
@@ -173,7 +173,7 @@ updateFromFrontend sessionId clientId msg model =
             ( model
             , Cmd.batch
                 [ sendToFrontend clientId (GotNotebooks Nothing notebooks)
-                , sendToFrontend clientId (GotPackageDict (Dict.get username model.usernameToNotebookPackageSummaryDict |> Maybe.withDefault Dict.empty))
+                , sendToFrontend clientId (GotPackageDict (Dict.get username model.usernameToPackageDictDict |> Maybe.withDefault Dict.empty))
                 ]
             )
 

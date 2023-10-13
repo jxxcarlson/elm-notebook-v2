@@ -109,7 +109,7 @@ type alias BackendModel =
     -- NOTEBOOK
     , dataSetLibrary : Dict String Notebook.DataSet.DataSet
     , userToNoteBookDict : UserToNotebookDict
-    , usernameToNotebookPackageSummaryDict : UsernameToPackageDictDict
+    , usernameToPackageDictDict : UsernameToPackageDictDict
     , slugDict : Dict.Dict String NotebookRecord -- keys are slugs, values are notebook ids
 
     -- USER
