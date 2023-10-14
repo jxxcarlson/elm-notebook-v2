@@ -178,6 +178,7 @@ viewNotebook model =
             , ticks = model.tickCount
             , cellDirection = model.cellInsertionDirection
             , errorOffset = Notebook.Eval.replErrorOffset model.evalState.decls
+            , theme = model.theme
             }
     in
     E.column
@@ -186,7 +187,7 @@ viewNotebook model =
         [ E.column
             [ View.Style.fgGray 0.6
             , Font.size 14
-            , Background.color (E.rgb255 120 120 160)
+            , Background.color (E.rgb255 70 70 100)
             , E.height (E.px (View.Geometry.bodyHeight model))
             , E.width (E.px (View.Geometry.notebookWidth model - 20))
             , E.scrollbarY

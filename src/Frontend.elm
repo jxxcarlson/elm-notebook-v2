@@ -74,6 +74,7 @@ init url key =
       , url = url
 
       -- NOTEBOOK (NEW)
+      , theme = Notebook.Book.DarkTheme
       , packagesFromCompiler = []
       , packageDict = Dict.empty
       , elmJsonError = Nothing

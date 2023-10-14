@@ -1,5 +1,6 @@
 module View.CellThemed exposing (bulletPoint, heading1, lightTheme, renderFull)
 
+import Config
 import Element exposing (..)
 import Element.Background
 import Element.Border as Border
@@ -11,7 +12,9 @@ import Markdown.Block exposing (HeadingLevel, ListItem(..))
 import Markdown.Html
 import Markdown.Parser
 import Markdown.Renderer
+import Notebook.Book
 import Notebook.Cell exposing (CellType(..))
+import Notebook.Config
 import Notebook.Utility as Utility
 
 
@@ -42,17 +45,43 @@ lightTheme =
     , codeSpanColor = Element.rgb255 180 50 255
     , grey = Element.rgb255 200 220 240
     , elmText = Element.rgb255 30 46 50
-    , background = Element.rgb255 220 220 255
+    , background = Notebook.Config.lightThemeBackgroundColor --Element.rgb255 220 220 255
     }
 
 
-renderFull : CellType -> Int -> String -> Element msg
-renderFull cellType width_ markdownBody =
-    render (renderer lightTheme) cellType width_ markdownBody
+darkTheme : Theme
+darkTheme =
+    { defaultText = Element.rgb255 200 210 230 -- Element.rgb255 220 240 255 --Element.rgb255 30 46 50
+    , mutedText = Element.rgb255 74 94 122
+    , link = Element.rgb255 74 94 190
+    , lightGrey = Element.rgb255 220 240 255
+    , codeBackground = Element.rgb255 50 50 50
+
+    --, codeColor = Element.rgb255 255 180 50
+    , codeColor = Element.rgb255 120 80 255
+    , codeSpanColor = Element.rgb255 120 80 255
+    , grey = Element.rgb255 220 240 255 --  Element.rgb255 200 220 240
+    , elmText = Element.rgb255 220 240 255 --Element.rgb255 30 46 50
+    , background = Notebook.Config.darkThemeBackgroundColor -- Notebook.Config.darkBackgroundColor
+    }
 
 
-render : Markdown.Renderer.Renderer (Element msg) -> CellType -> Int -> String -> Element msg
-render chosenRenderer cellType width_ markdownBody =
+renderFull : Notebook.Book.Theme -> CellType -> Int -> String -> Element msg
+renderFull theme cellType width_ markdownBody =
+    let
+        currentTheme =
+            case theme of
+                Notebook.Book.LightTheme ->
+                    lightTheme
+
+                Notebook.Book.DarkTheme ->
+                    darkTheme
+    in
+    render currentTheme (renderer currentTheme) cellType width_ markdownBody
+
+
+render : Theme -> Markdown.Renderer.Renderer (Element msg) -> CellType -> Int -> String -> Element msg
+render theme chosenRenderer cellType width_ markdownBody =
     Markdown.Parser.parse markdownBody
         -- @TODO show markdown parsing errors, i.e. malformed html?
         |> Result.withDefault []
@@ -71,8 +100,8 @@ render chosenRenderer cellType width_ markdownBody =
                        )
                     |> Element.column
                         [ Element.width (Element.px width_)
-                        , Element.Background.color (Utility.cellColor cellType)
                         , Element.height Element.fill
+                        , Element.Background.color theme.background
                         , Element.paddingEach { left = 12, right = 12, top = 12, bottom = 0 }
                         ]
            )
@@ -144,7 +173,15 @@ renderer theme =
                 |> Markdown.Html.withOptionalAttribute "maxwidth"
                 |> Markdown.Html.withOptionalAttribute "bg"
             ]
-    , text = \s -> Element.el [ Element.Font.color (Element.rgb 0.0 0.0 0.1) ] (Element.text s)
+
+    --, text = \s -> Element.el [ Element.Font.color (Element.rgb 0.0 0.0 0.1) ] (Element.text s)
+    , text =
+        \s ->
+            Element.el
+                [ Element.Font.color theme.defaultText
+                , Element.Background.color theme.background
+                ]
+                (Element.text s)
     , codeSpan =
         \content ->
             Element.el

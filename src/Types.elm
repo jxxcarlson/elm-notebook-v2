@@ -54,6 +54,7 @@ type alias FrontendModel =
     , privateDataSetMetaDataList : List Notebook.DataSet.DataSetMetaData
 
     -- NOTEBOOKS
+    , theme : Notebook.Book.Theme
     , evalState : Notebook.Types.EvalState
     , packagesFromCompiler : List { name : String, version : String }
     , packageDict : PackageDict

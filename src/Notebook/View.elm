@@ -10,6 +10,7 @@ import Html.Attributes as HA
 import List.Extra
 import Notebook.Book exposing (ViewData)
 import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
+import Notebook.Config
 import Notebook.ErrorReporter
 import Notebook.Parser
 import Notebook.Types
@@ -28,13 +29,40 @@ view viewData cellContents cell =
     E.column
         [ E.paddingEach { top = 0, right = 0, bottom = 0, left = 0 }
         , E.width (E.px viewData.width)
-        , Background.color (E.rgb255 99 106 122)
+        , Background.color (themedBackgroundColor viewData.theme) -- (E.rgb255 99 106 122)
         ]
         [ E.row
             [ E.width (E.px viewData.width) ]
             [ viewSourceAndValue viewData cellContents cell
             ]
         ]
+
+
+themedBackgroundColor theme =
+    case theme of
+        Notebook.Book.LightTheme ->
+            Notebook.Config.lightThemeBackgroundColor
+
+        Notebook.Book.DarkTheme ->
+            Notebook.Config.darkThemeBackgroundColor
+
+
+themedCodeColor theme =
+    case theme of
+        Notebook.Book.LightTheme ->
+            Notebook.Config.lightThemeCodeColor
+
+        Notebook.Book.DarkTheme ->
+            Notebook.Config.darkThemeCodeColor
+
+
+themedTextColor theme =
+    case theme of
+        Notebook.Book.LightTheme ->
+            Notebook.Config.lightThemeTextColor
+
+        Notebook.Book.DarkTheme ->
+            Notebook.Config.darkThemeTextColor
 
 
 viewSourceAndValue : ViewData -> String -> Cell -> Element FrontendMsg
@@ -71,6 +99,7 @@ viewSourceAndValue originalviewData cellContents cell =
                         , right = 0
                         , top = 1
                         }
+                    , Background.color (themedBackgroundColor viewData.theme)
                     ]
 
         viewData =
@@ -78,7 +107,7 @@ viewSourceAndValue originalviewData cellContents cell =
     in
     E.column ([ Background.color (Utility.cellColor cell.tipe), E.paddingXY 6 12, E.spacing 4 ] ++ style)
         [ E.el [ E.alignRight, Background.color (Utility.cellColor cell.tipe) ] (controls viewData cell)
-        , viewSource (viewData.width - controlWidth) cell cellContents
+        , viewSource viewData.theme (viewData.width - controlWidth) cell cellContents
         , E.el (hrule cell) (viewValue viewData cell)
         ]
 
@@ -150,7 +179,7 @@ controls viewData cell =
                     [ deleteCellAt cell.cellState cell.index
                     , clearCellAt cell.cellState cell.index
                     , View.Button.lockCell cell
-                    , viewIndex cell
+                    , viewIndex viewData.theme cell
                     ]
                 ]
 
@@ -159,16 +188,16 @@ controlWidth =
     0
 
 
-viewSource : Int -> Cell -> String -> Element FrontendMsg
-viewSource width cell cellContent =
+viewSource : Notebook.Book.Theme -> Int -> Cell -> String -> Element FrontendMsg
+viewSource theme width cell cellContent =
     case cell.cellState of
         CSView ->
             case cell.tipe of
                 CTCode ->
-                    renderCode cell width
+                    renderCode theme cell width
 
                 CTMarkdown ->
-                    renderMarkdown cell width
+                    renderMarkdown theme cell width
 
         CSEdit ->
             editCell width cell cellContent
@@ -232,7 +261,7 @@ viewSuccess viewData cell =
                                 , View.Style.monospace
                                 ]
                                 (par realWidth
-                                    [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) "Nothing" ]
+                                    [ View.CellThemed.renderFull viewData.theme cell.tipe (scale 1.0 realWidth) "Nothing" ]
                                 )
 
                         Notebook.Parser.Decl _ _ ->
@@ -255,7 +284,7 @@ viewSuccess viewData cell =
                                 , View.Style.monospace
                                 ]
                                 (par realWidth
-                                    [ View.CellThemed.renderFull cell.tipe (scale 1.0 realWidth) str ]
+                                    [ View.CellThemed.renderFull viewData.theme cell.tipe (scale 1.0 realWidth) str ]
                                 )
 
                         Notebook.Parser.Decl _ _ ->
@@ -285,8 +314,8 @@ getArg k args =
     List.Extra.getAt k args |> Maybe.withDefault "--"
 
 
-viewIndex : Cell -> Element FrontendMsg
-viewIndex cell =
+viewIndex : Notebook.Book.Theme -> Cell -> Element FrontendMsg
+viewIndex theme cell =
     let
         action =
             case cell.cellState of
@@ -307,7 +336,8 @@ viewIndex cell =
     E.el
         [ action
         , padding
-        , Font.color (E.rgba 0.1 0.1 0.7 0.5)
+        , Background.color (themedBackgroundColor theme)
+        , Font.color (themedCodeColor theme)
         , E.htmlAttribute <| HA.style "z-index" "1"
         , Font.family
             [ Font.typeface "Open Sans"
@@ -317,7 +347,7 @@ viewIndex cell =
         (E.text <| "Cell " ++ String.fromInt (cell.index + 1))
 
 
-renderCode cell width =
+renderCode theme cell width =
     E.column
         [ E.width (E.px width)
         , E.paddingXY 12 0
@@ -330,7 +360,7 @@ renderCode cell width =
 
           else
             Element.Events.onMouseDown NoOpFrontendMsg
-        , E.inFront (E.el [ E.alignRight, E.moveDown 8 ] (viewIndex cell))
+        , E.inFront (E.el [ E.alignRight, E.moveDown 8 ] (viewIndex theme cell))
         ]
         [ View.Utility.preformattedElement [ HA.style "line-height" "1.5" ] cell.text
         ]
@@ -340,7 +370,7 @@ renderCode cell width =
 -- , Styled.style [ ( "z-index", "1" ) ]
 
 
-renderMarkdown cell width =
+renderMarkdown theme cell width =
     E.column
         [ E.spacing 0
         , if not cell.locked then
@@ -349,14 +379,22 @@ renderMarkdown cell width =
           else
             Element.Events.onMouseDown NoOpFrontendMsg
         , E.width (E.px width)
-        , E.inFront (E.el [ E.alignRight, E.moveDown 4 ] (viewIndex cell))
+        , E.inFront (E.el [ E.alignRight, E.moveDown 4 ] (viewIndex theme cell))
         , Font.size 14
         , Font.family
             [ Font.typeface "Open Sans"
             , Font.sansSerif
             ]
+        , Background.color
+            (case theme of
+                Notebook.Book.LightTheme ->
+                    Notebook.Config.lightThemeBackgroundColor
+
+                Notebook.Book.DarkTheme ->
+                    Notebook.Config.darkThemeBackgroundColor
+            )
         ]
-        [ View.CellThemed.renderFull cell.tipe (width - 54) cell.text
+        [ View.CellThemed.renderFull theme cell.tipe (width - 54) cell.text
         ]
 
 

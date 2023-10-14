@@ -1,6 +1,7 @@
 module Notebook.Book exposing
     ( Book
     , DirectionToMove(..)
+    , Theme(..)
     , ViewData
     , initializeCellState
     , moveCellUpDown
@@ -32,6 +33,11 @@ type alias Book =
     , currentIndex : Int
     , packageNames : List String
     }
+
+
+type Theme
+    = DarkTheme
+    | LightTheme
 
 
 type DirectionToMove
@@ -171,6 +177,7 @@ type alias ViewData =
     , ticks : Int
     , cellDirection : Notebook.Types.CellDirection
     , errorOffset : Int
+    , theme : Theme
     }
 
 
