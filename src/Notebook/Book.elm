@@ -27,6 +27,7 @@ type alias Book =
     , title : String
     , cells : List Notebook.Cell.Cell
     , currentIndex : Int
+    , packageNames : List String
     }
 
 
@@ -62,6 +63,7 @@ scratchPad username =
           }
         ]
     , currentIndex = 0
+    , packageNames = []
     }
 
 
@@ -97,6 +99,7 @@ new author title =
           }
         ]
     , currentIndex = 0
+    , packageNames = []
     }
 
 
@@ -132,6 +135,7 @@ newBook author title =
           }
         ]
     , currentIndex = 0
+    , packageNames = []
     }
 
 

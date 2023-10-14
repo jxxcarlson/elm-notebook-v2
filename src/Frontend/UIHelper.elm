@@ -65,7 +65,20 @@ handlePopups model popupState =
                 ( { model | popupState = NoPopup }, Cmd.none )
 
             else
-                ( { model | popupState = PackageListPopup }, Notebook.Package.requestPackagesFromCompiler )
+                let
+                    packagesString =
+                        (model.currentBook.packageNames |> String.join "\n") ++ "\n"
+
+                    inputPackages =
+                        packagesString
+                in
+                ( { model
+                    | popupState = PackageListPopup
+                    , inputPackages =
+                        packagesString
+                  }
+                , Notebook.Package.requestPackagesFromCompiler
+                )
 
         StateEditorPopup ->
             if model.popupState == StateEditorPopup then

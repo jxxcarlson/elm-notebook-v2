@@ -49,6 +49,7 @@ bookCodec =
         |> Codec.field "title" .title Codec.string
         |> Codec.field "cells" .cells (Codec.list cellCodec)
         |> Codec.field "currentIndex" .currentIndex Codec.int
+        |> Codec.field "packageNames" .packageNames (Codec.list Codec.string)
         |> Codec.buildObject
 
 
