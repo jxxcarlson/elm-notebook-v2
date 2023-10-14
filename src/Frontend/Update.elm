@@ -1,4 +1,4 @@
-module Frontend.Update exposing (..)
+module Frontend.Update exposing (saveIfDirty, signOut)
 
 import Browser.Navigation as Nav
 import Lamdera
