@@ -27,10 +27,10 @@ type alias Model =
 
 
 executeNotebook : Model -> ( Model, Cmd FrontendMsg )
-executeNotebook model_ =
+executeNotebook model =
     let
         currentBook =
-            model_.currentBook
+            model.currentBook
 
         -- Close all cells and set report and replData to Nothing
         newBook =
@@ -49,30 +49,30 @@ executeNotebook model_ =
             }
 
         newEvalState =
-            updateEvalStateWithCells newBook.cells Notebook.Types.emptyEvalState
-
-        _ =
-            Debug.log "__TYPES, from book" newEvalState.types
-
-        _ =
-            Debug.log "__IMPORTS, from book" newEvalState.imports
-
-        _ =
-            Debug.log "__DECLS, from book" newEvalState.decls
-
-        model =
-            { model_ | currentBook = newBook, evalState = newEvalState }
-
-        n =
-            List.length model.currentBook.cells
+            updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState
 
         indices =
-            List.range 0 n
+            List.range 0 (List.length model.currentBook.cells)
 
         commands =
             List.indexedMap createDelayedCommand indices
     in
-    ( model, Cmd.batch commands )
+    ( { model
+        | currentBook = newBook
+        , books =
+            List.map
+                (\book ->
+                    if book.id == currentBook.id then
+                        newBook
+
+                    else
+                        book
+                )
+                model.books
+        , evalState = newEvalState
+      }
+    , Cmd.batch commands
+    )
 
 
 createDelayedCommand : Int -> Int -> Cmd FrontendMsg

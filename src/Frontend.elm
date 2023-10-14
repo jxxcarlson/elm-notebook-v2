@@ -551,14 +551,13 @@ update msg model =
 
                         newModel =
                             { model
-                                | -- evalState = Notebook.EvalCell.updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState
-                                  books = newBooks
+                                | evalState = Notebook.EvalCell.updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState
+                                , books = newBooks
                                 , currentBook = currentBook
                             }
                     in
                     ( { newModel
                         | currentUser = Just user
-                        , evalState = Notebook.Types.emptyEvalState
                       }
                     , Cmd.batch
                         [ sendToBackend (UpdateUserWith user)
@@ -764,7 +763,7 @@ updateFromBackend msg model =
                         xbook :: books
 
                 newModel =
-                    { model | evalState = Notebook.EvalCell.updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState, currentBook = book }
+                    { model | evalState = Notebook.EvalCell.updateEvalStateWithCells book.cells Notebook.Types.emptyEvalState, currentBook = book }
             in
             ( { newModel
                 | currentBook = book
@@ -813,7 +812,7 @@ updateFromBackend msg model =
                 Just currentBook ->
                     let
                         newModel =
-                            { model | evalState = Notebook.EvalCell.updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState, currentBook = currentBook }
+                            { model | evalState = Notebook.EvalCell.updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState, currentBook = currentBook }
                     in
                     ( { newModel | books = books, currentBook = currentBook }, Notebook.Package.installNewPackages (currentBook.packageNames |> Debug.log "__PKG NAMES") )
 
