@@ -193,6 +193,7 @@ type FrontendMsg
     | NewCodeCell CellState Int
     | NewMarkdownCell CellState Int
     | DeleteCell Int
+    | MoveCell Int DirectionToMove
     | EditCell Cell
     | ClearCell Int
     | EvalCell CellState Int
@@ -236,6 +237,11 @@ type FrontendMsg
 
 type alias Message =
     { txt : String, status : MessageStatus }
+
+
+type DirectionToMove
+    = Up
+    | Down
 
 
 type DataSetDescription

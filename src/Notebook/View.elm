@@ -136,6 +136,15 @@ controls viewData cell =
                     [ E.spacing 6
                     , E.alignRight
                     , E.height (E.px 32)
+                    , E.paddingEach { top = 2, bottom = 2, left = 8, right = 18 }
+                    ]
+                    [ moveCell cell.cellState cell.index Types.Up
+                    , moveCell cell.cellState cell.index Types.Down
+                    ]
+                , E.row
+                    [ E.spacing 6
+                    , E.alignRight
+                    , E.height (E.px 32)
                     , E.paddingEach { top = 2, bottom = 2, left = 8, right = 4 }
                     ]
                     [ deleteCellAt cell.cellState cell.index
@@ -450,6 +459,16 @@ deleteCellAt cellState index =
     --case cellState of
     --    CSView ->
     Button.smallPrimary { msg = DeleteCell index, status = Button.Active, label = Button.Text "Delete", tooltipText = Just "Delete cell" }
+
+
+moveCell : CellState -> Int -> Types.DirectionToMove -> Element FrontendMsg
+moveCell cellstate index direction =
+    case direction of
+        Types.Down ->
+            Button.smallPrimary { msg = MoveCell index direction, status = Button.Active, label = Button.Text "Down", tooltipText = Just "Move cell down" }
+
+        Types.Up ->
+            Button.smallPrimary { msg = MoveCell index direction, status = Button.Active, label = Button.Text "Up", tooltipText = Just "Move cell up" }
 
 
 

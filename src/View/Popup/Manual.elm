@@ -52,7 +52,7 @@ content =
     """
 
 
-## This manual
+## This Manual
 
 
 Click on the **Manual** button to show or hide the manual.
@@ -61,29 +61,30 @@ Click on the **Manual** button to show or hide the manual.
 
 **Kinds of Cells**
 
-There are two kinds of cells: code cells and markdown cells.
-Code cells are used to write Elm code: 
+There are two kinds of cells: markdown cells and code cells.
+Markdown cells are used to write text. Code cells are used to write Elm code:
 
   - expression to be evaluated, like `2 + 2` or `List.length [1,2,3]`. 
   - declarations, like `a = 2` or `b = [1,2,3]`
   - type definitions, like `type alias Point = { x : Float, y : Float }`
   - import statements, like `import List.Extra`, `import List.Extra as LE`, or `import List.Extra exposing (..)`
 
-Markdown cells are used to write text.
+
 
 **Working with Cells**
 
 Click on a cell to edit it or to evaluate the code in it.
 When you click on a cell, the app will display a row of controls:
 
- - *Above* or *Below*, *New Code*, *New Text*.  Use these to add new cells.
- The state of the *Above/Below* button determines the position of the new cell.
+ - *Above/Below*, *New Code*, *New Text*.  Use these to create new cells.
+ The *Above/Below* toggles the placement of the newly created cell.
 
  - *Close* (for Markdown cells) or *Run* and *Run!* (for code cells).
  The *Run* button evaluates the code in the cell but does not close it.
  The *Run!* button evaluates the code and closes the cell.
- The result of evaluating code is shown below the code.
+ The result of evaluating code is shown below the code itself.
 
+- *Up*, *Down*: move cells up or down.
 
  - *Delete*, *Clear*, *Locked* or *Unlocked*. Clicking the *Clear* button
  removes the result of evaluating the cell or error messages if any.  Clicking the
