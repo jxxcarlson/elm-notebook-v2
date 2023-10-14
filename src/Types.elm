@@ -168,6 +168,7 @@ type FrontendMsg
     | InputAuthor String
     | InputInitialStateValue String
       -- Notebook
+    | ToggleTheme Notebook.Book.Theme
     | ExecuteDelayedFunction
     | ExecuteDelayedFunction2
     | GetPackagesFromCompiler

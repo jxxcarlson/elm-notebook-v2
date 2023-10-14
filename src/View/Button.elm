@@ -38,6 +38,7 @@ module View.Button exposing
     , stateEditor
     , submitPackageList
     , submitTest
+    , toggleTheme
     , toggleViewPrivateDataSets
     , toggleViewPublicDataSets
     , updateDeclarationsDictionary
@@ -350,6 +351,16 @@ toggleViewPrivateDataSets =
 newNotebook : Element FrontendMsg
 newNotebook =
     Button.smallPrimary { msg = NewNotebook, status = Button.Active, label = Button.Text "New Notebook", tooltipText = Nothing }
+
+
+toggleTheme : Notebook.Book.Theme -> Element FrontendMsg
+toggleTheme theme =
+    case theme of
+        Notebook.Book.LightTheme ->
+            Button.smallPrimary { msg = ToggleTheme theme, status = Button.Active, label = Button.Text "Light", tooltipText = Nothing }
+
+        Notebook.Book.DarkTheme ->
+            Button.smallPrimary { msg = ToggleTheme theme, status = Button.Active, label = Button.Text "Dark", tooltipText = Nothing }
 
 
 

@@ -161,6 +161,14 @@ update msg model =
             , Cmd.none
             )
 
+        ToggleTheme theme ->
+            case theme of
+                Notebook.Book.DarkTheme ->
+                    ( { model | theme = Notebook.Book.LightTheme }, Cmd.none )
+
+                Notebook.Book.LightTheme ->
+                    ( { model | theme = Notebook.Book.DarkTheme }, Cmd.none )
+
         -- ELM COMPILER/JS INTEROP
         ExecuteDelayedFunction ->
             ( model, Notebook.Package.nowSendPackageList model )
