@@ -47,6 +47,24 @@ themedBackgroundColor theme =
             Notebook.Config.darkThemeBackgroundColor
 
 
+themedCodeCellBackgroundColor theme =
+    case theme of
+        Notebook.Book.LightTheme ->
+            Notebook.Config.lightThemeCodeCellBackgroundColor
+
+        Notebook.Book.DarkTheme ->
+            Notebook.Config.darkThemeCodeCellBackgroundColor
+
+
+themedCodeCellTextColor theme =
+    case theme of
+        Notebook.Book.LightTheme ->
+            Notebook.Config.lightThemeCodeCellTextColor
+
+        Notebook.Book.DarkTheme ->
+            Notebook.Config.darkThemeCodeCellTextColor
+
+
 themedCodeColor theme =
     case theme of
         Notebook.Book.LightTheme ->
@@ -105,7 +123,14 @@ viewSourceAndValue originalviewData cellContents cell =
         viewData =
             { originalviewData | width = originalviewData.width - 24 }
     in
-    E.column ([ Background.color (Utility.cellColor cell.tipe), E.paddingXY 6 12, E.spacing 4 ] ++ style)
+    E.column
+        ([ Background.color (Utility.cellColor cell.tipe)
+
+         --, E.paddingXY 6 12
+         --, E.spacing 4
+         ]
+            ++ style
+        )
         [ E.el [ E.alignRight, Background.color (Utility.cellColor cell.tipe) ] (controls viewData cell)
         , viewSource viewData.theme (viewData.width - controlWidth) cell cellContents
         , E.el (hrule cell) (viewValue viewData cell)
@@ -257,8 +282,8 @@ viewSuccess viewData cell =
                     case classif of
                         Notebook.Parser.Expr _ ->
                             E.el
-                                [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-                                , View.Style.monospace
+                                [ -- E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+                                  View.Style.monospace
                                 ]
                                 (par realWidth
                                     [ View.CellThemed.renderFull viewData.theme cell.tipe (scale 1.0 realWidth) "Nothing" ]
@@ -280,8 +305,8 @@ viewSuccess viewData cell =
                     case classif of
                         Notebook.Parser.Expr _ ->
                             E.el
-                                [ E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-                                , View.Style.monospace
+                                [ -- E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
+                                  View.Style.monospace
                                 ]
                                 (par realWidth
                                     [ View.CellThemed.renderFull viewData.theme cell.tipe (scale 1.0 realWidth) str ]
@@ -353,7 +378,8 @@ renderCode theme cell width =
         , E.paddingXY 12 0
         , Font.size 14
         , View.Style.monospace
-        , Font.color (E.rgb 0.0 0.0 0.8)
+        , Font.color (themedCodeCellTextColor theme)
+        , Background.color (themedCodeCellBackgroundColor theme)
         , E.height E.shrink
         , if not cell.locked then
             Element.Events.onMouseDown (EditCell cell)
