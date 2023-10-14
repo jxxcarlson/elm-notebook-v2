@@ -47,8 +47,8 @@ declarations model user =
             { top = 18, bottom = 36, left = 0, right = 0 }
         ]
         [ E.row [ E.paddingXY 18 0, E.spacing 8, E.width (E.px <| View.Geometry.sidePanelWidth model) ]
-            [ E.el [ Font.underline ] (E.text <| "Declarations")
-            , E.el [] (E.text <| "(" ++ String.fromInt (Dict.size model.evalState.decls) ++ ")")
+            [ E.el [ Font.underline ] (E.text <| "Types and Declarations")
+            , E.el [] (E.text <| "(" ++ String.fromInt (Dict.size model.evalState.decls + Dict.size model.evalState.types) ++ ")")
             , E.el [ E.paddingEach { left = 3, right = 0, top = 0, bottom = 0 } ] View.Button.updateDeclarationsDictionary
             ]
         , E.el
