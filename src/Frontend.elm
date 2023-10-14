@@ -563,7 +563,7 @@ update msg model =
                     , Cmd.batch
                         [ sendToBackend (UpdateUserWith user)
                         , sendToBackend (SaveNotebook previousBook)
-                        , Notebook.Package.installNewPackages currentBook.packageNames
+                        , Notebook.Package.installNewPackages (currentBook.packageNames |> Debug.log "__PKG NAMES")
                         ]
                     )
 
@@ -815,7 +815,7 @@ updateFromBackend msg model =
                         newModel =
                             { model | evalState = Notebook.EvalCell.updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState, currentBook = currentBook }
                     in
-                    ( { newModel | books = books, currentBook = currentBook }, Cmd.none )
+                    ( { newModel | books = books, currentBook = currentBook }, Notebook.Package.installNewPackages (currentBook.packageNames |> Debug.log "__PKG NAMES") )
 
 
 view : Model -> { title : String, body : List (Html.Html FrontendMsg) }
