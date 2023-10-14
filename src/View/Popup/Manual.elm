@@ -16,8 +16,9 @@ view model theme =
             , Element.width (Element.px <| View.Geometry.appWidth model // 2)
             , Element.height (Element.px <| View.Geometry.bodyHeight model)
             , Element.moveUp (toFloat <| View.Geometry.bodyHeight model)
-            , Element.padding 36
+            , Element.padding 48
             , Element.alignRight
+            , Element.clipX
             ]
             [ MarkdownThemed.renderFull (scale 0.42 (View.Geometry.appWidth model)) (View.Geometry.bodyHeight model) content
             ]
@@ -58,6 +59,8 @@ Click on the **Manual** button to show or hide the manual.
 
 ## Cells
 
+**Kinds of Cells**
+
 There are two kinds of cells: code cells and markdown cells.
 Code cells are used to write Elm code: 
 
@@ -68,12 +71,37 @@ Code cells are used to write Elm code:
 
 Markdown cells are used to write text.
 
-The result of evaluating the code is shown below the code.
+**Working with Cells**
+
+Click on a cell to edit it or to evaluate the code in it.
+When you click on a cell, the app will display a row of controls:
+
+ - *Above* or *Below*, *New Code*, *New Text*.  Use these to add new cells.
+ The state of the *Above/Below* button determines the position of the new cell.
+
+ - *Close* (for Markdown cells) or *Run* and *Run!* (for code cells).
+ The *Run* button evaluates the code in the cell but does not close it.
+ The *Run!* button evaluates the code and closes the cell.
+ The result of evaluating code is shown below the code.
+
+
+ - *Delete*, *Clear*, *Locked* or *Unlocked*. Clicking the *Clear* button
+ removes the result of evaluating the cell or error messages if any.  Clicking the
+ *Locked/Unlocked* button locks or unlocks the cell.  Locked cells cannot be edited.
+
+
+## Packages
+
+The *Packages* button opens a window that lets you add packages to your notebook.
+This window has two parts. In the upper part you list the names of the
+packages your notebook needs, e.g. `elm-community/list-extra`.
+The app remembers what you put there, so if you open it again, you can add, edit, or delete
+package names.
 
 ## Public versus private notebooks
 
 Notebooks are either public or private.  Public notebooks are visible to all users.
-To change the status of a notebook, click on the **Private** button in the notebook footer.
+To change the status of a notebook, click on the *Private* button in the notebook footer.
 
 You can work with a pubic notebook that does not belong to you: edit and evaluate
 cells, delete cells and make new ones. However, these changes will not be saved.
@@ -82,17 +110,19 @@ creates a copy of the notebook that belongs to you.
 
 
 
-Note the two buttons **Mine** and **Public** at the top of the notebook list (right-hand column).
-Click on the **Mine**
-button to show your documents. Click on **Public** to show public documents that do not
+Note the two buttons *Mine* and *Public* at the top of the notebook list (right-hand column).
+Click on the *Mine*
+button to show your documents. Click on *Public* to show public documents that do not
 belong to you.
 
 
 ## Cloning a notebook
 
-Public documents can be cloned by clicking on the **Clone** button in the footer.
+Public documents can be cloned by clicking on the *Clone* button in the footer.  This button
+is only visible if the *Public*, not the *Mine* button is selected, and if there are
+public notebooks visible.
 
-You can also update a notebook that has been cloned: click on the **Update** button in the footer.
+You can also update a notebook that has been cloned: click on the *Update* button in the footer.
 Updating a notebook brings in new material from the original source.
 However this operation will overwrite any changes you have made to the clone.
 
