@@ -361,7 +361,14 @@ viewIndex theme cell =
     E.el
         [ action
         , padding
-        , Background.color (themedBackgroundColor theme)
+        , Background.color
+            (case cell.tipe of
+                CTCode ->
+                    themedCodeCellBackgroundColor theme
+
+                CTMarkdown ->
+                    themedBackgroundColor theme
+            )
         , Font.color (themedCodeColor theme)
         , E.htmlAttribute <| HA.style "z-index" "1"
         , Font.family
