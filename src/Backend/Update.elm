@@ -2,6 +2,7 @@ module Backend.Update exposing
     ( createNotebook
     , getClonedNotebook
     , pullNotebook
+    , safeUpdateSlugDictWithBook
     , updateSlugDictWithBook
     )
 
@@ -87,6 +88,16 @@ updateSlugDictWithBook book model =
             Dict.insert book.slug { id = book.id, author = book.author, public = book.public } oldSlugDict |> Debug.log "@@NEW SLUG DICT"
     in
     { model | slugDict = newSlugDict }
+
+
+safeUpdateSlugDictWithBook : Book -> Model -> Model
+safeUpdateSlugDictWithBook book model =
+    case Dict.get book.slug model.slugDict of
+        Just _ ->
+            model
+
+        Nothing ->
+            updateSlugDictWithBook book model
 
 
 createNotebook : Model -> String -> String -> String -> ( Model, Cmd BackendMsg )

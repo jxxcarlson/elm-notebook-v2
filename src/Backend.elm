@@ -196,7 +196,7 @@ updateFromFrontend sessionId clientId msg model =
                 newNotebookDict =
                     NotebookDict.insert book.author book.id book model.userToNoteBookDict
             in
-            ( { model | userToNoteBookDict = newNotebookDict }, Cmd.none )
+            ( { model | userToNoteBookDict = newNotebookDict } |> Backend.Update.safeUpdateSlugDictWithBook book, Cmd.none )
 
         Types.CreateNotebook author title ->
             Backend.Update.createNotebook model clientId author title

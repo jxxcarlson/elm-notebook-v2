@@ -56,8 +56,8 @@ view model =
                 , messageRow model
                 , View.Utility.showIf (Predicate.regularUser model) Button.importNotebook
                 , View.Utility.showIf (Predicate.regularUser model) Button.exportNotebook
-                , Button.getPackagesFromCompiler
 
+                --  , Button.getPackagesFromCompiler
                 --, View.Utility.showIf (Predicate.regularUser model) Button.newDataSet
                 -- , Button.toggleViewPublicDataSets
                 --, View.Utility.showIf (Predicate.regularUser model) Button.toggleViewPrivateDataSets

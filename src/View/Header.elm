@@ -45,7 +45,8 @@ notSignedInHeader model =
             , View.Input.password model
             , Button.signIn
             ]
-        , welcomeLink
+
+        --, welcomeLink
         , Button.manualLarge
         , E.el [ E.alignRight ] Button.signUp
         ]
@@ -89,7 +90,7 @@ signedInHeader model user =
         , View.Utility.showIf (Predicate.regularUser model) (Button.cancelDeleteNotebook model.deleteNotebookState)
 
         -- , Button.clearValues
-        , welcomeLink
+        --, welcomeLink
         , Button.manual
         , E.el [ E.alignRight ] (Button.signOut user.username)
         ]

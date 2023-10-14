@@ -58,27 +58,17 @@ Click on the **Manual** button to show or hide the manual.
 
 ## Cells
 
-A cell consists of Elm declarations, Elm expressions, and comments.  Here is an example:
+There are two kinds of cells: code cells and markdown cells.
+Code cells are used to write Elm code: 
 
-```
-  # This is some Elm code:
+  - expression to be evaluated, like `2 + 2` or `List.length [1,2,3]`. 
+  - declarations, like `a = 2` or `b = [1,2,3]`
+  - type definitions, like `type alias Point = { x : Float, y : Float }`
+  - import statements, like `import List.Extra`, `import List.Extra as LE`, or `import List.Extra exposing (..)`
 
-  > a = 2   # declaration
-  > b = 5   # declaration
-  > a * b   # expression
-```
+Markdown cells are used to write text.
 
-Comments are prefixed by `#` and code is prefixed by `>`.
-
-The result of evaluating the code is shown below the code. A cell
-may contain more than one expression, but each must begin with "`>`".
-Click in a cell to edit it, then type ctrl-Enter to evaluate it.
-
-For examples, take a look at
-the public notebook [Welcome to Elm Notebook](https://elm-notebook.lamdera.app/p/jxxcarlson-welcome-to-elm-notebooks).
-You can follow this link as a guest, or sign in, click on the **Public** button (upper right), and
-then select *Welcome to Elm Notebook* from the list of public notebooks.
-
+The result of evaluating the code is shown below the code.
 
 ## Public versus private notebooks
 
@@ -106,6 +96,13 @@ You can also update a notebook that has been cloned: click on the **Update** but
 Updating a notebook brings in new material from the original source.
 However this operation will overwrite any changes you have made to the clone.
 
+
+
+"""
+
+
+old =
+    """
 ## Working with data
 
 Data can
@@ -132,5 +129,4 @@ To create a data set from a file on your computer, click
 on the button 'New Data Set' in the footer.
 In the reverse direction, you can export a data set to a file  with the
  command `export jxxcarlson.stocks`.
-
 """
