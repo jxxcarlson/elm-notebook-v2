@@ -26,7 +26,11 @@ view model =
                 --, E.alignRight
                 , E.moveUp (View.Geometry.appHeight model - 100 |> toFloat)
                 ]
-                [ View.Input.submitPackageList model
+                [ E.row [ E.spacing 12 ]
+                    [ E.el [ Font.bold, Font.size 14, Font.color (E.rgb 0.9 0.9 0.9) ] (E.text "Packages for this notebook")
+                    , E.el [ Font.italic, Font.size 14, Font.color (E.rgb 0.9 0.9 0.9) ] (E.text "Add more packages below, one per line.")
+                    ]
+                , View.Input.submitPackageList model
                 , E.column
                     [ E.height (E.px 300)
                     , E.width (E.px 500)

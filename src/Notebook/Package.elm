@@ -5,11 +5,42 @@ import Env exposing (Mode(..))
 import Http
 import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Pipeline as Pipeline exposing (required)
+import Lamdera
 import Notebook.Codec
 import Notebook.Types exposing (SimplePackageInfo)
 import Process
 import Task
 import Types
+
+
+submitPackageList model =
+    let
+        packageNames =
+            makePackageList model
+
+        currentBook =
+            model.currentBook
+
+        newBook =
+            { currentBook | packageNames = packageNames }
+
+        books =
+            List.map
+                (\b ->
+                    if b.id == currentBook.id then
+                        newBook
+
+                    else
+                        b
+                )
+                model.books
+    in
+    ( { model | currentBook = newBook, books = books }
+    , Cmd.batch
+        [ Lamdera.sendToBackend (Types.SaveNotebook newBook)
+        , installNewPackages (makePackageList model)
+        ]
+    )
 
 
 {-| This function talks to the Elm compiler via
@@ -32,11 +63,13 @@ sendPackageList packageList =
         }
 
 
+{-| Fetch the elm.json file for a package with given name.
+-}
 fetchElmJson : String -> Cmd Types.FrontendMsg
-fetchElmJson package =
+fetchElmJson packageName =
     let
         url =
-            "https://raw.githubusercontent.com/" ++ package ++ "/master/elm.json"
+            "https://raw.githubusercontent.com/" ++ packageName ++ "/master/elm.json"
     in
     Http.get
         { url = url

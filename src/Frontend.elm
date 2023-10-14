@@ -409,33 +409,7 @@ update msg model =
                     ( { model | packagesFromCompiler = packageList }, Cmd.none )
 
         SubmitPackageList ->
-            let
-                packageNames =
-                    Notebook.Package.makePackageList model
-
-                currentBook =
-                    model.currentBook
-
-                newBook =
-                    { currentBook | packageNames = packageNames }
-
-                books =
-                    List.map
-                        (\b ->
-                            if b.id == currentBook.id then
-                                newBook
-
-                            else
-                                b
-                        )
-                        model.books
-            in
-            ( { model | currentBook = newBook, books = books }
-            , Cmd.batch
-                [ sendToBackend (SaveNotebook newBook)
-                , Notebook.Package.installNewPackages (Notebook.Package.makePackageList model)
-                ]
-            )
+            Notebook.Package.submitPackageList model
 
         SubmitTest ->
             ( model, Cmd.none )
@@ -586,7 +560,11 @@ update msg model =
                         | currentUser = Just user
                         , evalState = Notebook.Types.emptyEvalState
                       }
-                    , Cmd.batch [ sendToBackend (UpdateUserWith user), sendToBackend (SaveNotebook previousBook) ]
+                    , Cmd.batch
+                        [ sendToBackend (UpdateUserWith user)
+                        , sendToBackend (SaveNotebook previousBook)
+                        , Notebook.Package.installNewPackages currentBook.packageNames
+                        ]
                     )
 
         TogglePublic ->
