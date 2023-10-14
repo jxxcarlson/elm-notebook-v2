@@ -13,7 +13,7 @@ fastTickInterval =
 
 
 darkThemeBackgroundColor =
-    E.rgb255 40 40 40
+    E.rgb255 43 40 60
 
 
 darkThemeCodeColor =
@@ -21,7 +21,11 @@ darkThemeCodeColor =
 
 
 darkThemeTextColor =
-    E.rgb255 200 200 200
+    E.rgb255 200 190 230
+
+
+darkThemeDividerColor =
+    E.rgb255 160 160 240
 
 
 
@@ -55,6 +59,10 @@ lightThemeCodeColor =
 
 lightThemeCodeCellTextColor =
     E.rgb255 20 20 150
+
+
+lightThemeDividerColor =
+    E.rgb 0.7 0.7 0.85
 
 
 

@@ -215,7 +215,7 @@ renderer theme =
                         |> justs
             in
             Element.image
-                (attrs ++ [ Element.width (Element.px 300), Element.centerX ])
+                ([ Element.width (Element.px 300), Element.centerX, Element.Background.color (Element.rgb 1 1 1) ] ++ attrs)
                 { src = src
                 , description = alt
                 }

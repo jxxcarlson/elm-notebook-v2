@@ -27,8 +27,7 @@ import View.Utility
 view : ViewData -> String -> Cell -> Element FrontendMsg
 view viewData cellContents cell =
     E.column
-        [ E.paddingEach { top = 0, right = 0, bottom = 0, left = 0 }
-        , E.width (E.px viewData.width)
+        [ E.width (E.px viewData.width)
         , Background.color (themedBackgroundColor viewData.theme) -- (E.rgb255 99 106 122)
         ]
         [ E.row
@@ -36,6 +35,15 @@ view viewData cellContents cell =
             [ viewSourceAndValue viewData cellContents cell
             ]
         ]
+
+
+themedDividerColor theme =
+    case theme of
+        Notebook.Book.LightTheme ->
+            Notebook.Config.lightThemeDividerColor
+
+        Notebook.Book.DarkTheme ->
+            Notebook.Config.darkThemeDividerColor
 
 
 themedBackgroundColor theme =
@@ -89,8 +97,9 @@ viewSourceAndValue originalviewData cellContents cell =
         style =
             case ( cell.cellState, cell.tipe ) of
                 ( CSEdit, _ ) ->
-                    [ Element.Border.color (E.rgb 0.75 0.75 0.75)
-                    , editBGColor
+                    [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0.75 0.75 0.75)
+
+                    --, editBGColor
                     , Element.Border.widthEach
                         { bottom = 1
                         , left = 0
@@ -100,7 +109,7 @@ viewSourceAndValue originalviewData cellContents cell =
                     ]
 
                 ( CSView, CTCode ) ->
-                    [ Element.Border.color (E.rgb 0 0 1.0)
+                    [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0 0 1.0)
                     , Element.Border.widthEach
                         { bottom = 1
                         , left = 0
@@ -110,7 +119,7 @@ viewSourceAndValue originalviewData cellContents cell =
                     ]
 
                 ( CSView, CTMarkdown ) ->
-                    [ Element.Border.color (E.rgb 0.75 0.75 0.75)
+                    [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0.75 0.75 0.75)
                     , Element.Border.widthEach
                         { bottom = 0
                         , left = 0
@@ -124,24 +133,22 @@ viewSourceAndValue originalviewData cellContents cell =
             { originalviewData | width = originalviewData.width - 24 }
     in
     E.column
-        ([ Background.color (Utility.cellColor cell.tipe)
-
-         --, E.paddingXY 6 12
-         --, E.spacing 4
+        ([ Background.color (themedCodeCellBackgroundColor viewData.theme)
+         , Font.color (themedCodeCellTextColor viewData.theme) -- (Utility.cellColor cell.tipe)
          ]
             ++ style
         )
         [ E.el [ E.alignRight, Background.color (Utility.cellColor cell.tipe) ] (controls viewData cell)
         , viewSource viewData.theme (viewData.width - controlWidth) cell cellContents
-        , E.el (hrule cell) (viewValue viewData cell)
+        , E.el (hrule viewData.theme cell) (viewValue viewData cell)
         ]
 
 
-hrule cell =
+hrule theme cell =
     case cell.tipe of
         CTCode ->
             [ Element.Border.widthEach { top = 2, bottom = 0, left = 0, right = 0 }
-            , Element.Border.color (E.rgba 0.75 0.75 1.0 0.8)
+            , Element.Border.color (themedCodeCellTextColor theme) --(E.rgba 0.75 0.75 1.0 0.8)
             ]
 
         CTMarkdown ->
@@ -285,7 +292,8 @@ viewSuccess viewData cell =
                                 [ -- E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
                                   View.Style.monospace
                                 ]
-                                (par realWidth
+                                (par viewData.theme
+                                    realWidth
                                     [ View.CellThemed.renderFull viewData.theme cell.tipe (scale 1.0 realWidth) "Nothing" ]
                                 )
 
@@ -308,7 +316,8 @@ viewSuccess viewData cell =
                                 [ -- E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
                                   View.Style.monospace
                                 ]
-                                (par realWidth
+                                (par viewData.theme
+                                    realWidth
                                     [ View.CellThemed.renderFull viewData.theme cell.tipe (scale 1.0 realWidth) str ]
                                 )
 
@@ -320,17 +329,18 @@ viewSuccess viewData cell =
                             E.none
 
         CVMarkdown str ->
-            par realWidth
+            par viewData.theme
+                realWidth
                 -- TODO: fix this outrageous hack
                 [ E.none ]
 
 
-par width =
+par theme width =
     E.paragraph
         [ E.spacing 8
-        , Font.color Color.black
+        , Font.color (themedTextColor theme)
         , E.width (E.px width)
-        , Background.color (E.rgb 0.75 0.75 0.95)
+        , Background.color (themedBackgroundColor theme) --  (E.rgb 0.75 0.75 0.95)
         ]
 
 
