@@ -14,12 +14,11 @@ import Frontend.Authentication
 import Frontend.ElmCompilerInterop
 import Frontend.Message
 import Frontend.UIHelper
+import Frontend.Update
 import Html exposing (Html)
-import Json.Decode
 import Keyboard
 import Lamdera exposing (sendToBackend)
 import List.Extra
-import Loading
 import Navigation
 import Notebook.Action
 import Notebook.Book exposing (Book)
@@ -33,14 +32,12 @@ import Notebook.Types exposing (MessageItem(..))
 import Notebook.Update
 import Ports
 import Predicate
-import Process
 import Random
 import Task
 import Time
 import Types exposing (AppMode(..), AppState(..), ClockState(..), DeleteNotebookState(..), FrontendModel, FrontendMsg(..), MessageStatus(..), PopupState(..), ShowNotebooks(..), SignupState(..), ToBackend(..), ToFrontend(..))
 import Url exposing (Url)
 import User
-import Util
 import View.Main
 
 
@@ -178,25 +175,7 @@ update msg model =
             ( model, Notebook.Package.fetchElmJson packageName )
 
         GotElmJsonDict result ->
-            case result of
-                Err _ ->
-                    ( { model | message = "Error retrieving elm.json dependencies" }, Cmd.none )
-
-                Ok data ->
-                    case model.currentUser of
-                        Nothing ->
-                            ( model, Cmd.none )
-
-                        Just user ->
-                            let
-                                elmJsonDependencies =
-                                    Util.mergeDictionaries (Dict.singleton data.name (Notebook.Types.cleanElmPackageSummary data)) model.packageDict
-                            in
-                            ( { model
-                                | packageDict = elmJsonDependencies
-                              }
-                            , sendToBackend (SaveElmJsonDependenciesBE user.username elmJsonDependencies)
-                            )
+            Notebook.Package.gotElmJsonDict model result
 
         GotReply cell result ->
             Frontend.ElmCompilerInterop.handleReplyFromElmCompiler model cell result
@@ -205,18 +184,7 @@ update msg model =
             Frontend.UIHelper.handleKeyPresses model keyMsg
 
         FETick time ->
-            if Predicate.canSave model && model.currentBook.dirty then
-                let
-                    oldBook =
-                        model.currentBook
-
-                    book =
-                        { oldBook | dirty = False }
-                in
-                ( { model | currentTime = time, currentBook = book }, sendToBackend (SaveNotebook book) )
-
-            else
-                ( model, Cmd.none )
+            Frontend.Update.saveIfDirty model time
 
         -- NAV
         UrlClicked urlRequest ->
@@ -285,29 +253,7 @@ update msg model =
             ( { model | cloneReference = str }, Cmd.none )
 
         SignOut ->
-            ( { model
-                | currentUser = Nothing
-                , message = "Signed out"
-                , inputUsername = ""
-                , inputPassword = ""
-                , clockState = Types.ClockStopped
-              }
-            , Cmd.batch
-                [ Nav.pushUrl model.key "/"
-                , if Predicate.canSave model then
-                    let
-                        oldBook =
-                            model.currentBook
-
-                        book =
-                            { oldBook | dirty = False }
-                    in
-                    sendToBackend (SaveNotebook book)
-
-                  else
-                    Cmd.none
-                ]
-            )
+            Frontend.Update.signOut model
 
         -- INPUT FIELDS
         InputName str ->

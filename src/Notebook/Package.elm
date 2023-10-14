@@ -11,6 +11,29 @@ import Notebook.Types exposing (SimplePackageInfo)
 import Process
 import Task
 import Types
+import Util
+
+
+gotElmJsonDict model result =
+    case result of
+        Err _ ->
+            ( { model | message = "Error retrieving elm.json dependencies" }, Cmd.none )
+
+        Ok data ->
+            case model.currentUser of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just user ->
+                    let
+                        elmJsonDependencies =
+                            Util.mergeDictionaries (Dict.singleton data.name (Notebook.Types.cleanElmPackageSummary data)) model.packageDict
+                    in
+                    ( { model
+                        | packageDict = elmJsonDependencies
+                      }
+                    , Lamdera.sendToBackend (Types.SaveElmJsonDependenciesBE user.username elmJsonDependencies)
+                    )
 
 
 submitPackageList model =
