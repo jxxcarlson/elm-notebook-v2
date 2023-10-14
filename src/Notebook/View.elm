@@ -138,8 +138,8 @@ controls viewData cell =
                     , E.height (E.px 32)
                     , E.paddingEach { top = 2, bottom = 2, left = 8, right = 18 }
                     ]
-                    [ moveCell cell.cellState cell.index Types.Up
-                    , moveCell cell.cellState cell.index Types.Down
+                    [ moveCell cell.cellState cell.index Notebook.Book.Up
+                    , moveCell cell.cellState cell.index Notebook.Book.Down
                     ]
                 , E.row
                     [ E.spacing 6
@@ -461,13 +461,13 @@ deleteCellAt cellState index =
     Button.smallPrimary { msg = DeleteCell index, status = Button.Active, label = Button.Text "Delete", tooltipText = Just "Delete cell" }
 
 
-moveCell : CellState -> Int -> Types.DirectionToMove -> Element FrontendMsg
+moveCell : CellState -> Int -> Notebook.Book.DirectionToMove -> Element FrontendMsg
 moveCell cellstate index direction =
     case direction of
-        Types.Down ->
+        Notebook.Book.Down ->
             Button.smallPrimary { msg = MoveCell index direction, status = Button.Active, label = Button.Text "Down", tooltipText = Just "Move cell down" }
 
-        Types.Up ->
+        Notebook.Book.Up ->
             Button.smallPrimary { msg = MoveCell index direction, status = Button.Active, label = Button.Text "Up", tooltipText = Just "Move cell up" }
 
 

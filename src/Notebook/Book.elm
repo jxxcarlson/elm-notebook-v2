@@ -1,7 +1,9 @@
 module Notebook.Book exposing
     ( Book
+    , DirectionToMove(..)
     , ViewData
     , initializeCellState
+    , moveCellUpDown
     , new
     , replaceCell
     , scratchPad
@@ -10,6 +12,7 @@ module Notebook.Book exposing
     )
 
 import Dict exposing (Dict)
+import List.Extra
 import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
 import Notebook.Types
 import Time
@@ -29,6 +32,11 @@ type alias Book =
     , currentIndex : Int
     , packageNames : List String
     }
+
+
+type DirectionToMove
+    = Up
+    | Down
 
 
 scratchPad : String -> Book
@@ -221,3 +229,46 @@ replaceCell cell book =
                 )
                 cells
     }
+
+
+moveCellUpDown model index direction =
+    case direction of
+        Down ->
+            case ( List.Extra.getAt index model.currentBook.cells, List.Extra.getAt (index + 1) model.currentBook.cells ) of
+                ( Just cell, Just cellBelow ) ->
+                    let
+                        newCellBelow =
+                            { cell | index = index + 1 }
+
+                        newCell =
+                            { cellBelow | index = index }
+
+                        currentBook =
+                            model.currentBook
+                                |> replaceCell newCellBelow
+                                |> replaceCell newCell
+                    in
+                    ( { model | currentBook = currentBook }, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        Up ->
+            case ( List.Extra.getAt index model.currentBook.cells, List.Extra.getAt (index - 1) model.currentBook.cells ) of
+                ( Just cell, Just cellAbove ) ->
+                    let
+                        newCellAbove =
+                            { cell | index = index - 1 }
+
+                        newCell =
+                            { cellAbove | index = index }
+
+                        currentBook =
+                            model.currentBook
+                                |> replaceCell newCellAbove
+                                |> replaceCell newCell
+                    in
+                    ( { model | currentBook = currentBook }, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )

@@ -684,54 +684,7 @@ update msg model =
                 ( Notebook.Update.deleteCell index model, Cmd.none )
 
         MoveCell index direction ->
-            case direction of
-                Types.Down ->
-                    let
-                        _ =
-                            Debug.log "__Down" "!"
-                    in
-                    case ( List.Extra.getAt index model.currentBook.cells, List.Extra.getAt (index + 1) model.currentBook.cells ) of
-                        ( Just cell, Just cellBelow ) ->
-                            let
-                                newCellBelow =
-                                    { cell | index = index + 1 }
-
-                                newCell =
-                                    { cellBelow | index = index }
-
-                                currentBook =
-                                    model.currentBook
-                                        |> Notebook.Book.replaceCell newCellBelow
-                                        |> Notebook.Book.replaceCell newCell
-                            in
-                            ( { model | currentBook = currentBook }, Cmd.none )
-
-                        _ ->
-                            ( model, Cmd.none )
-
-                Types.Up ->
-                    let
-                        _ =
-                            Debug.log "__Up" "!"
-                    in
-                    case ( List.Extra.getAt index model.currentBook.cells, List.Extra.getAt (index - 1) model.currentBook.cells ) of
-                        ( Just cell, Just cellAbove ) ->
-                            let
-                                newCellAbove =
-                                    { cell | index = index - 1 }
-
-                                newCell =
-                                    { cellAbove | index = index }
-
-                                currentBook =
-                                    model.currentBook
-                                        |> Notebook.Book.replaceCell newCellAbove
-                                        |> Notebook.Book.replaceCell newCell
-                            in
-                            ( { model | currentBook = currentBook }, Cmd.none )
-
-                        _ ->
-                            ( model, Cmd.none )
+            Notebook.Book.moveCellUpDown model index direction
 
         EditCell cell ->
             Notebook.Update.editCell model cell

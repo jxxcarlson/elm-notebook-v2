@@ -10,7 +10,7 @@ import Http
 import Json.Decode
 import Keyboard
 import Lamdera exposing (ClientId)
-import Notebook.Book exposing (Book)
+import Notebook.Book exposing (Book, DirectionToMove(..))
 import Notebook.Cell exposing (Cell, CellState(..), CellValue(..))
 import Notebook.DataSet
 import Notebook.Types
@@ -237,11 +237,6 @@ type FrontendMsg
 
 type alias Message =
     { txt : String, status : MessageStatus }
-
-
-type DirectionToMove
-    = Up
-    | Down
 
 
 type DataSetDescription
