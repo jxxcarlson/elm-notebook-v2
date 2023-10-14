@@ -186,8 +186,9 @@ viewNotebook model =
         [ E.column
             [ View.Style.fgGray 0.6
             , Font.size 14
+            , Background.color (E.rgb255 120 120 160)
             , E.height (E.px (View.Geometry.bodyHeight model))
-            , E.width (E.px (View.Geometry.notebookWidth model))
+            , E.width (E.px (View.Geometry.notebookWidth model - 20))
             , E.scrollbarY
             , E.clipX
             ]
