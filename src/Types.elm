@@ -167,6 +167,9 @@ type FrontendMsg
     | InputPackages String
     | InputAuthor String
     | InputInitialStateValue String
+      -- Compile program
+    | SendProgramToBeCompiled
+    | GotCompiledProgram (Result Http.Error String)
       -- Notebook
     | ToggleTheme Notebook.Book.Theme
     | ExecuteDelayedFunction

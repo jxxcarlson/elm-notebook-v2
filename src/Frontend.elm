@@ -26,6 +26,7 @@ import Notebook.Action
 import Notebook.Book exposing (Book)
 import Notebook.Cell exposing (CellState(..), CellType(..), CellValue(..))
 import Notebook.Codec
+import Notebook.Compile
 import Notebook.DataSet
 import Notebook.Eval
 import Notebook.EvalCell
@@ -170,6 +171,21 @@ update msg model =
                     ( { model | theme = Notebook.Book.DarkTheme }, Cmd.none )
 
         -- ELM COMPILER/JS INTEROP
+        SendProgramToBeCompiled ->
+            ( model
+            , Notebook.Compile.testCompilation
+            )
+
+        GotCompiledProgram result ->
+            case result of
+                Err e ->
+                    ( { model | message = "Error: " ++ Debug.toString e }, Cmd.none )
+
+                Ok program ->
+                    ( { model | message = "Received compiled program" }
+                    , File.Download.string "main.js" "text/javascript" program
+                    )
+
         ExecuteDelayedFunction ->
             ( model, Notebook.Package.nowSendPackageList model )
 

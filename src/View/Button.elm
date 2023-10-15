@@ -30,6 +30,7 @@ module View.Button exposing
     , runTask
     , saveDataSetAsPrivate
     , saveDataSetAsPublic
+    , sendProgramToBeCompiled
     , setClock
     , setUpUser
     , signIn
@@ -159,6 +160,11 @@ runCell cellState cellType index =
 dismissPopup : Element FrontendMsg
 dismissPopup =
     Button.largePrimary { msg = ChangePopup NoPopup, status = Button.Active, label = Button.Text "x", tooltipText = Nothing }
+
+
+sendProgramToBeCompiled : Element FrontendMsg
+sendProgramToBeCompiled =
+    Button.largePrimary { msg = SendProgramToBeCompiled, status = Button.Active, label = Button.Text "Compile Test Program", tooltipText = Nothing }
 
 
 editTitle : Types.AppMode -> Element FrontendMsg

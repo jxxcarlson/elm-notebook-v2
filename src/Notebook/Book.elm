@@ -32,6 +32,8 @@ type alias Book =
     , cells : List Notebook.Cell.Cell
     , currentIndex : Int
     , packageNames : List String
+    , tags : List String
+    , options : Dict String String
     }
 
 
@@ -78,6 +80,8 @@ scratchPad username =
         ]
     , currentIndex = 0
     , packageNames = []
+    , tags = []
+    , options = Dict.fromList []
     }
 
 
@@ -114,6 +118,8 @@ new author title =
         ]
     , currentIndex = 0
     , packageNames = []
+    , tags = []
+    , options = Dict.fromList []
     }
 
 
@@ -150,6 +156,8 @@ newBook author title =
         ]
     , currentIndex = 0
     , packageNames = []
+    , tags = []
+    , options = Dict.fromList []
     }
 
 
