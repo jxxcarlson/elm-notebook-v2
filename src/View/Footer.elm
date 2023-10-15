@@ -28,6 +28,7 @@ view model =
         [ E.height (E.px View.Geometry.footerHeight)
         , E.width (E.px (View.Geometry.appWidth model))
         , Font.size 14
+        , E.paddingEach { left = 18, right = 0, top = 0, bottom = 0 }
         , E.alignBottom
         , E.inFront (View.Popup.Admin.view model)
         , E.inFront (View.Popup.SignUp.view model)
@@ -44,16 +45,16 @@ view model =
         ]
         (case model.currentUser of
             Nothing ->
-                [ View.Utility.showIfIsAdmin model (Button.adminPopup model)
-                , View.Utility.showIfIsAdmin model Button.runTask
-                , displayMessages model
+                [ displayMessages model
                 ]
 
             Just _ ->
                 [ View.Utility.showIfIsAdmin model (Button.adminPopup model)
-                , View.Utility.showIfIsAdmin model Button.runTask
+
+                --, View.Utility.showIfIsAdmin model Button.runTask
                 , Button.packagesPopup model
-                , E.el [ Font.color (E.rgb 1 1 1) ] (E.text <| String.left 4 model.currentBook.id)
+
+                --, E.el [ Font.color (E.rgb 1 1 1) ] (E.text <| String.left 4 model.currentBook.id)
                 , View.Utility.showIfIsAdmin model Button.sendProgramToBeCompiled
                 , displayMessages model
                 , View.Utility.showIf (Predicate.regularUser model) Button.importNotebook
@@ -92,13 +93,14 @@ view model =
 
 displayMessages model =
     E.el
-        [ E.width (E.px 300)
+        [ E.width E.fill
         , E.height (E.px View.Geometry.footerHeight)
         , E.paddingXY View.Geometry.hPadding 4
         , View.Style.bgGray 0.1
+        , E.centerY
 
         -- , Font.color (E.rgb 0 1 0)
-        , E.moveDown 13
+        --, E.moveDown 13
         ]
         --[ E.text <| model.message ]
-        (Message.viewSmall 300 model)
+        (Message.viewSmall 500 model)

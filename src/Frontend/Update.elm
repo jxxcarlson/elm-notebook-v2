@@ -40,7 +40,6 @@ signOut model =
             Cmd.none
         ]
     )
-        |> (\( model_, messages_ ) -> Message.postMessage "Error decoding imported file" Types.MSRed model_)
 
 
 saveIfDirty : Model -> Time.Posix -> ( Model, Cmd Msg )

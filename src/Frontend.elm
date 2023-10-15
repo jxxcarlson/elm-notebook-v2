@@ -650,7 +650,7 @@ updateFromBackend msg model =
                                 newModel =
                                     { model | evalState = Notebook.EvalCell.updateEvalStateWithCells book.cells Notebook.Types.emptyEvalState, currentBook = book }
                             in
-                            Message.postMessage "Could not find the notebook you asked for" Types.MSRed newModel
+                            Message.postMessage "No notebook specified, using first one" Types.MSGreen newModel
                                 |> (\( model_, cmd ) ->
                                         ( model_, Cmd.batch [ cmd, Notebook.Package.installNewPackages book.packageNames ] )
                                    )

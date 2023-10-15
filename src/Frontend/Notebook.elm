@@ -95,7 +95,7 @@ setCurrentNotebook model book =
 importLoaded model dataString =
     case Notebook.Codec.importBook dataString of
         Err _ ->
-            Message.postMessage "Error decoding imported file" Types.MSRed model
+            Message.postMessage "Error decoding imported file (2)" Types.MSRed model
 
         Ok newBook ->
             case model.currentUser of

@@ -93,7 +93,7 @@ executeCell cellIndex model =
                 Cell.CTCode ->
                     case Notebook.Parser.classify cell.text of
                         Err _ ->
-                            Message.postMessage "Error decoding imported file" Types.MSRed model
+                            Message.postMessage "Error decoding imported file (1)" Types.MSRed model
 
                         Ok classif ->
                             case classif of

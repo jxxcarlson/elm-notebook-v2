@@ -6,6 +6,7 @@ import Element.Background as Background
 import Element.Border
 import Element.Events
 import Element.Font as Font
+import Message
 import Predicate
 import Types exposing (AppMode(..))
 import UILibrary.Color as Color
@@ -43,6 +44,7 @@ notSignedInHeader model =
             [ View.Input.username model
             , View.Input.password model
             , Button.signIn
+            , E.row [ E.width E.fill, E.paddingXY 8 8, View.Style.bgGray 0 ] [ Message.viewSmall 350 model ]
             ]
         , welcomeLink
         , Button.manualLarge
