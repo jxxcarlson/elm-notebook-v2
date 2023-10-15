@@ -639,10 +639,21 @@ updateFromBackend msg model =
             )
 
         GotNotebooks maybeNotebook books ->
-            -- TODO: ^^ maybeNotebook? WTF??
             case maybeNotebook of
                 Nothing ->
-                    ( model, Cmd.none )
+                    case List.head books of
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                        Just book ->
+                            let
+                                newModel =
+                                    { model | evalState = Notebook.EvalCell.updateEvalStateWithCells book.cells Notebook.Types.emptyEvalState, currentBook = book }
+                            in
+                            Message.postMessage "Could not find the notebook you asked for" Types.MSRed newModel
+                                |> (\( model_, cmd ) ->
+                                        ( model_, Cmd.batch [ cmd, Notebook.Package.installNewPackages book.packageNames ] )
+                                   )
 
                 Just currentBook ->
                     let
