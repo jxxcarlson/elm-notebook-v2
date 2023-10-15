@@ -179,7 +179,7 @@ update msg model =
         GotCompiledProgram result ->
             case result of
                 Err e ->
-                    ( { model | message = "Error: " ++ Debug.toString e }, Cmd.none )
+                    ( { model | message = "Error compiling program " }, Cmd.none )
 
                 Ok program ->
                     ( { model | message = "Received compiled program" }
@@ -654,7 +654,7 @@ updateFromBackend msg model =
                         newModel =
                             { model | evalState = Notebook.EvalCell.updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState, currentBook = currentBook }
                     in
-                    ( { newModel | books = books, currentBook = currentBook }, Notebook.Package.installNewPackages (currentBook.packageNames |> Debug.log "__PKG NAMES") )
+                    ( { newModel | books = books, currentBook = currentBook }, Notebook.Package.installNewPackages currentBook.packageNames )
 
 
 view : Model -> { title : String, body : List (Html.Html FrontendMsg) }
