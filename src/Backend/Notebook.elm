@@ -20,17 +20,17 @@ deleteNotebook model book =
     ( { model | userToNoteBookDict = newNotebookDict }, Cmd.none )
 
 
-getPublicNotebook model clientId slug =
+getPublicNotebook model clientId searchKey =
     let
         notebooks =
-            NotebookDict.allPublic model.userToNoteBookDict |> List.filter (\b -> String.contains slug b.slug)
+            NotebookDict.allPublic model.userToNoteBookDict |> List.filter (\b -> String.contains searchKey b.slug)
     in
     case List.head notebooks of
         Nothing ->
             ( model, Lamdera.sendToFrontend clientId (Types.SendMessage <| "Sorry, that notebook does not exist") )
 
         Just notebook ->
-            ( model, Cmd.batch [ Lamdera.sendToFrontend clientId (Types.GotPublicNotebook notebook), Lamdera.sendToFrontend clientId (Types.SendMessage <| "Found that notebook!") ] )
+            ( model, Cmd.batch [ Lamdera.sendToFrontend clientId (Types.GotPublicNotebook notebook), Lamdera.sendToFrontend clientId (Types.SendMessage <| "Found: " ++ notebook.title) ] )
 
 
 importNewBook : BackendModel -> String -> String -> Book -> ( BackendModel, Cmd BackendMsg )
