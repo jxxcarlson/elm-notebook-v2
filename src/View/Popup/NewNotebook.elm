@@ -2,7 +2,6 @@ module View.Popup.NewNotebook exposing (view)
 
 import Element exposing (Element)
 import Element.Background
-import Message
 import Types
 import View.Button
 import View.Geometry

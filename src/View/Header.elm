@@ -6,7 +6,6 @@ import Element.Background as Background
 import Element.Border
 import Element.Events
 import Element.Font as Font
-import Message
 import Predicate
 import Types exposing (AppMode(..))
 import UILibrary.Color as Color
