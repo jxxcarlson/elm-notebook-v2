@@ -116,9 +116,21 @@ belong to you.
 
 ## Opening a public document without signing in
 
-Imitate this example:  point your browser at
-[elm-notebook2.lamdera.app/p/jxxcarlson-collatz-conjecture](https://elm-notebook2.lamdera.app/open/jxxcarlson-collatz-conjecture).
+You can open a public document if you know its "address" on the internet.
+For example, there is a public document called **Collatz Conjecture.**
+You you can open by pointing your browser at
 
+- [elm-notebook2.lamdera.app/open/jxxcarlson-collatz-conjecture](https://elm-notebook2.lamdera.app/open/jxxcarlson-collatz-conjecture).
+
+Abbreviated versions of the address also work:
+
+ - [elm-notebook2.lamdera.app/open/jxxcarlson-collatz](https://elm-notebook2.lamdera.app/open/jxxcarlson-collatz)
+
+ - [elm-notebook2.lamdera.app/open/collatz](https://elm-notebook2.lamdera.app/open/collatz)
+
+ Documents that you open this way are opened in guest mode.  You can edit them, run code, etc. However,
+ your changes will not be saved. This feature can be useful for classes.  Just put these links on your
+ class website for your student's convenience.
 
 ## Cloning a notebook
 

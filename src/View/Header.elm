@@ -83,10 +83,10 @@ signedInHeader model user =
             ]
 
         --, View.Utility.showIf (Predicate.regularUser model) (Button.editTitle model.appMode)
-        , View.Utility.showIf (Predicate.regularUser model) Button.executeNotebook
-        , View.Utility.showIf (Predicate.regularUser model) Button.clearValues
+        , Button.executeNotebook
+        , Button.clearValues
         , View.Utility.showIf (Predicate.regularUser model) Button.newNotebook
-        , View.Utility.showIf (Predicate.regularUser model) (Button.toggleTheme model.theme)
+        , Button.toggleTheme model.theme
         , View.Utility.showIf (Predicate.regularUser model) (Button.deleteNotebook model.deleteNotebookState)
         , View.Utility.showIf (Predicate.regularUser model) (Button.cancelDeleteNotebook model.deleteNotebookState)
 

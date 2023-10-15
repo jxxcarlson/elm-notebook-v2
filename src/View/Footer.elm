@@ -53,7 +53,7 @@ view model =
                 , View.Utility.showIfIsAdmin model Button.runTask
                 , Button.packagesPopup model
                 , E.el [ Font.color (E.rgb 1 1 1) ] (E.text <| String.left 4 model.currentBook.id)
-                , Button.sendProgramToBeCompiled
+                , View.Utility.showIfIsAdmin model Button.sendProgramToBeCompiled
                 , messageRow model
                 , View.Utility.showIf (Predicate.regularUser model) Button.importNotebook
                 , View.Utility.showIf (Predicate.regularUser model) Button.exportNotebook
