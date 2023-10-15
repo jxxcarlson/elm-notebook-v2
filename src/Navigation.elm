@@ -19,13 +19,13 @@ urlAction path =
     else
         let
             prefix =
-                String.left 3 path
+                String.left 6 path
 
             segment =
-                String.dropLeft 3 path
+                String.dropLeft 6 path
         in
         case prefix of
-            "/p/" ->
+            "/open/" ->
                 Lamdera.sendToBackend (Types.GetPublicNotebook segment)
 
             _ ->

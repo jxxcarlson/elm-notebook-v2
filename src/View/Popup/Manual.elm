@@ -109,12 +109,15 @@ cells, delete cells and make new ones. However, these changes will not be saved.
 If you want to save changes to a public notebook, clone it (see below)  Cloning a notebook
 creates a copy of the notebook that belongs to you.
 
-
-
 Note the two buttons *Mine* and *Public* at the top of the notebook list (right-hand column).
 Click on the *Mine*
 button to show your documents. Click on *Public* to show public documents that do not
 belong to you.
+
+## Opening a public document without signing in
+
+Imitate this example:  point your browser at
+[elm-notebook2.lamdera.app/p/jxxcarlson-collatz-conjecture](https://elm-notebook2.lamdera.app/open/jxxcarlson-collatz-conjecture).
 
 
 ## Cloning a notebook
