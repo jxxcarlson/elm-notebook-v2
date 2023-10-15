@@ -181,12 +181,11 @@ update msg model =
         GotCompiledProgram result ->
             case result of
                 Err e ->
-                    ( { model | message = "Error compiling program " }, Cmd.none )
+                    Message.postMessage "Error compiling program" Types.MSRed model
 
                 Ok program ->
-                    ( { model | message = "Received compiled program" }
-                    , File.Download.string "main.js" "text/javascript" program
-                    )
+                    Message.postMessage "Received compiled program" Types.MSRed model
+                        |> (\( model_, cmd ) -> ( model_, Cmd.batch [ cmd, File.Download.string "main.js" "text/javascript" program ] ))
 
         ExecuteDelayedFunction ->
             ( model, Notebook.Package.nowSendPackageList model )
@@ -258,7 +257,7 @@ update msg model =
                 )
 
             else
-                ( { model | message = "Password must be at least 8 letters long." }, Cmd.none )
+                Message.postMessage "Password must be at least 8 letters long." Types.MSRed model
 
         InputUsername str ->
             ( { model | inputUsername = str }, Cmd.none )
@@ -329,7 +328,7 @@ update msg model =
         GotPackagesFromCompiler result ->
             case result of
                 Err e ->
-                    ( { model | message = "Error retrieving package List from compiler" }, Cmd.none )
+                    Message.postMessage "Error retrieving package List from compiler" Types.MSRed model
 
                 Ok packageList ->
                     ( { model | packagesFromCompiler = packageList }, Cmd.none )
@@ -431,7 +430,7 @@ update msg model =
                     in
                     case List.head newNotebookList of
                         Nothing ->
-                            ( { model | message = "You can't delete your last notebook." }, Cmd.none )
+                            Message.postMessage "You can't delete your last notebook." Types.MSRed model
 
                         Just book ->
                             ( { model
@@ -473,7 +472,7 @@ update msg model =
 
         UpdateNotebookTitle ->
             if not (Predicate.canSave model) then
-                ( { model | message = "You can't edit this notebook." }, Cmd.none )
+                Message.postMessage "You can't edit this notebook." Types.MSRed model
 
             else
                 let
@@ -553,20 +552,20 @@ updateFromBackend msg model =
 
         -- USER
         SendMessage message ->
-            ( { model | message = message }, Cmd.none )
+            Message.postMessage message Types.MSGreen model
 
         MessageReceived message ->
-            Frontend.Message.received model message
+            Message.postMessage message.txt Types.MSGreen model
 
         UserSignedIn user _ ->
             ( { model | currentUser = Just user, popupState = Types.NoPopup }, Cmd.none )
 
         SendUser user ->
             if user.username == "guest" then
-                ( { model | currentUser = Just user, message = "", clockState = ClockStopped }, Cmd.none )
+                ( { model | currentUser = Just user, clockState = ClockStopped }, Cmd.none )
 
             else
-                ( { model | currentUser = Just user, message = "", clockState = ClockStopped }, Cmd.none )
+                ( { model | currentUser = Just user, clockState = ClockStopped }, Cmd.none )
 
         -- DATA
         GotListOfPublicDataSets dataSetMetaDataList ->

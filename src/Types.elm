@@ -96,8 +96,7 @@ type ClockState
 
 
 type alias BackendModel =
-    { message : String
-    , currentTime : Time.Posix
+    { currentTime : Time.Posix
 
     -- RANDOM
     , randomSeed : Random.Seed

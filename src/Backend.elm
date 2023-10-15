@@ -35,10 +35,7 @@ app =
 
 init : ( Model, Cmd BackendMsg )
 init =
-    ( { message = "Hello!"
-
-      -- RANDOM
-      , randomSeed = Random.initialSeed 1234
+    ( { randomSeed = Random.initialSeed 1234
       , uuidCount = 0
       , uuid = "aldkjf;ladjkf;dalkjf;ldkjf"
       , randomAtmosphericInt = Nothing
