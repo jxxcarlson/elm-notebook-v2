@@ -169,7 +169,7 @@ signUpUser model sessionId clientId username transitPassword email =
     in
     case Authentication.insert user randomHex transitPassword model.authenticationDict of
         Err str ->
-            ( { model | randomSeed = tokenData.seed }, Lamdera.sendToFrontend clientId (MessageReceived { txt = "Error: " ++ str, status = MSRed }) )
+            ( { model | randomSeed = tokenData.seed }, Lamdera.sendToFrontend clientId (MessageReceived { id = -1, txt = "Error: " ++ str, status = MSRed }) )
 
         Ok authDict ->
             let
@@ -182,7 +182,7 @@ signUpUser model sessionId clientId username transitPassword email =
               }
             , Cmd.batch
                 [ Lamdera.sendToFrontend clientId (UserSignedIn user clientId)
-                , Lamdera.sendToFrontend clientId (MessageReceived { txt = "Success! Your account is set up.", status = MSGreen })
+                , Lamdera.sendToFrontend clientId (MessageReceived { id = -1, txt = "Success! Your account is set up.", status = MSGreen })
                 , Lamdera.sendToFrontend clientId (GotNotebook book)
                 ]
             )

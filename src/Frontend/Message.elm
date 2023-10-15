@@ -1,6 +1,7 @@
 module Frontend.Message exposing (received)
 
 import Lamdera
+import Message
 import Types
 
 
@@ -25,8 +26,11 @@ import Types
 
 
 received : Types.FrontendModel -> Types.Message -> ( Types.FrontendModel, Cmd Types.FrontendMsg )
-received model message =
+received model message_ =
     let
+        message =
+            { message_ | id = model.messageId }
+
         newMessages =
             if List.member message.status [ Types.MSRed, Types.MSYellow, Types.MSGreen ] then
                 [ message ]
@@ -35,7 +39,18 @@ received model message =
                 model.messages
     in
     if message.txt == "Sorry, password and username don't match" then
-        ( { model | inputPassword = "", messages = newMessages }, Cmd.none )
+        ( { model
+            | messageId = model.messageId + 1
+            , inputPassword = ""
+            , messages = newMessages
+          }
+        , Message.removeMessageAfterDelay model.messageId
+        )
 
     else
-        ( { model | messages = newMessages }, Cmd.none )
+        ( { model
+            | messageId = model.messageId + 1
+            , messages = newMessages
+          }
+        , Message.removeMessageAfterDelay model.messageId
+        )

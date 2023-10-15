@@ -2,6 +2,7 @@ module View.Footer exposing (view)
 
 import Element as E exposing (Element)
 import Element.Font as Font
+import Message
 import Predicate
 import UILibrary.Color as Color
 import View.Button as Button
@@ -45,7 +46,7 @@ view model =
             Nothing ->
                 [ View.Utility.showIfIsAdmin model (Button.adminPopup model)
                 , View.Utility.showIfIsAdmin model Button.runTask
-                , messageRow model
+                , displayMessages model
                 ]
 
             Just _ ->
@@ -54,7 +55,7 @@ view model =
                 , Button.packagesPopup model
                 , E.el [ Font.color (E.rgb 1 1 1) ] (E.text <| String.left 4 model.currentBook.id)
                 , View.Utility.showIfIsAdmin model Button.sendProgramToBeCompiled
-                , messageRow model
+                , displayMessages model
                 , View.Utility.showIf (Predicate.regularUser model) Button.importNotebook
                 , View.Utility.showIf (Predicate.regularUser model) Button.exportNotebook
 
@@ -89,12 +90,15 @@ view model =
         )
 
 
-messageRow model =
-    E.row
+displayMessages model =
+    E.el
         [ E.width (E.px 300)
         , E.height (E.px View.Geometry.footerHeight)
         , E.paddingXY View.Geometry.hPadding 4
         , View.Style.bgGray 0.1
-        , Font.color (E.rgb 0 1 0)
+
+        -- , Font.color (E.rgb 0 1 0)
+        , E.moveDown 13
         ]
-        [ E.text <| model.message ]
+        --[ E.text <| model.message ]
+        (Message.viewSmall 300 model)

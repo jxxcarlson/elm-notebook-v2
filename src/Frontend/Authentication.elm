@@ -6,6 +6,7 @@ module Frontend.Authentication exposing
 import Authentication
 import Config
 import Lamdera
+import Message
 import Types exposing (FrontendModel, FrontendMsg, MessageStatus(..), ToBackend)
 import Url
 import User
@@ -64,12 +65,20 @@ signUp model =
                 |> reject (model.inputEmail == "") "missing email address"
     in
     if List.isEmpty errors then
-        ( { model | messages = [ { txt = "OK, signing you up", status = MSGreen } ] }
-        , Lamdera.sendToBackend (Types.SignUpBE model.inputSignupUsername (Authentication.encryptForTransit model.inputPassword) model.inputEmail)
+        ( { model | messageId = model.messageId + 1, messages = [ { id = model.messageId, txt = "OK, signing you up", status = MSGreen } ] }
+        , Cmd.batch
+            [ Lamdera.sendToBackend (Types.SignUpBE model.inputSignupUsername (Authentication.encryptForTransit model.inputPassword) model.inputEmail)
+            , Message.removeMessageAfterDelay model.messageId
+            ]
         )
 
     else
-        ( { model | messages = [ { txt = String.join ", " errors, status = MSRed } ] }, Cmd.none )
+        ( { model
+            | messageId = model.messageId + 1
+            , messages = [ { id = model.messageId, txt = String.join ", " errors, status = MSRed } ]
+          }
+        , Message.removeMessageAfterDelay model.messageId
+        )
 
 
 reject : Bool -> String -> List String -> List String

@@ -1,11 +1,27 @@
-module Message exposing (viewSmall)
+module Message exposing (postMessage, removeMessageAfterDelay, viewSmall)
 
 import Element as E exposing (Element)
-import Element.Background as Background
 import Element.Font as Font
+import Process
+import Task
 import Types
 import View.Color
 import View.Style
+
+
+postMessage : String -> Types.MessageStatus -> Types.FrontendModel -> ( Types.FrontendModel, Cmd Types.FrontendMsg )
+postMessage str status model =
+    ( { model
+        | messageId = model.messageId + 1
+        , messages =
+            model.messages ++ [ { id = model.messageId, txt = str, status = status } ]
+      }
+    , removeMessageAfterDelay model.messageId
+    )
+
+
+removeMessageAfterDelay id =
+    Process.sleep (30 * 1000) |> Task.perform (always (Types.ExecuteDelayedMessageRemoval id))
 
 
 viewSmall : Int -> Types.FrontendModel -> Element Types.FrontendMsg
@@ -31,9 +47,8 @@ viewSmall width model =
     else
         E.paragraph
             [ E.width (E.px width)
-
-            --, E.height (E.px 20)
-            , E.paddingXY 8 0
+            , E.height (E.px 20)
+            , E.paddingXY 4 4
             , View.Style.bgGray 0.0
             , View.Style.fgGray 1.0
             , E.spacing 12
@@ -72,9 +87,9 @@ style attr =
     [ Font.size 14 ] ++ attr
 
 
-make : String -> Types.MessageStatus -> List Types.Message
-make str status =
-    [ { txt = str, status = status } ]
+make : Int -> String -> Types.MessageStatus -> List Types.Message
+make id str status =
+    [ { id = id, txt = str, status = status } ]
 
 
 handleMessage : Types.Message -> Element msg

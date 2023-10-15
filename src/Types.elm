@@ -7,7 +7,6 @@ import Browser.Navigation exposing (Key)
 import Dict exposing (Dict)
 import File exposing (File)
 import Http
-import Json.Decode
 import Keyboard
 import Lamdera exposing (ClientId)
 import Notebook.Book exposing (Book, DirectionToMove(..))
@@ -35,6 +34,7 @@ type alias FrontendModel =
     , randomSeed : Random.Seed
     , randomProbabilities : List Float
     , probabilityVectorLength : Int
+    , messageId : Int
 
     -- ADMIN
     , users : List User
@@ -174,6 +174,7 @@ type FrontendMsg
     | ToggleTheme Notebook.Book.Theme
     | ExecuteDelayedFunction
     | ExecuteDelayedFunction2
+    | ExecuteDelayedMessageRemoval Int
     | GetPackagesFromCompiler
     | GotPackagesFromCompiler (Result Http.Error (List Notebook.Types.SimplePackageInfo))
     | GotElmJsonDict (Result Http.Error Notebook.Types.ElmPackageSummary)
@@ -241,7 +242,7 @@ type FrontendMsg
 
 
 type alias Message =
-    { txt : String, status : MessageStatus }
+    { id : Int, txt : String, status : MessageStatus }
 
 
 type DataSetDescription

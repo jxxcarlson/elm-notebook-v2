@@ -21,6 +21,7 @@ import Html exposing (Html)
 import Keyboard
 import Lamdera exposing (sendToBackend)
 import List.Extra
+import Message
 import Navigation
 import Notebook.Action
 import Notebook.Book exposing (Book)
@@ -73,6 +74,7 @@ init : Url.Url -> Nav.Key -> ( Model, Cmd FrontendMsg )
 init url key =
     ( { key = key
       , url = url
+      , messageId = 0
 
       -- NOTEBOOK (NEW)
       , theme = Notebook.Book.DarkTheme
@@ -191,6 +193,9 @@ update msg model =
 
         ExecuteDelayedFunction2 ->
             ( model, Notebook.Package.requestPackagesFromCompiler )
+
+        ExecuteDelayedMessageRemoval id ->
+            ( { model | messages = List.filter (\m -> m.id /= id) model.messages }, Cmd.none )
 
         ExecuteCell k ->
             Notebook.EvalCell.executeCell k model
@@ -338,18 +343,10 @@ update msg model =
         PackageListSent result ->
             case result of
                 Err _ ->
-                    ( { model
-                        | message = "Could not decode JSON"
-                      }
-                    , Cmd.none
-                    )
+                    Message.postMessage "Could not decode JSON from compiler" Types.MSRed model
 
                 Ok str ->
-                    ( { model
-                        | message = str
-                      }
-                    , Cmd.none
-                    )
+                    Message.postMessage str Types.MSGreen model
 
         ClearNotebookValues ->
             Notebook.Update.clearNotebookValues model.currentBook model
