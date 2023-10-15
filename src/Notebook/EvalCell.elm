@@ -7,6 +7,7 @@ module Notebook.EvalCell exposing
 
 import Dict
 import List.Extra
+import Message
 import Notebook.Book
 import Notebook.Cell as Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
 import Notebook.CellHelper
@@ -92,7 +93,7 @@ executeCell cellIndex model =
                 Cell.CTCode ->
                     case Notebook.Parser.classify cell.text of
                         Err _ ->
-                            ( { model | message = "Parse error (Cell)" }, Cmd.none )
+                            Message.postMessage "Error decoding imported file" Types.MSRed model
 
                         Ok classif ->
                             case classif of
@@ -206,7 +207,7 @@ processCode : Model -> Cell -> ( Model, Cmd FrontendMsg )
 processCode model cell =
     case Notebook.Parser.classify cell.text of
         Err _ ->
-            ( { model | message = "Parse error (22)3" }, Cmd.none )
+            Message.postMessage "Parse error in processCode" Types.MSRed model
 
         Ok classif ->
             case classif of

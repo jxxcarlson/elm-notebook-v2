@@ -23,7 +23,6 @@ type alias FrontendModel =
     { -- SYSTEM
       key : Key
     , url : Url
-    , message : String
     , messages : List Message
     , appState : AppState
     , appMode : AppMode

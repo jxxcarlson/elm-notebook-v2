@@ -26,6 +26,7 @@ import Html exposing (Html)
 import Keyboard
 import Lamdera exposing (sendToBackend)
 import List.Extra
+import Message
 import Navigation
 import Notebook.Action
 import Notebook.Book exposing (Book)
@@ -94,7 +95,7 @@ setCurrentNotebook model book =
 importLoaded model dataString =
     case Notebook.Codec.importBook dataString of
         Err _ ->
-            ( { model | message = "Error decoding imported file" }, Cmd.none )
+            Message.postMessage "Error decoding imported file" Types.MSRed model
 
         Ok newBook ->
             case model.currentUser of

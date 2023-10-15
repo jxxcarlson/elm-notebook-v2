@@ -82,7 +82,6 @@ init url key =
       , packageDict = Dict.empty
       , elmJsonError = Nothing
       , evalState = Notebook.Eval.initEmptyEvalState
-      , message = "Welcome!"
       , messages = []
       , appState = Loading
       , appMode = AMWorking

@@ -2,6 +2,7 @@ module Frontend.Update exposing (saveIfDirty, signOut)
 
 import Browser.Navigation as Nav
 import Lamdera
+import Message
 import Predicate
 import Time
 import Types exposing (FrontendModel, FrontendMsg(..), ToBackend(..))
@@ -19,7 +20,6 @@ signOut : Model -> ( Model, Cmd Msg )
 signOut model =
     ( { model
         | currentUser = Nothing
-        , message = "Signed out"
         , inputUsername = ""
         , inputPassword = ""
         , clockState = Types.ClockStopped
@@ -40,6 +40,7 @@ signOut model =
             Cmd.none
         ]
     )
+        |> (\( model_, messages_ ) -> Message.postMessage "Error decoding imported file" Types.MSRed model_)
 
 
 saveIfDirty : Model -> Time.Posix -> ( Model, Cmd Msg )

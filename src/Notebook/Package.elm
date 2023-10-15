@@ -6,6 +6,7 @@ import Http
 import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Pipeline as Pipeline exposing (required)
 import Lamdera
+import Message
 import Notebook.Codec
 import Notebook.Types exposing (SimplePackageInfo)
 import Process
@@ -21,7 +22,7 @@ import Util
 gotElmJsonDict model result =
     case result of
         Err _ ->
-            ( { model | message = "Error retrieving elm.json dependencies" }, Cmd.none )
+            Message.postMessage "Error retrieving elm.json dependencies" Types.MSRed model
 
         Ok data ->
             case model.currentUser of

@@ -4,6 +4,7 @@ module Frontend.ElmCompilerInterop exposing
     )
 
 import Codec
+import Message
 import Notebook.Book
 import Notebook.Cell exposing (CellValue(..))
 import Notebook.Eval
@@ -26,7 +27,7 @@ receiveReplDataFromJS model str =
         Ok replData ->
             case model.currentCell of
                 Nothing ->
-                    ( { model | message = "Error: no cell found or ReceivedFromJS" }, Cmd.none )
+                    Message.postMessage "Error: no cell found or ReceivedFromJS" Types.MSRed model
 
                 Just cell ->
                     let
@@ -39,7 +40,7 @@ receiveReplDataFromJS model str =
                     ( { model | currentCell = Nothing, currentBook = newBook }, Cmd.none )
 
         Err _ ->
-            ( { model | message = "Error evaluating Elm code" }, Cmd.none )
+            Message.postMessage "Error evaluating Elm code" Types.MSRed model
 
 
 handleReplyFromElmCompiler model cell result =
