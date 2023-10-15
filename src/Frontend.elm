@@ -640,7 +640,7 @@ updateFromBackend msg model =
 
         GotNotebooks maybeNotebook books ->
             -- TODO: ^^ maybeNotebook? WTF??
-            case List.head books of
+            case maybeNotebook of
                 Nothing ->
                     ( model, Cmd.none )
 
