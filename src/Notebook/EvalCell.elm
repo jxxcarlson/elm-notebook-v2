@@ -103,9 +103,16 @@ executeCell cellIndex model =
 
                                         cleanBook =
                                             Notebook.CellHelper.updateBookWithCell cleanCell model.currentBook
+
+                                        newEvalState =
+                                            updateEvalStateWithCells cleanBook.cells Notebook.Types.emptyEvalState |> Debug.log "__EvalState (1)"
                                     in
-                                    ( { model | currentCell = Just cleanCell, currentBook = cleanBook }
-                                    , Eval.requestEvaluation model.evalState cell sourceText
+                                    ( { model
+                                        | currentCell = Just cleanCell
+                                        , currentBook = cleanBook
+                                        , evalState = newEvalState
+                                      }
+                                    , Eval.requestEvaluation newEvalState cell sourceText
                                     )
 
                                 Notebook.Parser.Decl _ _ ->
@@ -228,7 +235,11 @@ processExpr model cell sourceText =
         processRemoveCmd model sourceText
 
     else
-        ( model, Eval.requestEvaluation model.evalState cell sourceText )
+        let
+            newEvalState =
+                updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState |> Debug.log "__EvalState (2)"
+        in
+        ( model, Eval.requestEvaluation newEvalState cell sourceText )
 
 
 processClearCmd model =
