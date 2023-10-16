@@ -231,48 +231,11 @@ processCode model cell =
 
 processExpr : Model -> Cell -> String -> ( Model, Cmd FrontendMsg )
 processExpr model cell sourceText =
-    if String.left 6 sourceText == ":clear" then
-        processClearCmd model
-
-    else if String.left 7 sourceText == ":remove" then
-        processRemoveCmd model sourceText
-
-    else
-        let
-            newEvalState =
-                updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState |> Debug.log "__EvalState (2)"
-        in
-        ( model, Eval.requestEvaluation newEvalState cell sourceText )
-
-
-processClearCmd model =
     let
-        evalState =
-            model.evalState
+        newEvalState =
+            updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState |> Debug.log "__EvalState (2)"
     in
-    ( { model
-        | evalState = { evalState | decls = Dict.empty }
-      }
-    , Cmd.none
-    )
-
-
-processRemoveCmd : Model -> String -> ( Model, Cmd FrontendMsg )
-processRemoveCmd model expr =
-    let
-        key =
-            String.dropLeft 8 expr |> String.trim
-    in
-    case Dict.get key model.evalState.decls of
-        Just _ ->
-            ( { model
-                | evalState = Eval.removeDeclaration key model.evalState
-              }
-            , Cmd.none
-            )
-
-        Nothing ->
-            ( model, Cmd.none )
+    ( model, Eval.requestEvaluation newEvalState cell sourceText )
 
 
 processDeclaration : Model -> Cell -> String -> String -> ( Model, Cmd FrontendMsg )
