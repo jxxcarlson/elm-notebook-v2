@@ -56,10 +56,10 @@ resolve ( lhs, rhs ) =
         Expr (lhs ++ " =" ++ rhs)
 
     else if String.contains "type alias" lhs then
-        TypeAlias lhs rhs
+        TypeAlias (String.replace "type alias" "" lhs |> String.trim) rhs
 
     else if String.contains "type" lhs then
-        ElmType lhs rhs
+        ElmType (String.replace "type" "" lhs |> String.trim) rhs
 
     else if String.contains "import" lhs then
         Import lhs rhs
@@ -109,7 +109,7 @@ importParser =
 replItemParser =
     Parser.oneOf
         [ importParser
-        , lhsRhsParser
+        , Parser.backtrackable lhsRhsParser
         , expressionParser
         ]
 
