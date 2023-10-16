@@ -648,7 +648,11 @@ updateFromBackend msg model =
                         Just book ->
                             let
                                 newModel =
-                                    { model | evalState = Notebook.EvalCell.updateEvalStateWithCells book.cells Notebook.Types.emptyEvalState, currentBook = book }
+                                    { model
+                                        | evalState = Notebook.EvalCell.updateEvalStateWithCells book.cells Notebook.Types.emptyEvalState
+                                        , currentBook = book
+                                        , books = books
+                                    }
                             in
                             Message.postMessage "No notebook specified, using first one" Types.MSGreen newModel
                                 |> (\( model_, cmd ) ->
