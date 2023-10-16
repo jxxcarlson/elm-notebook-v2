@@ -52,10 +52,13 @@ view model =
                     , E.el [ Font.color UILibrary.Color.lightGray ] (E.text "Screenshot: user clicked on a cell to edit it.")
                     ]
                 , E.paragraph [ Font.italic, Font.color (E.rgb 0.65 0.65 1.0) ]
-                    [ E.text "Click on the \"Sign in as Guest,\" button to view and run example notebooks. (See blue link above, center.)" ]
-                , E.paragraph [ E.spacing 8, Font.italic ]
-                    [ E.text "To create and save notebooks: (1) Sign up.  (2) To edit a cell, click on it.  (3) To run the code in a cell, type ctrl-Enter or click on \"Run\"."
-                    ]
+                    [ E.text "Click on the \"Sign in as Guest,\" button to view and run a \"Welcome notebook.\" It also gives directions on how to edit cells and run the code in them.  (See blue link above, center.)" ]
+
+                --, E.paragraph [ E.spacing 8, Font.italic ]
+                --    [ E.text "To create and save notebooks: (1) Sign up. "
+                --    , E.text "(2) To edit a cell, click on the \"Cell\" label in the upper right corner of the cell. "
+                --    , E.text "(3) To close a cell or run its code, type ctrl-Enter (or click on the cell label again, or click on \"Run\")."
+                --    ]
                 , E.paragraph [ E.spacing 8 ]
                     [ E.text "Elm-notebook runs code by talking to the Elm compiler. "
                     , E.text "Many thanks to Evan Czaplicki and Mario Rogic."
