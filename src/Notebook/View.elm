@@ -280,6 +280,7 @@ render viewData report =
 
 viewSuccess : ViewData -> Cell -> Element FrontendMsg
 viewSuccess viewData cell =
+    -- TODO
     let
         realWidth =
             viewData.width - controlWidth
@@ -294,8 +295,8 @@ viewSuccess viewData cell =
                     case classif of
                         Notebook.Parser.Expr _ ->
                             E.el
-                                [ -- E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-                                  View.Style.monospace
+                                [ Element.Events.onMouseDown (ExecuteCell cell.index)
+                                , View.Style.monospace
                                 ]
                                 (par viewData.theme
                                     realWidth
@@ -303,7 +304,6 @@ viewSuccess viewData cell =
                                 )
 
                         Notebook.Parser.Decl _ _ ->
-                            -- E.el [ E.height (E.px 30), E.width (E.px 100), E.paddingXY 24 12 ] (E.text "Ok")
                             E.none
 
                         _ ->
@@ -318,8 +318,7 @@ viewSuccess viewData cell =
                     case classif of
                         Notebook.Parser.Expr _ ->
                             E.el
-                                [ -- E.paddingEach { top = 12, bottom = 0, left = 0, right = 0 }
-                                  View.Style.monospace
+                                [ View.Style.monospace
                                 ]
                                 (par viewData.theme
                                     realWidth
