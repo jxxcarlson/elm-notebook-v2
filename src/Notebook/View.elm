@@ -74,23 +74,43 @@ themedCodeCellTextColor theme =
             Notebook.Config.darkThemeCodeCellTextColor
 
 
-themedButtonColor cstate theme =
-    case cstate of
-        CSView ->
-            case theme of
-                Notebook.Book.LightTheme ->
-                    E.rgb 1 0 1
+themedButtonColor tipe cstate theme =
+    case theme of
+        Notebook.Book.DarkTheme ->
+            case cstate of
+                CSView ->
+                    case tipe of
+                        CTCode ->
+                            E.rgb 0.2 0.2 0.4
 
-                Notebook.Book.DarkTheme ->
-                    E.rgb 0.1 0 0.4
+                        CTMarkdown ->
+                            E.rgb 0.2 0.2 0.4
 
-        CSEdit ->
-            case theme of
-                Notebook.Book.LightTheme ->
-                    E.rgb 1 0 1
+                CSEdit ->
+                    case tipe of
+                        CTCode ->
+                            E.rgb 0.2 0.2 0.4
 
-                Notebook.Book.DarkTheme ->
-                    E.rgb 0.2 0 0.6
+                        CTMarkdown ->
+                            E.rgb 0.2 0.2 0.4
+
+        Notebook.Book.LightTheme ->
+            case cstate of
+                CSView ->
+                    case tipe of
+                        CTCode ->
+                            E.rgb 0.2 0.2 0.4
+
+                        CTMarkdown ->
+                            E.rgb 0.2 0.2 0.4
+
+                CSEdit ->
+                    case tipe of
+                        CTCode ->
+                            E.rgb 0.2 0.2 0.6
+
+                        CTMarkdown ->
+                            E.rgb 0.2 0.2 0.7
 
 
 themedCodeColor theme =
@@ -409,10 +429,10 @@ viewIndex theme cell =
         , Background.color
             (case cell.tipe of
                 CTCode ->
-                    themedButtonColor cell.cellState theme
+                    themedButtonColor cell.tipe cell.cellState theme
 
                 CTMarkdown ->
-                    themedButtonColor cell.cellState theme
+                    themedButtonColor cell.tipe cell.cellState theme
             )
         , Font.color (themedMutedTextColor theme)
         , E.htmlAttribute <| HA.style "z-index" "1"

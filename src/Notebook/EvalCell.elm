@@ -106,7 +106,7 @@ executeCell cellIndex model =
                                             Notebook.CellHelper.updateBookWithCell cleanCell model.currentBook
 
                                         newEvalState =
-                                            updateEvalStateWithCells cleanBook.cells Notebook.Types.emptyEvalState |> Debug.log "__EvalState (1)"
+                                            updateEvalStateWithCells cleanBook.cells Notebook.Types.emptyEvalState
                                     in
                                     ( { model
                                         | currentCell = Just cleanCell
@@ -150,19 +150,15 @@ updateEvalStateWithCell cell evalState =
 
                         Notebook.Parser.Decl name sourceText ->
                             Eval.insertDeclaration name (name ++ " = " ++ sourceText ++ "\n") evalState
-                                |> Debug.log "__Decl"
 
                         Notebook.Parser.ElmType name expr ->
                             Eval.insertTypeDeclaration name ("type " ++ name ++ " = " ++ expr ++ "\n") evalState
-                                |> Debug.log "__ElmType"
 
                         Notebook.Parser.TypeAlias name expr ->
                             Eval.insertTypeDeclaration name ("type alias " ++ name ++ " = " ++ expr ++ "\n") evalState
-                                |> Debug.log "__TypeAlias"
 
                         Notebook.Parser.Import name expr ->
                             Eval.insertImport name ("import " ++ name ++ " " ++ expr ++ "\n") evalState
-                                |> Debug.log "__Import"
 
 
 
@@ -233,7 +229,7 @@ processExpr : Model -> Cell -> String -> ( Model, Cmd FrontendMsg )
 processExpr model cell sourceText =
     let
         newEvalState =
-            updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState |> Debug.log "__EvalState (2)"
+            updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState
     in
     ( model, Eval.requestEvaluation newEvalState cell sourceText )
 
@@ -241,9 +237,6 @@ processExpr model cell sourceText =
 processDeclaration : Model -> Cell -> String -> String -> ( Model, Cmd FrontendMsg )
 processDeclaration model cell name expr =
     let
-        _ =
-            Debug.log "__processDeclaration" ( name, expr )
-
         newEvalState =
             Eval.insertDeclaration name (name ++ " = " ++ expr ++ "\n") model.evalState
 
@@ -261,8 +254,20 @@ processImport model cell name expr =
     let
         newEvalState =
             Eval.insertImport name ("import " ++ name ++ " " ++ expr ++ "\n") model.evalState
+
+        newCell =
+            { cell | cellState = CSView }
+
+        newBook =
+            Notebook.CellHelper.updateBookWithCell newCell model.currentBook
     in
-    ( { model | evalState = newEvalState }, Cmd.none )
+    ( { model
+        | evalState = newEvalState
+        , currentCell = Just newCell
+        , currentBook = newBook
+      }
+    , Cmd.none
+    )
 
 
 processTypeDeclaration : Model -> Cell -> String -> String -> ( Model, Cmd FrontendMsg )
@@ -270,8 +275,20 @@ processTypeDeclaration model cell name expr =
     let
         newEvalState =
             Eval.insertTypeDeclaration name ("type " ++ name ++ " = " ++ expr ++ "\n") model.evalState
+
+        newCell =
+            { cell | cellState = CSView }
+
+        newBook =
+            Notebook.CellHelper.updateBookWithCell newCell model.currentBook
     in
-    ( { model | evalState = newEvalState }, Cmd.none )
+    ( { model
+        | evalState = newEvalState
+        , currentCell = Just newCell
+        , currentBook = newBook
+      }
+    , Cmd.none
+    )
 
 
 processTypeAliasDeclaration : Model -> Cell -> String -> String -> ( Model, Cmd FrontendMsg )
@@ -279,5 +296,17 @@ processTypeAliasDeclaration model cell name expr =
     let
         newEvalState =
             Eval.insertTypeDeclaration name ("type alias " ++ name ++ " = " ++ expr ++ "\n") model.evalState
+
+        newCell =
+            { cell | cellState = CSView }
+
+        newBook =
+            Notebook.CellHelper.updateBookWithCell newCell model.currentBook
     in
-    ( { model | evalState = newEvalState }, Cmd.none )
+    ( { model
+        | evalState = newEvalState
+        , currentCell = Just newCell
+        , currentBook = newBook
+      }
+    , Cmd.none
+    )
