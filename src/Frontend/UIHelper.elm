@@ -30,6 +30,10 @@ handleKeyPresses model keyMsg =
 
         ( newModel, cmd ) =
             if List.member Keyboard.Control pressedKeys && List.member Keyboard.Enter pressedKeys then
+                let
+                    _ =
+                        Debug.log "__CTRL+ENTER" (Maybe.map .index model.currentCell)
+                in
                 Notebook.EvalCell.processCell Notebook.Cell.CSEdit model.currentCellIndex { model | pressedKeys = pressedKeys }
 
             else

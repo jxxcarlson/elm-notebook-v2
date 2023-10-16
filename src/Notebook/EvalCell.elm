@@ -241,10 +241,19 @@ processExpr model cell sourceText =
 processDeclaration : Model -> Cell -> String -> String -> ( Model, Cmd FrontendMsg )
 processDeclaration model cell name expr =
     let
+        _ =
+            Debug.log "__processDeclaration" ( name, expr )
+
         newEvalState =
             Eval.insertDeclaration name (name ++ " = " ++ expr ++ "\n") model.evalState
+
+        newCell =
+            { cell | cellState = CSView }
+
+        newBook =
+            Notebook.CellHelper.updateBookWithCell newCell model.currentBook
     in
-    ( { model | evalState = newEvalState }, Cmd.none )
+    ( { model | evalState = newEvalState, currentCell = Just newCell, currentBook = newBook }, Cmd.none )
 
 
 processImport : Model -> Cell -> String -> String -> ( Model, Cmd FrontendMsg )
