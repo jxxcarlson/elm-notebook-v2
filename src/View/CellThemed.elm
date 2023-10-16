@@ -53,13 +53,11 @@ darkTheme : Theme
 darkTheme =
     { defaultText = Element.rgb255 200 210 230 -- Element.rgb255 220 240 255 --Element.rgb255 30 46 50
     , mutedText = Element.rgb255 74 94 122
-    , link = Element.rgb255 74 94 190
+    , link = Element.rgb255 200 94 255
     , lightGrey = Element.rgb255 220 240 255
-    , codeBackground = Element.rgb255 50 50 50
-
-    --, codeColor = Element.rgb255 255 180 50
-    , codeColor = Element.rgb255 120 80 255
-    , codeSpanColor = Element.rgb255 120 80 255
+    , codeBackground = Notebook.Config.darkThemeBackgroundColor --Element.rgb255 50 50 50
+    , codeColor = Element.rgb255 90 160 255
+    , codeSpanColor = Element.rgb255 90 160 255
     , grey = Element.rgb255 220 240 255 --  Element.rgb255 200 220 240
     , elmText = Element.rgb255 220 240 255 --Element.rgb255 30 46 50
     , background = Notebook.Config.darkThemeBackgroundColor -- Notebook.Config.darkBackgroundColor

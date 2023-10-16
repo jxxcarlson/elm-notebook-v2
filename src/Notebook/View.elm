@@ -170,11 +170,14 @@ controls viewData cell =
 
         CSEdit ->
             E.row
-                [ controlBGEdit
-                , E.width (E.px (viewData.width - 3))
+                [ --controlBGEdit
+                  E.width (E.px (viewData.width - 3))
                 , E.centerX
                 , E.paddingEach { left = 0, right = 12, bottom = 0, top = 0 }
-                , bgColor cell
+
+                --, bgColor cell
+                , Background.color (themedBackgroundColor viewData.theme) --      bgColor cell
+                , Font.color (themedTextColor viewData.theme)
                 ]
                 [ E.row
                     [ E.spacing 2
@@ -190,7 +193,8 @@ controls viewData cell =
                         ]
                     , E.row [ E.spacing 6 ]
                         [ runCell CSEdit cell.tipe cell.index
-                        , runCell CSView cell.tipe cell.index
+
+                        --, runCell CSView cell.tipe cell.index
                         ]
                     ]
                 , E.row
@@ -232,7 +236,7 @@ viewSource theme width cell cellContent =
                     renderMarkdown theme cell width
 
         CSEdit ->
-            editCell width cell cellContent
+            editCell theme width cell cellContent
 
 
 viewValue : ViewData -> Cell -> Element FrontendMsg
@@ -351,6 +355,7 @@ getArg k args =
 
 viewIndex : Notebook.Book.Theme -> Cell -> Element FrontendMsg
 viewIndex theme cell =
+    -- TODO
     let
         action =
             case cell.cellState of
@@ -398,11 +403,12 @@ renderCode theme cell width =
         , Font.color (themedCodeCellTextColor theme)
         , Background.color (themedCodeCellBackgroundColor theme)
         , E.height E.shrink
-        , if not cell.locked then
-            Element.Events.onMouseDown (EditCell cell)
 
-          else
-            Element.Events.onMouseDown NoOpFrontendMsg
+        --, if not cell.locked then
+        --    Element.Events.onMouseDown (EditCell cell)
+        --
+        --  else
+        --    Element.Events.onMouseDown NoOpFrontendMsg
         , E.inFront (E.el [ E.alignRight, E.moveDown 8 ] (viewIndex theme cell))
         ]
         [ View.Utility.preformattedElement [ HA.style "line-height" "1.5" ] cell.text
@@ -416,11 +422,12 @@ renderCode theme cell width =
 renderMarkdown theme cell width =
     E.column
         [ E.spacing 0
-        , if not cell.locked then
-            Element.Events.onMouseDown (EditCell cell)
 
-          else
-            Element.Events.onMouseDown NoOpFrontendMsg
+        --, if not cell.locked then
+        --    Element.Events.onMouseDown (EditCell cell)
+        --
+        --  else
+        --    Element.Events.onMouseDown NoOpFrontendMsg
         , E.width (E.px width)
         , E.inFront (E.el [ E.alignRight, E.moveDown 4 ] (viewIndex theme cell))
         , Font.size 14
@@ -455,8 +462,8 @@ editBGColor =
     Background.color (E.rgb 0.2 0.2 0.35)
 
 
-editCell : Int -> Cell -> String -> Element FrontendMsg
-editCell width cell cellContent =
+editCell : Notebook.Book.Theme -> Int -> Cell -> String -> Element FrontendMsg
+editCell theme width cell cellContent =
     E.el
         [ E.paddingXY 8 4
         , bgColor cell
@@ -469,8 +476,8 @@ editCell width cell cellContent =
             , E.width (E.px <| width - 16)
             ]
             [ Element.Input.multiline
-                [ bgColor cell
-                , Font.color Color.black
+                [ Background.color (themedBackgroundColor theme) --      bgColor cell
+                , Font.color (themedTextColor theme)
                 , E.centerX
                 , E.width (E.px <| width)
                 , View.Style.monospace

@@ -174,6 +174,7 @@ updateEvalStateWithCell cell evalState =
 
 processCell : CellState -> Int -> Model -> ( Model, Cmd FrontendMsg )
 processCell cellState cellIndex model_ =
+    -- TODO
     let
         model =
             case cellState of
@@ -190,10 +191,10 @@ processCell cellState cellIndex model_ =
         Just cell ->
             case cell.tipe of
                 Cell.CTCode ->
-                    processCode model { cell | report = Nothing, replData = Nothing }
+                    processCode model { cell | report = Nothing, replData = Nothing, cellState = CSView }
 
                 Cell.CTMarkdown ->
-                    processMarkdown model cell
+                    processMarkdown model { cell | cellState = CSView }
 
 
 processMarkdown model cell =
