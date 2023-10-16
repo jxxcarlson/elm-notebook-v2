@@ -103,7 +103,7 @@ editCell model cell =
         newBook =
             Notebook.CellHelper.updateBookWithCell updatedCell model.currentBook
     in
-    ( { model | currentCellIndex = cell.index, cellContent = cell.text, currentBook = newBook }, Cmd.none )
+    ( { model | currentCell = Just updatedCell, currentCellIndex = cell.index, cellContent = cell.text, currentBook = newBook }, Cmd.none )
 
 
 clearCell : FrontendModel -> Int -> ( FrontendModel, Cmd FrontendMsg )
