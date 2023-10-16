@@ -1,4 +1,9 @@
-module Notebook.CellHelper exposing (addCellToBook, updateBookWithCell, updateBookWithCellIndexAndReplData)
+module Notebook.CellHelper exposing
+    ( addCellToBook
+    , updateBookWithCell
+    , updateBookWithCellIndexAndReplData
+    , updateCellStateAtIndex
+    )
 
 import List.Extra
 import Notebook.Book exposing (Book)
@@ -18,6 +23,16 @@ updateBookWithCellIndexAndReplData cellIndex replData book =
 
         Just targetCell ->
             updateBookWithCell { targetCell | value = CVString replData.value, replData = Just replData } book
+
+
+updateCellStateAtIndex : Int -> Notebook.Cell.CellState -> Book -> Book
+updateCellStateAtIndex cellIndex cellState book =
+    case List.Extra.getAt cellIndex book.cells of
+        Nothing ->
+            book
+
+        Just targetCell ->
+            updateBookWithCell { targetCell | cellState = cellState } book
 
 
 updateBookWithCell : Cell -> Book -> Book

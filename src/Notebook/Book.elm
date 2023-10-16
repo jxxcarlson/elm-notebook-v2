@@ -13,6 +13,7 @@ module Notebook.Book exposing
     )
 
 import Dict exposing (Dict)
+import Keyboard
 import List.Extra
 import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
 import Notebook.Types
@@ -186,6 +187,7 @@ type alias ViewData =
     , cellDirection : Notebook.Types.CellDirection
     , errorOffset : Int
     , theme : Theme
+    , pressedKeys : List Keyboard.Key
     }
 
 

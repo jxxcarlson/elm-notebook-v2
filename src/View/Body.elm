@@ -179,6 +179,7 @@ viewNotebook model =
             , cellDirection = model.cellInsertionDirection
             , errorOffset = Notebook.Eval.replErrorOffset model.evalState.decls
             , theme = model.theme
+            , pressedKeys = model.pressedKeys
             }
     in
     E.column

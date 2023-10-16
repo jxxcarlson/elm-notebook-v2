@@ -7,6 +7,7 @@ import Element.Events
 import Element.Font as Font
 import Element.Input
 import Html.Attributes as HA
+import Keyboard
 import List.Extra
 import Notebook.Book exposing (ViewData)
 import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
@@ -139,7 +140,7 @@ viewSourceAndValue originalviewData cellContents cell =
             ++ style
         )
         [ E.el [ E.alignRight, Background.color (Utility.cellColor cell.tipe) ] (controls viewData cell)
-        , viewSource viewData.theme (viewData.width - controlWidth) cell cellContents
+        , viewSource viewData (viewData.width - controlWidth) cell cellContents
         , E.el (hrule viewData.theme cell) (viewValue viewData cell)
         ]
 
@@ -224,19 +225,19 @@ controlWidth =
     0
 
 
-viewSource : Notebook.Book.Theme -> Int -> Cell -> String -> Element FrontendMsg
-viewSource theme width cell cellContent =
+viewSource : ViewData -> Int -> Cell -> String -> Element FrontendMsg
+viewSource viewData width cell cellContent =
     case cell.cellState of
         CSView ->
             case cell.tipe of
                 CTCode ->
-                    renderCode theme cell width
+                    renderCode viewData.pressedKeys viewData.theme cell width
 
                 CTMarkdown ->
-                    renderMarkdown theme cell width
+                    renderMarkdown viewData.theme cell width
 
         CSEdit ->
-            editCell theme width cell cellContent
+            editCell viewData.theme width cell cellContent
 
 
 viewValue : ViewData -> Cell -> Element FrontendMsg
@@ -394,7 +395,7 @@ viewIndex theme cell =
         (E.text <| "Cell " ++ String.fromInt (cell.index + 1))
 
 
-renderCode theme cell width =
+renderCode pressedKeys theme cell width =
     E.column
         [ E.width (E.px width)
         , E.paddingXY 12 0
@@ -403,12 +404,11 @@ renderCode theme cell width =
         , Font.color (themedCodeCellTextColor theme)
         , Background.color (themedCodeCellBackgroundColor theme)
         , E.height E.shrink
+        , if not cell.locked then
+            Element.Events.onMouseDown (EditCell cell)
 
-        --, if not cell.locked then
-        --    Element.Events.onMouseDown (EditCell cell)
-        --
-        --  else
-        --    Element.Events.onMouseDown NoOpFrontendMsg
+          else
+            Element.Events.onMouseDown NoOpFrontendMsg
         , E.inFront (E.el [ E.alignRight, E.moveDown 8 ] (viewIndex theme cell))
         ]
         [ View.Utility.preformattedElement [ HA.style "line-height" "1.5" ] cell.text

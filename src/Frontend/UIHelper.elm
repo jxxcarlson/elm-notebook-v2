@@ -8,6 +8,7 @@ import Browser.Dom
 import Keyboard
 import Lamdera
 import Notebook.Cell
+import Notebook.CellHelper
 import Notebook.EvalCell
 import Notebook.Package
 import Types exposing (PopupState(..))
