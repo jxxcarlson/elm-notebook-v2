@@ -99,18 +99,18 @@ themedButtonColor tipe cstate theme =
                 CSView ->
                     case tipe of
                         CTCode ->
-                            E.rgb 0.2 0.2 0.4
+                            E.rgb 0.75 0.75 1.0
 
                         CTMarkdown ->
-                            E.rgb 0.2 0.2 0.4
+                            E.rgb 0.75 0.75 1.0
 
                 CSEdit ->
                     case tipe of
                         CTCode ->
-                            E.rgb 0.2 0.2 0.6
+                            E.rgb 0.75 0.75 1.0
 
                         CTMarkdown ->
-                            E.rgb 0.2 0.2 0.7
+                            E.rgb 0.75 0.75 1.0
 
 
 themedCodeColor theme =
