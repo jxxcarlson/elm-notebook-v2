@@ -300,7 +300,7 @@ viewSuccess viewData cell =
                                 ]
                                 (par viewData.theme
                                     realWidth
-                                    [ View.CellThemed.renderFull viewData.theme cell.tipe (scale 1.0 realWidth) "Nothing" ]
+                                    [ View.CellThemed.renderFull viewData.theme cell.tipe (scale 1.0 realWidth) "No value" ]
                                 )
 
                         Notebook.Parser.Decl _ _ ->
