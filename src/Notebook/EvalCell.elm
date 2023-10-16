@@ -116,9 +116,6 @@ executeCell cellIndex model =
                                     , Eval.requestEvaluation newEvalState cell sourceText
                                     )
 
-                                Notebook.Parser.Decl _ _ ->
-                                    ( model, Cmd.none )
-
                                 _ ->
                                     ( model, Cmd.none )
 
