@@ -42,23 +42,17 @@ view model =
                         { src = "https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/94d42afa-2246-4d63-ba08-f5e53b36b800/public"
                         , description = "Cells in Elm Notebook"
                         }
-                    , E.el [ Font.color UILibrary.Color.lightGray ] (E.text "Screenshot")
+                    , E.el [ Font.color UILibrary.Color.lightGray, Font.size 12 ] (E.text "Screenshot")
                     ]
                 , E.column [ E.spacing 6 ]
                     [ E.image [ E.width (E.px 600), E.centerX, E.centerY ]
                         { src = "https://imagedelivery.net/9U-0Y4sEzXlO6BXzTnQnYQ/bdd5f465-bf3e-4696-3773-b11eb7993600/public"
                         , description = "Editing a cell"
                         }
-                    , E.el [ Font.color UILibrary.Color.lightGray ] (E.text "Screenshot: user clicked on a cell to edit it.")
+                    , E.el [ Font.color (E.rgb 0.85 0.65 1.0), Font.size 12 ] (E.text "Screenshot: user clicked on the \"Cell 3\" label to edit it. User will click again to evaluate the code in it")
                     ]
                 , E.paragraph [ Font.italic, Font.color (E.rgb 0.65 0.65 1.0) ]
-                    [ E.text "Click on the \"Sign in as Guest,\" button to view and run a \"Welcome notebook.\" It also gives directions on how to edit cells and run the code in them.  (See blue link above, center.)" ]
-
-                --, E.paragraph [ E.spacing 8, Font.italic ]
-                --    [ E.text "To create and save notebooks: (1) Sign up. "
-                --    , E.text "(2) To edit a cell, click on the \"Cell\" label in the upper right corner of the cell. "
-                --    , E.text "(3) To close a cell or run its code, type ctrl-Enter (or click on the cell label again, or click on \"Run\")."
-                --    ]
+                    [ E.text "Click on the \"Sign in as Guest,\" button (above, center) to view and run a \"Welcome\" notebook. This notebook also gives directions on how to edit cells and run the code in them." ]
                 , E.paragraph [ E.spacing 8 ]
                     [ E.text "Elm-notebook runs code by talking to the Elm compiler. "
                     , E.text "Many thanks to Evan Czaplicki and Mario Rogic."
