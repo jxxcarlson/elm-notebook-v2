@@ -3,7 +3,6 @@ module UILibrary.Color exposing
     , blueExample
     , darkBlue
     , darkGray
-    , darkGreen
     , darkRed
     , darkSteelGray
     , darkerSteelGray
@@ -23,6 +22,7 @@ module UILibrary.Color exposing
     , transparent
     , veryPaleBlue
     , white
+    , xBlue
     )
 
 import Element exposing (Element)
@@ -113,7 +113,7 @@ redExample =
     Element.row [ Element.spacing 24 ]
         [ Element.el [ Font.size 14, Element.padding 12, Font.color white, Background.color darkRed ] (Element.text "white on green")
         , Element.el [ Font.size 14, Element.padding 12, Font.color white, Background.color red ] (Element.text "white on red")
-        , Element.el [ Font.size 14, Element.padding 12, Font.color white, Background.color mediumRed ] (Element.text "white on mediumRed")
+        , Element.el [ Font.size 14, Element.padding 12, Font.color white, Background.color xBlue ] (Element.text "white on mediumRed")
         , Element.el [ Font.size 14, Element.padding 12, Font.color black, Background.color pink ] (Element.text "black on pink")
         ]
 
@@ -133,9 +133,13 @@ red =
     Element.rgb 1 0 0
 
 
-mediumRed : Element.Color
-mediumRed =
-    Element.rgb 1 0.5 0.5
+xBlue : Element.Color
+xBlue =
+    Element.rgb255 59 47 156
+
+
+
+---115 34 99
 
 
 pink : Element.Color
@@ -206,7 +210,12 @@ lightBlue =
 
 specialBlue : Element.Color
 specialBlue =
-    Element.rgb255 100 130 255
+    Element.rgb255 80 105 200
+
+
+
+--80 80 110
+--120 90 255
 
 
 medBlue : Element.Color
@@ -253,8 +262,13 @@ transparent =
 -- red =
 --     Element.rgb255 255 0 0
 -- paleRed : Element.Color
--- paleRed =
---     Element.rgb255 140 100 100
+
+
+paleRed =
+    Element.rgb255 140 100 100
+
+
+
 -- blue : Element.Color
 -- blue =
 --     Element.rgb255 0 0 140

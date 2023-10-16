@@ -500,10 +500,10 @@ newCellAboveOrBelow : Notebook.Types.CellDirection -> Element FrontendMsg
 newCellAboveOrBelow cellDirection =
     case cellDirection of
         Notebook.Types.Up ->
-            Button.smallPrimary { msg = ChangeCellInsertionDirection Notebook.Types.Down, status = Button.ActiveSpecial, label = Button.Text "Above", tooltipText = Just "Insert new cell above" }
+            Button.smallPrimary { msg = ChangeCellInsertionDirection Notebook.Types.Down, status = Button.ActiveRunningSpecial, label = Button.Text "Above", tooltipText = Just "Insert new cell above" }
 
         Notebook.Types.Down ->
-            Button.smallPrimary { msg = ChangeCellInsertionDirection Notebook.Types.Up, status = Button.ActiveSpecial, label = Button.Text "Below", tooltipText = Just "Insert ew cell below " }
+            Button.smallPrimary { msg = ChangeCellInsertionDirection Notebook.Types.Up, status = Button.ActiveRunningSpecial, label = Button.Text "Below", tooltipText = Just "Insert ew cell below " }
 
 
 newCodeCellAt : CellState -> Int -> Element FrontendMsg

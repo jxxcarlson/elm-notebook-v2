@@ -57,6 +57,7 @@ type Status
     | Waiting
     | Highlighted
     | ActiveRunning
+    | ActiveRunningSpecial
     | ActiveSpecial
     | ActiveTransparentSpecial
     | ActiveTransparent
@@ -158,7 +159,7 @@ smallPrimaryStyle status =
 
 
 specialStyle status =
-    if status == ActiveTransparentSpecial || status == ActiveRunning then
+    if status == ActiveTransparentSpecial || status == ActiveRunningSpecial then
         [ Font.italic ]
 
     else
@@ -209,14 +210,17 @@ fgListColor status =
         ActiveRunning ->
             UILibrary.Color.darkRed
 
+        ActiveRunningSpecial ->
+            UILibrary.Color.darkRed
+
         ActiveSpecial ->
-            UILibrary.Color.paleBlue
+            UILibrary.Color.darkRed
 
         ActiveTransparentSpecial ->
-            UILibrary.Color.specialBlue
+            UILibrary.Color.xBlue
 
         ActiveTransparent ->
-            UILibrary.Color.specialBlue
+            UILibrary.Color.xBlue
 
 
 bgColor : Status -> Element.Color
@@ -235,10 +239,14 @@ bgColor status =
             UILibrary.Color.darkRed
 
         ActiveRunning ->
-            UILibrary.Color.darkGreen
+            UILibrary.Color.xBlue
+
+        ActiveRunningSpecial ->
+            UILibrary.Color.xBlue
 
         ActiveSpecial ->
-            UILibrary.Color.darkBlue
+            --UILibrary.Color.darkBlue
+            UILibrary.Color.xBlue
 
         ActiveTransparentSpecial ->
             UILibrary.Color.transparent
@@ -263,13 +271,16 @@ bgSecondaryColor status =
             UILibrary.Color.darkRed
 
         ActiveRunning ->
-            UILibrary.Color.darkBlue
+            UILibrary.Color.xBlue
+
+        ActiveRunningSpecial ->
+            UILibrary.Color.xBlue
 
         ActiveSpecial ->
-            UILibrary.Color.paleBlue
+            UILibrary.Color.xBlue
 
         ActiveTransparentSpecial ->
-            UILibrary.Color.specialBlue
+            UILibrary.Color.transparent
 
         ActiveTransparent ->
             UILibrary.Color.transparent
@@ -293,8 +304,11 @@ fgColor status =
         ActiveRunning ->
             UILibrary.Color.white
 
+        ActiveRunningSpecial ->
+            UILibrary.Color.white
+
         ActiveSpecial ->
-            UILibrary.Color.black
+            UILibrary.Color.darkRed
 
         ActiveTransparentSpecial ->
             UILibrary.Color.white

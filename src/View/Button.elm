@@ -258,16 +258,29 @@ viewNotebookEntry : Book -> Book -> Element FrontendMsg
 viewNotebookEntry currentBook book =
     if currentBook.id == book.id then
         if book.public then
-            Button.smallPrimary { msg = NoOpFrontendMsg, status = Button.Highlighted, label = Button.Text book.title, tooltipText = Nothing }
+            Button.smallPrimary { msg = NoOpFrontendMsg, status = Button.ActiveRunningSpecial, label = Button.Text book.title, tooltipText = Nothing }
 
         else
-            Button.smallPrimary { msg = NoOpFrontendMsg, status = Button.Highlighted, label = Button.Text book.title, tooltipText = Nothing }
+            Button.smallPrimary { msg = NoOpFrontendMsg, status = Button.ActiveRunning, label = Button.Text book.title, tooltipText = Nothing }
 
     else if book.public then
         Button.smallPrimary { msg = SetCurrentNotebook book, status = Button.ActiveTransparentSpecial, label = Button.Text book.title, tooltipText = Nothing }
 
     else
         Button.smallPrimary { msg = SetCurrentNotebook book, status = Button.ActiveTransparent, label = Button.Text book.title, tooltipText = Nothing }
+
+
+
+--type Status
+--    = Active
+--    | Inactive
+--    | Waiting
+--    | Highlighted
+--    | ActiveRunning
+--    | ActiveRunningSpecial
+--    | ActiveSpecial
+--    | ActiveTransparentSpecial
+--    | ActiveTransparent
 
 
 cloneNotebook : Element FrontendMsg
@@ -319,10 +332,10 @@ lockCell : Notebook.Cell.Cell -> Element FrontendMsg
 lockCell cell =
     case cell.locked of
         True ->
-            Button.smallPrimary { msg = ToggleCellLock cell, status = Button.Active, label = Button.Text "Locked", tooltipText = Just "Cell can't be edited when locked" }
+            Button.smallPrimary { msg = ToggleCellLock cell, status = Button.ActiveRunningSpecial, label = Button.Text "Locked", tooltipText = Just "Cell can't be edited when locked" }
 
         False ->
-            Button.smallPrimary { msg = ToggleCellLock cell, status = Button.Active, label = Button.Text "Unlocked", tooltipText = Just "Lock to prevent editing" }
+            Button.smallPrimary { msg = ToggleCellLock cell, status = Button.ActiveRunningSpecial, label = Button.Text "Unlocked", tooltipText = Just "Lock to prevent editing" }
 
 
 saveDataSetAsPublic : Notebook.DataSet.DataSetMetaData -> Element FrontendMsg
