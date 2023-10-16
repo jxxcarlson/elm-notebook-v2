@@ -561,10 +561,22 @@ updateFromBackend msg model =
 
         SendUser user ->
             if user.username == "guest" then
-                ( { model | currentUser = Just user, clockState = ClockStopped }, Cmd.none )
+                ( { model
+                    | currentUser = Just user
+                    , showNotebooks = ShowPublicNotebooks
+                    , clockState = ClockStopped
+                  }
+                , Cmd.none
+                )
 
             else
-                ( { model | currentUser = Just user, clockState = ClockStopped }, Cmd.none )
+                ( { model
+                    | currentUser = Just user
+                    , showNotebooks = ShowUserNotebooks
+                    , clockState = ClockStopped
+                  }
+                , Cmd.none
+                )
 
         -- DATA
         GotListOfPublicDataSets dataSetMetaDataList ->
