@@ -405,7 +405,12 @@ renderCode pressedKeys theme cell width =
         , Background.color (themedCodeCellBackgroundColor theme)
         , E.height E.shrink
         , if not cell.locked then
-            Element.Events.onMouseDown (EditCell cell)
+            case cell.cellState of
+                CSView ->
+                    Element.Events.onMouseDown (EditCell cell)
+
+                CSEdit ->
+                    Element.Events.onMouseDown (EvalCell CSEdit cell.index)
 
           else
             Element.Events.onMouseDown NoOpFrontendMsg
@@ -496,10 +501,10 @@ newCellAboveOrBelow : Notebook.Types.CellDirection -> Element FrontendMsg
 newCellAboveOrBelow cellDirection =
     case cellDirection of
         Notebook.Types.Up ->
-            Button.smallPrimary { msg = ChangeCellInsertionDirection Notebook.Types.Down, status = Button.Highlighted, label = Button.Text "Above", tooltipText = Just "Insert new cell above" }
+            Button.smallPrimary { msg = ChangeCellInsertionDirection Notebook.Types.Down, status = Button.ActiveSpecial, label = Button.Text "Above", tooltipText = Just "Insert new cell above" }
 
         Notebook.Types.Down ->
-            Button.smallPrimary { msg = ChangeCellInsertionDirection Notebook.Types.Up, status = Button.Highlighted, label = Button.Text "Below", tooltipText = Just "Insert ew cell below " }
+            Button.smallPrimary { msg = ChangeCellInsertionDirection Notebook.Types.Up, status = Button.ActiveSpecial, label = Button.Text "Below", tooltipText = Just "Insert ew cell below " }
 
 
 newCodeCellAt : CellState -> Int -> Element FrontendMsg
