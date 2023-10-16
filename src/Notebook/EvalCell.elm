@@ -153,15 +153,19 @@ updateEvalStateWithCell cell evalState =
 
                         Notebook.Parser.Decl name sourceText ->
                             Eval.insertDeclaration name (name ++ " = " ++ sourceText ++ "\n") evalState
+                                |> Debug.log "__Decl"
 
                         Notebook.Parser.ElmType name expr ->
                             Eval.insertTypeDeclaration name ("type " ++ name ++ " = " ++ expr ++ "\n") evalState
+                                |> Debug.log "__ElmType"
 
                         Notebook.Parser.TypeAlias name expr ->
                             Eval.insertTypeDeclaration name ("type alias " ++ name ++ " = " ++ expr ++ "\n") evalState
+                                |> Debug.log "__TypeAlias"
 
                         Notebook.Parser.Import name expr ->
                             Eval.insertImport name ("import " ++ name ++ " " ++ expr ++ "\n") evalState
+                                |> Debug.log "__Import"
 
 
 

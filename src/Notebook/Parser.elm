@@ -1,11 +1,8 @@
 module Notebook.Parser exposing
     ( Classification(..)
     , classify
-    , expressionParser
     , getErrorOffset
-    , importParser
     , replItemParser
-    , typeAliasParser
     )
 
 import Parser
@@ -53,45 +50,33 @@ type Classification
     | ElmType String String
 
 
-declarationsParser : Parser Classification
-declarationsParser =
-    succeed (\a1 a2 b1 b2 source -> Decl (String.slice a1 a2 source |> String.trim) (String.slice b1 b2 source))
+resolve : ( String, String ) -> Classification
+resolve ( lhs, rhs ) =
+    if String.left 1 rhs == "=" then
+        Expr (lhs ++ " =" ++ rhs)
+
+    else if String.contains "type alias" lhs then
+        TypeAlias lhs rhs
+
+    else if String.contains "type" lhs then
+        ElmType lhs rhs
+
+    else if String.contains "import" lhs then
+        Import lhs rhs
+
+    else
+        Decl lhs rhs
+
+
+lhsRhsParser : Parser Classification
+lhsRhsParser =
+    succeed
+        (\a1 a2 b1 b2 source ->
+            ( String.slice a1 a2 source |> String.trim, String.slice b1 b2 source |> String.trim ) |> resolve
+        )
         |= getOffset
         |. chompWhile (\c -> c /= '=')
         |= getOffset
-        |. spaces
-        |. symbol "="
-        |. spaces
-        |= getOffset
-        |. chompUntilEndOr "\n\n"
-        |= getOffset
-        |= getSource
-
-
-typeAliasParser : Parser Classification
-typeAliasParser =
-    succeed (\a1 a2 b1 b2 source -> TypeAlias (String.slice a1 a2 source |> String.trim) (String.slice b1 b2 source))
-        |. symbol "type alias "
-        |= getOffset
-        |. chompWhile (\c -> c /= ' ')
-        |= getOffset
-        |. spaces
-        |. symbol "="
-        |. spaces
-        |= getOffset
-        |. chompUntilEndOr "\n\n"
-        |= getOffset
-        |= getSource
-
-
-elmTypeParser : Parser Classification
-elmTypeParser =
-    succeed (\a1 a2 b1 b2 source -> ElmType (String.slice a1 a2 source |> String.trim) (String.slice b1 b2 source))
-        |. symbol "type "
-        |= getOffset
-        |. chompWhile (\c -> c /= ' ')
-        |= getOffset
-        |. spaces
         |. symbol "="
         |. spaces
         |= getOffset
@@ -122,7 +107,11 @@ importParser =
 
 
 replItemParser =
-    Parser.oneOf [ importParser, typeAliasParser, elmTypeParser, Parser.backtrackable declarationsParser, expressionParser ]
+    Parser.oneOf
+        [ importParser
+        , lhsRhsParser
+        , expressionParser
+        ]
 
 
 classify : String -> Result (List Parser.DeadEnd) Classification
