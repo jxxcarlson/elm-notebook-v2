@@ -74,6 +74,25 @@ themedCodeCellTextColor theme =
             Notebook.Config.darkThemeCodeCellTextColor
 
 
+themedButtonColor cstate theme =
+    case cstate of
+        CSView ->
+            case theme of
+                Notebook.Book.LightTheme ->
+                    E.rgb 1 0 1
+
+                Notebook.Book.DarkTheme ->
+                    E.rgb 0.1 0 0.4
+
+        CSEdit ->
+            case theme of
+                Notebook.Book.LightTheme ->
+                    E.rgb 1 0 1
+
+                Notebook.Book.DarkTheme ->
+                    E.rgb 0.2 0 0.6
+
+
 themedCodeColor theme =
     case theme of
         Notebook.Book.LightTheme ->
@@ -81,6 +100,17 @@ themedCodeColor theme =
 
         Notebook.Book.DarkTheme ->
             Notebook.Config.darkThemeCodeColor
+
+
+themedMutedTextColor theme =
+    case theme of
+        Notebook.Book.LightTheme ->
+            --Notebook.Config.lightThemeTextColor
+            E.rgb 0.2 0.2 0.2
+
+        Notebook.Book.DarkTheme ->
+            --Notebook.Config.darkThemeTextColor
+            E.rgb255 170 160 200
 
 
 themedTextColor theme =
@@ -368,10 +398,10 @@ viewIndex theme cell =
         padding =
             case cell.cellState of
                 CSView ->
-                    E.paddingEach { top = 9, bottom = 0, left = 0, right = 16 }
+                    E.paddingEach { top = 9, bottom = 6, left = 6, right = 16 }
 
                 CSEdit ->
-                    E.paddingEach { top = 0, bottom = 0, left = 0, right = 0 }
+                    E.paddingEach { top = 6, bottom = 6, left = 12, right = 16 }
     in
     E.el
         [ action
@@ -379,13 +409,14 @@ viewIndex theme cell =
         , Background.color
             (case cell.tipe of
                 CTCode ->
-                    themedCodeCellBackgroundColor theme
+                    themedButtonColor cell.cellState theme
 
                 CTMarkdown ->
-                    themedBackgroundColor theme
+                    themedButtonColor cell.cellState theme
             )
-        , Font.color (themedCodeColor theme)
+        , Font.color (themedMutedTextColor theme)
         , E.htmlAttribute <| HA.style "z-index" "1"
+        , E.htmlAttribute <| HA.style "cursor" "pointer"
         , Font.family
             [ Font.typeface "Open Sans"
             , Font.sansSerif

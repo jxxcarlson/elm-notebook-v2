@@ -209,20 +209,20 @@ myNotebooks : Types.ShowNotebooks -> Element FrontendMsg
 myNotebooks showNotebooks =
     case showNotebooks of
         ShowUserNotebooks ->
-            Button.smallPrimary { msg = NoOpFrontendMsg, status = Button.Highlighted, label = Button.Text "Mine", tooltipText = Nothing }
+            Button.smallPrimary { msg = NoOpFrontendMsg, status = Button.Highlighted, label = Button.Text "My docs", tooltipText = Nothing }
 
         ShowPublicNotebooks ->
-            Button.smallPrimary { msg = SetShowNotebooksState Types.ShowUserNotebooks, status = Button.Active, label = Button.Text "Mine", tooltipText = Nothing }
+            Button.smallPrimary { msg = SetShowNotebooksState Types.ShowUserNotebooks, status = Button.Active, label = Button.Text "My docs", tooltipText = Nothing }
 
 
 publicNotebooks : Types.ShowNotebooks -> Element FrontendMsg
 publicNotebooks showNotebooks =
     case showNotebooks of
         ShowUserNotebooks ->
-            Button.smallPrimary { msg = SetShowNotebooksState Types.ShowPublicNotebooks, status = Button.Active, label = Button.Text "Public", tooltipText = Nothing }
+            Button.smallPrimary { msg = SetShowNotebooksState Types.ShowPublicNotebooks, status = Button.Active, label = Button.Text "Public docs", tooltipText = Nothing }
 
         ShowPublicNotebooks ->
-            Button.smallPrimary { msg = NoOpFrontendMsg, status = Button.Highlighted, label = Button.Text "Public", tooltipText = Nothing }
+            Button.smallPrimary { msg = NoOpFrontendMsg, status = Button.Highlighted, label = Button.Text "Public docs", tooltipText = Nothing }
 
 
 cancelDeleteNotebook : DeleteNotebookState -> Element FrontendMsg
