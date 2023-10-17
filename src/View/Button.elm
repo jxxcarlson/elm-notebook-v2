@@ -408,7 +408,7 @@ setUpUser =
 
 submitPackageList : Element FrontendMsg
 submitPackageList =
-    buttonTemplate [] SubmitPackageList "Submit"
+    buttonTemplate [] SubmitPackageList "Install"
 
 
 submitTest : Element FrontendMsg
