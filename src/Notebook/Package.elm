@@ -22,7 +22,7 @@ import Util
 gotElmJsonDict model result =
     case result of
         Err _ ->
-            Message.postMessage "Error retrieving elm.json dependencies" Types.MSRed model
+            Message.postMessage "E.1" Types.MSRed model
 
         Ok data ->
             case model.currentUser of
