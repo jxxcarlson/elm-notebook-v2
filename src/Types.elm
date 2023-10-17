@@ -251,7 +251,7 @@ type DataSetDescription
 type MessageStatus
     = MSWhite
     | MSYellow
-    | MSGreen
+    | MSBlue
     | MSRed
 
 

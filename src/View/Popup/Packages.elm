@@ -3,8 +3,12 @@ module View.Popup.Packages exposing (..)
 import Dict exposing (Dict)
 import Element as E exposing (Element)
 import Element.Background as Background
+import Element.Border
 import Element.Font as Font
 import Message
+import Notebook.Book
+import Notebook.Eval
+import Notebook.ThemedColor as ThemedColor
 import Notebook.Types
 import Types
 import View.Button
@@ -15,6 +19,18 @@ import View.Style
 
 view : Types.FrontendModel -> Element Types.FrontendMsg
 view model =
+    let
+        viewData =
+            { book = model.currentBook
+            , kvDict = model.kvDict
+            , width = View.Geometry.notebookWidth model
+            , ticks = model.tickCount
+            , cellDirection = model.cellInsertionDirection
+            , errorOffset = Notebook.Eval.replErrorOffset model.evalState.decls
+            , theme = model.theme
+            , pressedKeys = model.pressedKeys
+            }
+    in
     case model.popupState of
         Types.PackageListPopup ->
             E.column
@@ -22,20 +38,30 @@ view model =
                 , View.Style.bgGray 0.4
                 , E.padding 24
                 , E.centerX
-
-                --, E.alignRight
-                , E.moveUp (View.Geometry.appHeight model - 100 |> toFloat)
+                , Element.Border.width 1
+                , Element.Border.color (ThemedColor.themedPopupDividerColor viewData.theme)
+                , Background.color (ThemedColor.themedPopupBackgroundColor viewData.theme)
+                , Font.color (ThemedColor.themedValueTextColor viewData.theme)
+                , E.moveUp (View.Geometry.appHeight model - 90 |> toFloat)
                 ]
                 [ E.row [ E.spacing 12 ]
                     [ E.el [ Font.bold, Font.size 14, Font.color (E.rgb 0.9 0.9 0.9) ] (E.text "Packages for this notebook")
                     , E.el [ Font.italic, Font.size 14, Font.color (E.rgb 0.9 0.9 0.9) ] (E.text "Add more packages below, one per line.")
                     ]
                 , View.Input.submitPackageList model
+                    [ Background.color (ThemedColor.themedCodeCellBackgroundColor viewData.theme)
+                    , Font.color (ThemedColor.themedCodeCellTextColor viewData.theme)
+                    , Element.Border.color (ThemedColor.themedPopupDividerColor viewData.theme)
+                    ]
+                    [ Font.color (E.rgb 0.9 0.9 0.9) ]
                 , E.column
-                    [ E.height (E.px 300)
+                    [ E.height (E.px 250)
                     , E.width (E.px 500)
                     , E.scrollbarY
-                    , Background.color (E.rgb 1 1 1)
+                    , Font.color (ThemedColor.themedTextColor viewData.theme)
+                    , Background.color (ThemedColor.themedCodeCellBackgroundColor viewData.theme)
+                    , Element.Border.width 1
+                    , Element.Border.color (ThemedColor.themedPopupDividerColor viewData.theme)
                     , E.spacing 12
                     , E.padding 24
                     ]
@@ -59,16 +85,24 @@ viewCompilerPackage package =
     E.row [ Font.size 12, E.spacing 14 ] [ E.el [ E.width (E.px 190) ] (E.text package.name), E.el [ E.width (E.px 60) ] (E.text package.version) ]
 
 
-viewPackage : Dict String Notebook.Types.ElmPackageSummary -> List (Element Types.FrontendMsg)
-viewPackage dict =
+viewPackage : Notebook.Book.ViewData -> Dict String Notebook.Types.ElmPackageSummary -> List (Element Types.FrontendMsg)
+viewPackage viewData dict =
     dict
         |> Dict.values
-        |> List.map viewValue
+        |> List.map (viewValue viewData)
 
 
-viewValue : Notebook.Types.ElmPackageSummary -> Element Types.FrontendMsg
-viewValue summary =
-    E.row [ Font.size 14, E.width (E.px 500), E.paddingXY 12 0, E.height (E.px 36), Background.color (E.rgb 1.0 0.9 0.9) ]
+viewValue : Notebook.Book.ViewData -> Notebook.Types.ElmPackageSummary -> Element Types.FrontendMsg
+viewValue viewData summary =
+    E.row
+        [ Font.size 14
+        , E.width (E.px 500)
+        , E.paddingXY 12 0
+        , E.height (E.px 36)
+        , Background.color (ThemedColor.themedBackgroundColor viewData.theme)
+
+        --, Background.color (E.rgb 1.0 0.9 0.9)
+        ]
         [ E.row [ E.width (E.px 180), E.scrollbarX ] [ E.text summary.name ]
         , E.row [ E.width (E.px 40) ] [ E.text summary.version ]
         , E.row [ E.width (E.px 220), E.scrollbarX, E.spacing 12 ] (List.map (\x -> E.el [ E.width E.fill ] (E.text x)) summary.exposedModules)

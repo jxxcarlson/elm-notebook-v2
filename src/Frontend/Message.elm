@@ -32,7 +32,7 @@ received model message_ =
             { message_ | id = model.messageId }
 
         newMessages =
-            if List.member message.status [ Types.MSRed, Types.MSYellow, Types.MSGreen ] then
+            if List.member message.status [ Types.MSRed, Types.MSYellow, Types.MSBlue ] then
                 [ message ]
 
             else

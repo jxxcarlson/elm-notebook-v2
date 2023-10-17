@@ -7,18 +7,17 @@ import Element.Events
 import Element.Font as Font
 import Element.Input
 import Html.Attributes as HA
-import Keyboard
 import List.Extra
 import Notebook.Book exposing (ViewData)
 import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
 import Notebook.Config
 import Notebook.ErrorReporter
 import Notebook.Parser
+import Notebook.ThemedColor exposing (..)
 import Notebook.Types
 import Notebook.Utility as Utility
 import Types exposing (FrontendModel, FrontendMsg(..))
 import UILibrary.Button as Button
-import UILibrary.Color as Color
 import View.Button exposing (runCell)
 import View.CellThemed
 import View.Style
@@ -36,128 +35,6 @@ view viewData cellContents cell =
             [ viewSourceAndValue viewData cellContents cell
             ]
         ]
-
-
-themedDividerColor theme =
-    case theme of
-        Notebook.Book.LightTheme ->
-            Notebook.Config.lightThemeDividerColor
-
-        Notebook.Book.DarkTheme ->
-            Notebook.Config.darkThemeDividerColor
-
-
-themedValueBackgroundColor theme =
-    case theme of
-        Notebook.Book.LightTheme ->
-            Notebook.Config.lightThemeValueBackgroundColor
-
-        Notebook.Book.DarkTheme ->
-            Notebook.Config.darkThemeValueBackgroundColor
-
-
-themedBackgroundColor theme =
-    case theme of
-        Notebook.Book.LightTheme ->
-            Notebook.Config.lightThemeBackgroundColor
-
-        Notebook.Book.DarkTheme ->
-            Notebook.Config.darkThemeBackgroundColor
-
-
-themedCodeCellBackgroundColor theme =
-    case theme of
-        Notebook.Book.LightTheme ->
-            Notebook.Config.lightThemeCodeCellBackgroundColor
-
-        Notebook.Book.DarkTheme ->
-            Notebook.Config.darkThemeCodeCellBackgroundColor
-
-
-themedCodeCellTextColor theme =
-    case theme of
-        Notebook.Book.LightTheme ->
-            Notebook.Config.lightThemeCodeCellTextColor
-
-        Notebook.Book.DarkTheme ->
-            Notebook.Config.darkThemeCodeCellTextColor
-
-
-themedButtonColor tipe cstate theme =
-    case theme of
-        Notebook.Book.DarkTheme ->
-            case cstate of
-                CSView ->
-                    case tipe of
-                        CTCode ->
-                            E.rgb 0.2 0.2 0.4
-
-                        CTMarkdown ->
-                            E.rgb 0.2 0.2 0.4
-
-                CSEdit ->
-                    case tipe of
-                        CTCode ->
-                            E.rgb 0.2 0.2 0.4
-
-                        CTMarkdown ->
-                            E.rgb 0.2 0.2 0.4
-
-        Notebook.Book.LightTheme ->
-            case cstate of
-                CSView ->
-                    case tipe of
-                        CTCode ->
-                            E.rgb 0.75 0.75 1.0
-
-                        CTMarkdown ->
-                            E.rgb 0.75 0.75 1.0
-
-                CSEdit ->
-                    case tipe of
-                        CTCode ->
-                            E.rgb 0.75 0.75 1.0
-
-                        CTMarkdown ->
-                            E.rgb 0.75 0.75 1.0
-
-
-themedCodeColor theme =
-    case theme of
-        Notebook.Book.LightTheme ->
-            Notebook.Config.lightThemeCodeColor
-
-        Notebook.Book.DarkTheme ->
-            Notebook.Config.darkThemeCodeColor
-
-
-themedMutedTextColor theme =
-    case theme of
-        Notebook.Book.LightTheme ->
-            --Notebook.Config.lightThemeTextColor
-            E.rgb 0.2 0.2 0.2
-
-        Notebook.Book.DarkTheme ->
-            --Notebook.Config.darkThemeTextColor
-            E.rgb255 170 160 200
-
-
-themedTextColor theme =
-    case theme of
-        Notebook.Book.LightTheme ->
-            Notebook.Config.lightThemeTextColor
-
-        Notebook.Book.DarkTheme ->
-            Notebook.Config.darkThemeTextColor
-
-
-themedValueTextColor theme =
-    case theme of
-        Notebook.Book.LightTheme ->
-            Notebook.Config.lightThemeValueTextColor
-
-        Notebook.Book.DarkTheme ->
-            Notebook.Config.darkThemeValueTextColor
 
 
 viewSourceAndValue : ViewData -> String -> Cell -> Element FrontendMsg

@@ -21,7 +21,7 @@ postMessage str status model =
 
 
 removeMessageAfterDelay id =
-    Process.sleep (6 * 1000) |> Task.perform (always (Types.ExecuteDelayedMessageRemoval id))
+    Process.sleep (4 * 1000) |> Task.perform (always (Types.ExecuteDelayedMessageRemoval id))
 
 
 viewSmall : Int -> Types.FrontendModel -> Element Types.FrontendMsg
@@ -32,14 +32,14 @@ viewSmall width model =
 
         messageTypes =
             if model.showEditor then
-                [ Types.MSGreen
+                [ Types.MSBlue
 
                 --, Types.MSYellow
                 , Types.MSRed
                 ]
 
             else
-                [ Types.MSGreen, Types.MSRed ]
+                [ Types.MSBlue, Types.MSRed ]
     in
     if actualMessages == [] then
         E.none
@@ -62,14 +62,14 @@ view model =
     let
         messageTypes =
             if model.showEditor then
-                [ Types.MSGreen
+                [ Types.MSBlue
 
                 --, Types.MSYellow
                 , Types.MSRed
                 ]
 
             else
-                [ Types.MSGreen, Types.MSRed ]
+                [ Types.MSBlue, Types.MSRed ]
     in
     E.paragraph
         [ E.width E.fill
@@ -100,8 +100,8 @@ handleMessageInFooter { txt, status } =
         Types.MSYellow ->
             E.el (style [ Font.color View.Color.yellow ]) (E.text txt)
 
-        Types.MSGreen ->
-            E.el (style [ Font.color (E.rgb 0 0.7 0) ]) (E.text txt)
+        Types.MSBlue ->
+            E.el (style [ Font.color (E.rgb 0.4 0.4 1.0) ]) (E.text txt)
 
         Types.MSRed ->
             E.el (style [ Font.color View.Color.red ]) (E.text txt)

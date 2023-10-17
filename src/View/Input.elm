@@ -38,13 +38,17 @@ multiLineTemplate width_ height_ default msg text =
         }
 
 
-multiLineTemplate2 : Int -> Int -> String -> (String -> msg) -> String -> Element msg
-multiLineTemplate2 width_ height_ default msg text =
-    Input.multiline [ E.moveUp 5, Font.size 16, E.width (E.px width_), E.height (E.px height_) ]
+
+-- multiLineTemplate2 : Int -> Int -> String -> (String -> msg) -> String -> Element msg
+
+
+multiLineTemplate2 : List (E.Attr () msg) -> List (E.Attr () msg) -> Int -> Int -> String -> (String -> msg) -> String -> Element msg
+multiLineTemplate2 attr labelAttr width_ height_ defaultLabelText msg text =
+    Input.multiline ([ E.moveUp 5, Font.size 16, E.width (E.px width_), E.height (E.px height_) ] ++ attr)
         { onChange = msg
         , text = text
-        , label = Input.labelAbove [ Font.size 13 ] (E.text default)
-        , placeholder = Just <| Input.placeholder [ E.moveUp 5 ] (E.text default)
+        , label = Input.labelAbove ([ Font.size 13 ] ++ labelAttr) (E.text defaultLabelText)
+        , placeholder = Just <| Input.placeholder [ E.moveUp 5 ] (E.text defaultLabelText)
         , spellcheck = False
         }
 
@@ -97,8 +101,8 @@ data model =
     multiLineTemplate 500 200 "Data" InputData model.inputData
 
 
-submitPackageList model =
-    multiLineTemplate 500 250 "Submit packages" InputPackages model.inputPackages
+submitPackageList model attr labelAttr =
+    multiLineTemplate2 attr labelAttr 500 250 "Packages to submit:" InputPackages model.inputPackages
 
 
 

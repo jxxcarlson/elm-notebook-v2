@@ -344,7 +344,7 @@ update msg model =
                     Message.postMessage "Could not decode JSON from compiler" Types.MSRed model
 
                 Ok str ->
-                    Message.postMessage str Types.MSGreen model
+                    Message.postMessage str Types.MSBlue model
 
         ClearNotebookValues ->
             Notebook.Update.clearNotebookValues model.currentBook model
@@ -551,10 +551,10 @@ updateFromBackend msg model =
 
         -- USER
         SendMessage message ->
-            Message.postMessage message Types.MSGreen model
+            Message.postMessage message Types.MSBlue model
 
         MessageReceived message ->
-            Message.postMessage message.txt Types.MSGreen model
+            Message.postMessage message.txt Types.MSBlue model
 
         UserSignedIn user _ ->
             ( { model | currentUser = Just user, popupState = Types.NoPopup }, Cmd.none )
@@ -666,7 +666,7 @@ updateFromBackend msg model =
                                         , books = books
                                     }
                             in
-                            Message.postMessage "No notebook specified, using first one" Types.MSGreen newModel
+                            Message.postMessage "No notebook specified, using first one" Types.MSBlue newModel
                                 |> (\( model_, cmd ) ->
                                         ( model_, Cmd.batch [ cmd, Notebook.Package.installNewPackages book.packageNames ] )
                                    )

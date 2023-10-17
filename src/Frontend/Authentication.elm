@@ -65,7 +65,7 @@ signUp model =
                 |> reject (model.inputEmail == "") "missing email address"
     in
     if List.isEmpty errors then
-        ( { model | messageId = model.messageId + 1, messages = [ { id = model.messageId, txt = "OK, signing you up", status = MSGreen } ] }
+        ( { model | messageId = model.messageId + 1, messages = [ { id = model.messageId, txt = "OK, signing you up", status = MSBlue } ] }
         , Cmd.batch
             [ Lamdera.sendToBackend (Types.SignUpBE model.inputSignupUsername (Authentication.encryptForTransit model.inputPassword) model.inputEmail)
             , Message.removeMessageAfterDelay model.messageId

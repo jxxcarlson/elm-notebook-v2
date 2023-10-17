@@ -36,6 +36,10 @@ darkThemeDividerColor =
     E.rgb255 160 160 240
 
 
+darkThemePopupDividerColor =
+    E.rgb255 100 100 200
+
+
 
 -- Code cell dark  them
 
@@ -84,6 +88,10 @@ lightThemeCodeCellTextColor =
 
 lightThemeDividerColor =
     E.rgb 0.1 0.1 0.85
+
+
+lightThemePopupDividerColor =
+    E.rgb255 40 40 100
 
 
 

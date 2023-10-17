@@ -182,7 +182,7 @@ signUpUser model sessionId clientId username transitPassword email =
               }
             , Cmd.batch
                 [ Lamdera.sendToFrontend clientId (UserSignedIn user clientId)
-                , Lamdera.sendToFrontend clientId (MessageReceived { id = -1, txt = "Success! Your account is set up.", status = MSGreen })
+                , Lamdera.sendToFrontend clientId (MessageReceived { id = -1, txt = "Success! Your account is set up.", status = MSBlue })
                 , Lamdera.sendToFrontend clientId (GotNotebook book)
                 ]
             )
