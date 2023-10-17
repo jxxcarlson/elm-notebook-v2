@@ -17,6 +17,7 @@ import Notebook.Types exposing (EvalState)
 import Process
 import Task
 import Types exposing (FrontendMsg)
+import Util
 
 
 type alias Model =
@@ -113,7 +114,7 @@ executeCell cellIndex model =
                                         , currentBook = cleanBook
                                         , evalState = newEvalState
                                       }
-                                    , Eval.requestEvaluation newEvalState cell sourceText
+                                    , Eval.requestEvaluation newEvalState cell (sourceText |> Util.compressNewlines |> String.trim)
                                     )
 
                                 _ ->

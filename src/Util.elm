@@ -1,5 +1,6 @@
 module Util exposing
-    ( compressSpaces
+    ( compressNewlines
+    , compressSpaces
     , firstPart
     , getChunks
     , insertInList
@@ -18,11 +19,18 @@ mergeDictionaries newDict oldDict =
     Dict.fromList (Dict.toList newDict ++ Dict.toList oldDict)
 
 
-{-| Replace multiple spaces with a single space
+{-| Replace runs of spaces with a single space
 -}
 compressSpaces : String -> String
 compressSpaces str =
     userReplace " +" (\_ -> " ") str
+
+
+{-| Replace runs of newlines with a single newlines
+-}
+compressNewlines : String -> String
+compressNewlines str =
+    userReplace "\n+" (\_ -> "\n") str
 
 
 userReplace : String -> (Regex.Match -> String) -> String -> String
