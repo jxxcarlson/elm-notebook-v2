@@ -42,7 +42,12 @@ darkThemeDividerColor =
 
 darkThemeCodeCellBackgroundColor =
     -- E.rgb255  100 100 130
-    E.rgb255 80 80 110
+    E.rgb255 43 40 110
+
+
+
+-- 80 80 160
+-- 100 100 130
 
 
 darkThemeCodeCellTextColor =
