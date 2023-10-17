@@ -427,7 +427,7 @@ adminPopup model =
 
 packagesPopup : FrontendModel -> Element FrontendMsg
 packagesPopup model =
-    buttonTemplate [] (ChangePopup PackageListPopup) "Packages"
+    buttonTemplate [] (ChangePopup PackageListPopup) "Install Packages"
 
 
 runTask : Element FrontendMsg
