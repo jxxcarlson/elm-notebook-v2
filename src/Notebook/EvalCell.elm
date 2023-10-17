@@ -162,6 +162,14 @@ updateEvalStateWithCell cell evalState =
                             Eval.insertImport name ("import " ++ name ++ " " ++ expr ++ "\n") evalState
 
 
+fixLet str =
+    if String.left 3 str == "let" then
+        "\n" ++ str
+
+    else
+        str
+
+
 compress str =
     str |> Util.compressNewlines |> String.trim
 
