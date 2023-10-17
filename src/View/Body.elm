@@ -121,7 +121,26 @@ viewMyNotebookList model user =
     E.el [ Font.color Color.white, E.paddingEach { left = 0, right = 0, bottom = 8, top = 0 } ]
         (E.text <| "Notebooks: " ++ String.fromInt (List.length model.books))
         :: controls model.showNotebooks
-        :: List.map (viewNotebookEntry model.currentBook) (List.sortBy (\b -> b.title) model.books)
+        --:: List.map (viewNotebookEntry model.currentBook) (List.sortBy (\b -> b.title) model.books)
+        :: List.map (viewNotebookEntry model.currentBook) (List.sortBy bookSorter model.books)
+
+
+bookSorter : Book -> ( Int, String )
+bookSorter book =
+    if book.title == "Welcome" then
+        ( 0, "Welcome" )
+
+    else
+        ( 1, book.title )
+
+
+publicBookSorter : Book -> ( Int, String )
+publicBookSorter book =
+    if book.title == "Welcome" then
+        ( 0, "Welcome" )
+
+    else
+        ( 1, book.author ++ book.title )
 
 
 viewNotebookEntry : Book -> Book -> Element FrontendMsg
@@ -147,7 +166,7 @@ viewPublicNotebookList model user =
         (E.text <| "Notebooks: " ++ String.fromInt (List.length model.books))
         :: controls model.showNotebooks
         :: List.map (viewPublicNotebookEntry model.currentBook)
-            (List.sortBy (\b -> b.author ++ b.title)
+            (List.sortBy publicBookSorter
                 (List.filter (\b -> b.public) model.books)
             )
 
