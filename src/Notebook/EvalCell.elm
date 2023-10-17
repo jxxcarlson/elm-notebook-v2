@@ -149,7 +149,11 @@ updateEvalStateWithCell cell evalState =
                         Notebook.Parser.Expr _ ->
                             evalState
 
-                        Notebook.Parser.Decl name sourceText ->
+                        Notebook.Parser.Decl name sourceText_ ->
+                            let
+                                sourceText =
+                                    fixLet sourceText_
+                            in
                             Eval.insertDeclaration name (name ++ " = " ++ sourceText ++ "\n") evalState
 
                         Notebook.Parser.ElmType name expr ->
@@ -164,7 +168,7 @@ updateEvalStateWithCell cell evalState =
 
 fixLet str =
     if String.left 3 str == "let" then
-        "\n" ++ str
+        "\n  " ++ str
 
     else
         str

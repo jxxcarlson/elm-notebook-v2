@@ -155,8 +155,7 @@ typeDict =
 encodeExpr : EvalState -> String -> Encode.Value
 encodeExpr evalState expr =
     Encode.object
-        [ --( "entry", Encode.string (expr |> removeComments |> String.replace "\n" " " |> Util.compressSpaces |> (\x -> x ++ "\n")) )
-          ( "entry", Encode.string (expr |> removeComments |> Util.compressSpaces |> (\x -> x ++ "\n")) )
+        [ ( "entry", Encode.string (expr |> removeComments |> String.replace "\n" " " |> Util.compressSpaces |> (\x -> x ++ "\n")) )
         , ( "imports", Encode.dict identity Encode.string evalState.imports )
         , ( "types", Encode.dict identity Encode.string evalState.types )
         , ( "decls", Encode.dict identity Encode.string evalState.decls )
