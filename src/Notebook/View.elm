@@ -47,6 +47,15 @@ themedDividerColor theme =
             Notebook.Config.darkThemeDividerColor
 
 
+themedValueBackgroundColor theme =
+    case theme of
+        Notebook.Book.LightTheme ->
+            Notebook.Config.lightThemeValueBackgroundColor
+
+        Notebook.Book.DarkTheme ->
+            Notebook.Config.darkThemeValueBackgroundColor
+
+
 themedBackgroundColor theme =
     case theme of
         Notebook.Book.LightTheme ->
@@ -142,6 +151,15 @@ themedTextColor theme =
             Notebook.Config.darkThemeTextColor
 
 
+themedValueTextColor theme =
+    case theme of
+        Notebook.Book.LightTheme ->
+            Notebook.Config.lightThemeValueTextColor
+
+        Notebook.Book.DarkTheme ->
+            Notebook.Config.darkThemeValueTextColor
+
+
 viewSourceAndValue : ViewData -> String -> Cell -> Element FrontendMsg
 viewSourceAndValue originalviewData cellContents cell =
     let
@@ -162,7 +180,7 @@ viewSourceAndValue originalviewData cellContents cell =
                 ( CSView, CTCode ) ->
                     [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0 0 1.0)
                     , Element.Border.widthEach
-                        { bottom = 1
+                        { bottom = 0 -- 1
                         , left = 0
                         , right = 0
                         , top = 1
@@ -191,7 +209,7 @@ viewSourceAndValue originalviewData cellContents cell =
         )
         [ E.el [ E.alignRight, Background.color (Utility.cellColor cell.tipe) ] (controls viewData cell)
         , viewSource viewData (viewData.width - controlWidth) cell cellContents
-        , E.el (hrule viewData.theme cell) (viewValue viewData cell)
+        , E.el [] (viewValue viewData cell)
         ]
 
 
@@ -204,10 +222,6 @@ hrule theme cell =
 
         CTMarkdown ->
             []
-
-
-controlBGEdit =
-    Background.color (E.rgb 0.8 0.8 1.0)
 
 
 bgColor cell =
@@ -350,7 +364,7 @@ viewSuccess viewData cell =
                                 ]
                                 (par viewData.theme
                                     realWidth
-                                    [ View.CellThemed.renderFull viewData.theme cell.tipe (scale 1.0 realWidth) "No value" ]
+                                    [ E.text "No value" ]
                                 )
 
                         Notebook.Parser.Decl _ _ ->
@@ -372,7 +386,8 @@ viewSuccess viewData cell =
                                 ]
                                 (par viewData.theme
                                     realWidth
-                                    [ View.CellThemed.renderFull viewData.theme cell.tipe (scale 1.0 realWidth) str ]
+                                    -- [ View.CellThemed.renderFull viewData.theme cell.tipe (scale 1.0 realWidth) str ]
+                                    [ E.text str ]
                                 )
 
                         Notebook.Parser.Decl _ _ ->
@@ -392,9 +407,10 @@ viewSuccess viewData cell =
 par theme width =
     E.paragraph
         [ E.spacing 8
-        , Font.color (themedTextColor theme)
+        , Font.color (themedValueTextColor theme)
         , E.width (E.px width)
-        , Background.color (themedBackgroundColor theme) --  (E.rgb 0.75 0.75 0.95)
+        , E.paddingXY 12 12
+        , Background.color (themedValueBackgroundColor theme) --  (E.rgb 0.75 0.75 0.95)
         ]
 
 

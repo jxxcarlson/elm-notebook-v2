@@ -27,6 +27,7 @@ type alias Theme =
     , codeColor : Element.Color
     , codeSpanColor : Element.Color
     , link : Element.Color
+    , linkColor : Element.Color
     , elmText : Element.Color
     , background : Element.Color
     }
@@ -37,12 +38,13 @@ lightTheme =
     { defaultText = Element.rgb255 30 46 50
     , mutedText = Element.rgb255 74 94 122
     , link = Element.rgb255 12 82 109
+    , linkColor = Element.rgb255 12 82 189
     , lightGrey = Element.rgb255 220 240 255
-    , codeBackground = Element.rgb255 200 200 240
+    , codeBackground = Notebook.Config.lightThemeBackgroundColor
 
     --, codeColor = Element.rgb255 255 180 50
-    , codeColor = Element.rgb255 20 20 20
-    , codeSpanColor = Element.rgb255 180 50 255
+    , codeColor = Element.rgb255 80 0 250
+    , codeSpanColor = Element.rgb255 80 0 250
     , grey = Element.rgb255 200 220 240
     , elmText = Element.rgb255 30 46 50
     , background = Notebook.Config.lightThemeBackgroundColor --Element.rgb255 220 220 255
@@ -53,7 +55,8 @@ darkTheme : Theme
 darkTheme =
     { defaultText = Element.rgb255 200 210 230 -- Element.rgb255 220 240 255 --Element.rgb255 30 46 50
     , mutedText = Element.rgb255 74 94 122
-    , link = Element.rgb255 200 94 255
+    , link = Element.rgb 0.8 0 0 --Element.rgb255 200 94 255
+    , linkColor = Element.rgb255 90 160 255
     , lightGrey = Element.rgb255 220 240 255
     , codeBackground = Notebook.Config.darkThemeBackgroundColor --Element.rgb255 50 50 50
     , codeColor = Element.rgb255 90 160 255
@@ -200,10 +203,11 @@ renderer theme =
                 , label =
                     case title of
                         Just title_ ->
-                            Element.text title_
+                            --- Element.el [ Element.Font.color theme.linkColor ] (Element.text title_)
+                            Element.el [ Element.Font.color (Element.rgb 1 0 0) ] (Element.text title_)
 
                         Nothing ->
-                            Element.paragraph [] list
+                            Element.paragraph [ Element.Font.color theme.linkColor ] list
                 }
     , image =
         \{ alt, src, title } ->

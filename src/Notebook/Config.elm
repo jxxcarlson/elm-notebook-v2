@@ -16,6 +16,14 @@ darkThemeBackgroundColor =
     E.rgb255 43 40 60
 
 
+darkThemeValueBackgroundColor =
+    E.rgb255 100 100 180
+
+
+darkThemeValueTextColor =
+    E.rgb255 220 220 255
+
+
 darkThemeCodeColor =
     E.rgb255 100 100 250
 
@@ -49,6 +57,14 @@ lightThemeBackgroundColor =
     E.rgb 0.95 0.95 0.95
 
 
+lightThemeValueBackgroundColor =
+    E.rgb255 170 170 220
+
+
+lightThemeValueTextColor =
+    E.rgb255 40 40 220
+
+
 lightThemeTextColor =
     E.rgb 0.2 0.2 0.2
 
@@ -62,7 +78,7 @@ lightThemeCodeCellTextColor =
 
 
 lightThemeDividerColor =
-    E.rgb 0.7 0.7 0.85
+    E.rgb 0.1 0.1 0.85
 
 
 
