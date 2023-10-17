@@ -114,7 +114,7 @@ executeCell cellIndex model =
                                         , currentBook = cleanBook
                                         , evalState = newEvalState
                                       }
-                                    , Eval.requestEvaluation newEvalState cell (sourceText |> Util.compressNewlines |> String.trim)
+                                    , Eval.requestEvaluation newEvalState cell sourceText
                                     )
 
                                 _ ->
@@ -140,7 +140,7 @@ updateEvalStateWithCell cell evalState =
             evalState
 
         Cell.CTCode ->
-            case Notebook.Parser.classify cell.text of
+            case Notebook.Parser.classify (compress cell.text) of
                 Err _ ->
                     evalState
 
@@ -160,6 +160,10 @@ updateEvalStateWithCell cell evalState =
 
                         Notebook.Parser.Import name expr ->
                             Eval.insertImport name ("import " ++ name ++ " " ++ expr ++ "\n") evalState
+
+
+compress str =
+    str |> Util.compressNewlines |> String.trim
 
 
 
