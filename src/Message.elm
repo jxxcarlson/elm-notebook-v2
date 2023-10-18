@@ -53,6 +53,7 @@ viewSmall width model =
             , View.Style.fgGray 1.0
             , E.spacing 12
             , Font.size 12
+            , E.scrollbarX
             ]
             (actualMessages |> List.map handleMessageInFooter |> List.intersperse (E.el [ Font.size 12, Font.color (E.rgb 0.4 0.4 1.0) ] (E.text ", ")))
 
