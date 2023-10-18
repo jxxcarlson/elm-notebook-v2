@@ -55,6 +55,9 @@ resolve ( lhs, rhs ) =
     if String.left 1 rhs == "=" then
         Expr (lhs ++ " =" ++ rhs)
 
+    else if String.left 1 lhs == "{" then
+        Expr (lhs ++ " = " ++ rhs)
+
     else if String.contains "type alias" lhs then
         TypeAlias (String.replace "type alias" "" lhs |> String.trim) rhs
 
