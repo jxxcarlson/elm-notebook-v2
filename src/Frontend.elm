@@ -330,7 +330,7 @@ update msg model =
                     Message.postMessage "E.4" Types.MSRed model
 
                 Ok packageList ->
-                    Message.postMessage ("Fr. Compiler: " ++ (packageList |> List.map (.name >> shorten) |> String.join ", ")) MSYellow model
+                    Message.postMessage ("Fr. Compiler: " ++ (packageList |> List.filter (\p -> p.name /= "elm/core") |> List.map (.name >> shorten) |> String.join ", ")) MSYellow model
                         |> (\( modl, cmd ) -> ( { modl | packagesFromCompiler = List.filter (\p -> p.name /= "elm/core") packageList }, cmd ))
 
         SubmitPackageList ->
