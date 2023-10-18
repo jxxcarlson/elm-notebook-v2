@@ -98,9 +98,5 @@ displayMessages model =
         , E.paddingXY View.Geometry.hPadding 4
         , View.Style.bgGray 0.1
         , E.centerY
-
-        -- , Font.color (E.rgb 0 1 0)
-        --, E.moveDown 13
         ]
-        --[ E.text <| model.message ]
         (Message.viewSmall 500 model)

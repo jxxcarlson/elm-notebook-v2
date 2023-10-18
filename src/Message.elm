@@ -54,7 +54,7 @@ viewSmall width model =
             , E.spacing 12
             , Font.size 12
             ]
-            (actualMessages |> List.map handleMessageInFooter)
+            (actualMessages |> List.map handleMessageInFooter |> List.intersperse (E.el [ Font.size 12, Font.color (E.rgb 0.4 0.4 1.0) ] (E.text ", ")))
 
 
 view : Types.FrontendModel -> Element Types.FrontendMsg
