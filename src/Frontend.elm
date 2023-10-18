@@ -330,11 +330,15 @@ update msg model =
                     Message.postMessage "E.4" Types.MSRed model
 
                 Ok packageList ->
-                    Message.postMessage ("Packages: " ++ (packageList |> List.map .name |> String.join ", ")) MSYellow model
+                    let
+                        _ =
+                            Debug.log "__@@GotPackagesFromCompiler" packageList
+                    in
+                    Message.postMessage ("Packages from Compiler: " ++ (packageList |> List.map .name |> String.join ", ")) MSYellow model
                         |> (\( modl, cmd ) -> ( { modl | packagesFromCompiler = List.filter (\p -> p.name /= "elm/core") packageList }, cmd ))
 
         SubmitPackageList ->
-            Notebook.Package.submitPackageList model
+            Notebook.Package.submitPackageListFromUserInput model
 
         SubmitTest ->
             ( model, Cmd.none )

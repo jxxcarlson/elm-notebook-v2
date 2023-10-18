@@ -31,15 +31,7 @@ viewSmall width model =
             model.messages |> List.filter (\m -> List.member m.status messageTypes)
 
         messageTypes =
-            if model.showEditor then
-                [ Types.MSBlue
-
-                --, Types.MSYellow
-                , Types.MSRed
-                ]
-
-            else
-                [ Types.MSBlue, Types.MSRed ]
+            [ Types.MSBlue, Types.MSYellow, Types.MSRed ]
     in
     if actualMessages == [] then
         E.none

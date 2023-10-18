@@ -37,10 +37,10 @@ gotElmJsonDict model result =
                     )
 
 
-submitPackageList model =
+submitPackageListFromUserInput model =
     let
         packageNames =
-            makePackageList model
+            makePackageList model |> Debug.log "__submitPackageListFromUserInput"
 
         currentBook =
             model.currentBook
