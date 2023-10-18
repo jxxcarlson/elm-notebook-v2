@@ -128,6 +128,9 @@ nowSendPackageList model =
 installNewPackages : List String -> Cmd Types.FrontendMsg
 installNewPackages packageList =
     let
+        _ =
+            Debug.log "__installNewPackages" packageList
+
         n =
             packageList |> List.length
 

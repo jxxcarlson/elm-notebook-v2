@@ -66,11 +66,11 @@ view model =
                     , E.padding 24
                     ]
                     --(viewPackage model.packageDict)
-                    (E.el [ Font.size 12, Font.bold ] (E.text "Installed packages (Elm compiler)") :: List.map viewCompilerPackage model.packagesFromCompiler)
+                    (E.el [ Font.size 12, Font.bold ] (E.text "Installed packages (Elm compiler)")
+                        :: List.map viewCompilerPackage model.packagesFromCompiler
+                    )
                 , E.row [ E.spacing 18 ]
                     [ View.Button.submitPackageList
-
-                    --  , View.Button.submitTest
                     , View.Button.dismissPopup
                     ]
                 , E.el [ E.width E.fill, E.paddingXY 8 8, View.Style.bgGray 0 ] (Message.viewSmall 250 model)

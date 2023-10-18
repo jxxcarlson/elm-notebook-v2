@@ -88,6 +88,10 @@ signoutBE model clientId mUsername =
 
 signIn : Model -> ClientId -> String -> String -> ( Model, Cmd backendMsg )
 signIn model clientId username encryptedPassword =
+    let
+        _ =
+            Debug.log "__signIn" username
+    in
     case
         Dict.get username model.authenticationDict
     of

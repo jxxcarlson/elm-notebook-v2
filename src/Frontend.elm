@@ -330,7 +330,7 @@ update msg model =
                     Message.postMessage "Error retrieving package List from compiler" Types.MSRed model
 
                 Ok packageList ->
-                    ( { model | packagesFromCompiler = packageList }, Cmd.none )
+                    ( { model | packagesFromCompiler = List.filter (\p -> p.name /= "elm/core") packageList }, Cmd.none )
 
         SubmitPackageList ->
             Notebook.Package.submitPackageList model
@@ -599,6 +599,12 @@ updateFromBackend msg model =
 
         GotNotebook book_ ->
             let
+                _ =
+                    Debug.log "__GotNotebook, title" book_.title
+
+                _ =
+                    Debug.log "__GotNotebook, packages" book_.packageNames
+
                 book =
                     Notebook.Book.initializeCellState book_
 
@@ -616,7 +622,7 @@ updateFromBackend msg model =
                 | currentBook = book
                 , books = addOrReplaceBook book model.books
               }
-            , Cmd.none
+            , Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__package names (GotNotebook)")
             )
 
         GotPublicNotebook book_ ->
@@ -647,10 +653,17 @@ updateFromBackend msg model =
                 , showNotebooks = ShowPublicNotebooks
                 , books = addOrReplaceBook book model.books
               }
-            , sendToBackend (GetPublicNotebooks (Just book) currentUser.username)
+            , Cmd.batch
+                [ sendToBackend (GetPublicNotebooks (Just book) currentUser.username)
+                , Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__package names (GotPublicNotebook)")
+                ]
             )
 
         GotNotebooks maybeNotebook books ->
+            let
+                _ =
+                    Debug.log "__GotNotebooks__" (List.length books)
+            in
             case maybeNotebook of
                 Nothing ->
                     case List.head books of
@@ -659,6 +672,12 @@ updateFromBackend msg model =
 
                         Just book ->
                             let
+                                _ =
+                                    Debug.log "__current book (1)" book.title
+
+                                _ =
+                                    Debug.log "__package names (1)" book.packageNames
+
                                 newModel =
                                     { model
                                         | evalState = Notebook.EvalCell.updateEvalStateWithCells book.cells Notebook.Types.emptyEvalState
@@ -668,11 +687,17 @@ updateFromBackend msg model =
                             in
                             Message.postMessage "No notebook specified, using first one" Types.MSBlue newModel
                                 |> (\( model_, cmd ) ->
-                                        ( model_, Cmd.batch [ cmd, Notebook.Package.installNewPackages book.packageNames ] )
+                                        ( model_, Cmd.batch [ cmd, Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__package names (1*)") ] )
                                    )
 
                 Just currentBook ->
                     let
+                        _ =
+                            Debug.log "__current book (2)" currentBook.title
+
+                        _ =
+                            Debug.log "__package names (2)" currentBook.packageNames
+
                         newModel =
                             { model | evalState = Notebook.EvalCell.updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState, currentBook = currentBook }
                     in
