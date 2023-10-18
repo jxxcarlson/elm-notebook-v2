@@ -341,7 +341,7 @@ update msg model =
         PackageListSent result ->
             case result of
                 Err _ ->
-                    Message.postMessage "E.3" Types.MSYello model
+                    Message.postMessage "E.3" Types.MSYellow model
 
                 Ok str ->
                     Message.postMessage str Types.MSBlue model
