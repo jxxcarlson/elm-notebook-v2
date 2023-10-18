@@ -47,7 +47,7 @@ viewSmall width model =
     else
         E.paragraph
             [ E.width (E.px width)
-            , E.height E.fill
+            , E.height (E.px 60) --E.fill
             , E.paddingXY 4 12
             , View.Style.bgGray 0.0
             , View.Style.fgGray 1.0
