@@ -330,18 +330,6 @@ update msg model =
                     Message.postMessage "E.4" Types.MSRed model
 
                 Ok packageList ->
-                    let
-                        shorten name =
-                            case String.split "/" name of
-                                [ a, b ] ->
-                                    b
-
-                                _ ->
-                                    name
-
-                        _ =
-                            Debug.log "__@@GotPackagesFromCompiler" packageList
-                    in
                     Message.postMessage ("Fr. Compiler: " ++ (packageList |> List.map (.name >> shorten) |> String.join ", ")) MSYellow model
                         |> (\( modl, cmd ) -> ( { modl | packagesFromCompiler = List.filter (\p -> p.name /= "elm/core") packageList }, cmd ))
 
@@ -717,14 +705,10 @@ updateFromBackend msg model =
                         newModel =
                             { model | evalState = Notebook.EvalCell.updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState, currentBook = currentBook }
                     in
-                    Message.postMessage ([ "** GotNotebooks: ", currentBook.title ] ++ currentBook.packageNames |> String.join ", ") Types.MSBlue newModel
+                    Message.postMessage ("**Got:  " :: currentBook.packageNames |> String.join ", ") Types.MSBlue newModel
                         |> (\( model_, cmd ) ->
                                 ( { model_ | books = books, currentBook = currentBook }, Cmd.batch [ cmd, Notebook.Package.installNewPackages (currentBook.packageNames |> Debug.log "__package names (1*)") ] )
                            )
-
-
-
--- ( { newModel | books = books, currentBook = currentBook }, Notebook.Package.installNewPackages currentBook.packageNames )
 
 
 view : Model -> { title : String, body : List (Html.Html FrontendMsg) }
@@ -776,3 +760,12 @@ getStopExpression model =
     --    |> Eval.eval
     --    |> Result.toMaybe
     Nothing
+
+
+shorten name =
+    case String.split "/" name of
+        [ a, b ] ->
+            b
+
+        _ ->
+            name
