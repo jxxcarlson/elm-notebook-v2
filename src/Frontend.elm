@@ -341,7 +341,7 @@ update msg model =
         PackageListSent result ->
             case result of
                 Err _ ->
-                    Message.postMessage "Could not decode JSON from compiler" Types.MSRed model
+                    Message.postMessage "E.3" Types.MSYello model
 
                 Ok str ->
                     Message.postMessage str Types.MSBlue model
@@ -655,7 +655,7 @@ updateFromBackend msg model =
               }
             , Cmd.batch
                 [ sendToBackend (GetPublicNotebooks (Just book) currentUser.username)
-                , Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__package names (GotPublicNotebook)")
+                , Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__package names (GotPublicNotebook!!!)")
                 ]
             )
 
