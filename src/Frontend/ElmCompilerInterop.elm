@@ -27,7 +27,7 @@ receiveReplDataFromJS model str =
         Ok replData ->
             case model.currentCell of
                 Nothing ->
-                    Message.postMessage "Error: no cell found or ReceivedFromJS" Types.MSRed model
+                    Message.postMessage "E.2" Types.MSYellow model
 
                 Just cell ->
                     let
