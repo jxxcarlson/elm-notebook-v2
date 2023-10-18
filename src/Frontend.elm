@@ -331,10 +331,18 @@ update msg model =
 
                 Ok packageList ->
                     let
+                        shorten name =
+                            case String.split "/" name of
+                                [ a, b ] ->
+                                    b
+
+                                _ ->
+                                    name
+
                         _ =
                             Debug.log "__@@GotPackagesFromCompiler" packageList
                     in
-                    Message.postMessage ("Packages from Compiler: " ++ (packageList |> List.map .name |> String.join ", ")) MSYellow model
+                    Message.postMessage ("Fr. Compiler: " ++ (packageList |> List.map (.name >> shorten) |> String.join ", ")) MSYellow model
                         |> (\( modl, cmd ) -> ( { modl | packagesFromCompiler = List.filter (\p -> p.name /= "elm/core") packageList }, cmd ))
 
         SubmitPackageList ->
@@ -349,7 +357,7 @@ update msg model =
                     Message.postMessage "E.3" Types.MSYellow model
 
                 Ok str ->
-                    Message.postMessage ("PackageListSent: " ++ str) Types.MSYellow model
+                    Message.postMessage ("Sent: " ++ str) Types.MSBlue model
 
         ClearNotebookValues ->
             Notebook.Update.clearNotebookValues model.currentBook model
@@ -697,7 +705,7 @@ updateFromBackend msg model =
                                         , books = books
                                     }
                             in
-                            Message.postMessage "No notebook specified, using first one" Types.MSBlue newModel
+                            Message.postMessage "OK.1" Types.MSBlue newModel
                                 |> (\( model_, cmd ) ->
                                         ( model_, Cmd.batch [ cmd, Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__Install_via GotNotebooks") ] )
                                    )
