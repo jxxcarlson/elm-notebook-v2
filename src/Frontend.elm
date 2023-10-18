@@ -708,7 +708,14 @@ updateFromBackend msg model =
                         newModel =
                             { model | evalState = Notebook.EvalCell.updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState, currentBook = currentBook }
                     in
-                    ( { newModel | books = books, currentBook = currentBook }, Notebook.Package.installNewPackages currentBook.packageNames )
+                    Message.postMessage ("GotNoteboks, currentBook = " ++ currentBook.title) Types.MSBlue newModel
+                        |> (\( model_, cmd ) ->
+                                ( { model_ | books = books, currentBook = currentBook }, Cmd.batch [ cmd, Notebook.Package.installNewPackages (currentBook.packageNames |> Debug.log "__package names (1*)") ] )
+                           )
+
+
+
+-- ( { newModel | books = books, currentBook = currentBook }, Notebook.Package.installNewPackages currentBook.packageNames )
 
 
 view : Model -> { title : String, body : List (Html.Html FrontendMsg) }
