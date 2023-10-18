@@ -327,10 +327,11 @@ update msg model =
         GotPackagesFromCompiler result ->
             case result of
                 Err e ->
-                    Message.postMessage "Error retrieving package List from compiler" Types.MSRed model
+                    Message.postMessage "E.4" Types.MSRed model
 
                 Ok packageList ->
-                    ( { model | packagesFromCompiler = List.filter (\p -> p.name /= "elm/core") packageList }, Cmd.none )
+                    Message.postMessage ("Packages: " ++ (packageList |> List.map .name |> String.join ", ")) MSYellow model
+                        |> (\( modl, cmd ) -> ( { modl | packagesFromCompiler = List.filter (\p -> p.name /= "elm/core") packageList }, cmd ))
 
         SubmitPackageList ->
             Notebook.Package.submitPackageList model
@@ -708,7 +709,7 @@ updateFromBackend msg model =
                         newModel =
                             { model | evalState = Notebook.EvalCell.updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState, currentBook = currentBook }
                     in
-                    Message.postMessage ("** GotNotebooks: " ++ currentBook.title ++ ", " ++ (currentBook.packageNames |> String.join ", ")) Types.MSBlue newModel
+                    Message.postMessage ([ "** GotNotebooks: ", currentBook.title ] ++ currentBook.packageNames |> String.join ", ") Types.MSBlue newModel
                         |> (\( model_, cmd ) ->
                                 ( { model_ | books = books, currentBook = currentBook }, Cmd.batch [ cmd, Notebook.Package.installNewPackages (currentBook.packageNames |> Debug.log "__package names (1*)") ] )
                            )

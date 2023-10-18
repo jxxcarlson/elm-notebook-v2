@@ -15,10 +15,6 @@ import Types
 import Util
 
 
-
---otElmJsonDict : Dict String Notebook.Types.ElmPackageSummary -> Types.FrontendModel -> ( Types.FrontendModel, Cmd Types.FrontendMsg )
-
-
 gotElmJsonDict model result =
     case result of
         Err _ ->
