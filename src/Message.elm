@@ -21,7 +21,7 @@ postMessage str status model =
 
 
 removeMessageAfterDelay id =
-    Process.sleep (32 * 1000) |> Task.perform (always (Types.ExecuteDelayedMessageRemoval id))
+    Process.sleep (8 * 1000) |> Task.perform (always (Types.ExecuteDelayedMessageRemoval id))
 
 
 viewSmall : Int -> Types.FrontendModel -> Element Types.FrontendMsg

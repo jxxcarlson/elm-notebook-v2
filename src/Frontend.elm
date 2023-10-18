@@ -25,6 +25,7 @@ import Message
 import Navigation
 import Notebook.Action
 import Notebook.Book exposing (Book)
+import Notebook.CLI
 import Notebook.Cell exposing (CellState(..), CellType(..), CellValue(..))
 import Notebook.Codec
 import Notebook.Compile
@@ -103,6 +104,7 @@ init url key =
       , inputDescription = ""
       , inputComments = ""
       , inputData = ""
+      , inputCommand = ""
       , inputPackages = ""
       , inputInitialStateValue = ""
 
@@ -300,6 +302,9 @@ update msg model =
 
         InputData str ->
             ( { model | inputData = str }, Cmd.none )
+
+        InputCommand str ->
+            ( { model | inputCommand = str }, Cmd.none )
 
         InputPackages str ->
             ( { model | inputPackages = str }, Cmd.none )
@@ -527,6 +532,9 @@ update msg model =
 
         EvalCell cellState index ->
             Notebook.EvalCell.processCell cellState model.currentCellIndex model
+
+        RunCommand ->
+            Notebook.CLI.executeCommand model
 
         -- NOTEBOOKS
         -- ADMIN

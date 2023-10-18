@@ -1,6 +1,7 @@
 module View.Input exposing
     ( author
     , cloneReference
+    , command
     , comments
     , data
     , description
@@ -99,6 +100,10 @@ comments model =
 
 data model =
     multiLineTemplate 500 200 "Data" InputData model.inputData
+
+
+command model =
+    multiLineTemplate 400 50 "Command" InputCommand model.inputCommand
 
 
 submitPackageList model attr labelAttr =

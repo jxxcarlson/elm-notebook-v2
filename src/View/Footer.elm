@@ -10,6 +10,7 @@ import View.Geometry
 import View.Input
 import View.MarkdownThemed
 import View.Popup.Admin
+import View.Popup.CLI
 import View.Popup.EditDataSet
 import View.Popup.Manual
 import View.Popup.NewDataSet
@@ -40,6 +41,7 @@ view model =
         , E.inFront (View.Popup.ViewPrivateDataSets.view model)
         , E.inFront (View.Popup.Packages.view model)
         , E.inFront (View.Popup.StateEditor.view model)
+        , E.inFront (View.Popup.CLI.view model)
         , View.Style.bgGray 0.0
         , E.spacing 12
         ]
@@ -53,9 +55,10 @@ view model =
 
                 --, View.Utility.showIfIsAdmin model Button.runTask
                 , Button.packagesPopup model
+                , Button.cliPopup model
 
                 --, E.el [ Font.color (E.rgb 1 1 1) ] (E.text <| String.left 4 model.currentBook.id)
-                , View.Utility.showIfIsAdmin model Button.sendProgramToBeCompiled
+                --, View.Utility.showIfIsAdmin model Button.sendProgramToBeCompiled
                 , displayMessages model
                 , View.Utility.showIf (Predicate.regularUser model) Button.importNotebook
                 , View.Utility.showIf (Predicate.regularUser model) Button.exportNotebook

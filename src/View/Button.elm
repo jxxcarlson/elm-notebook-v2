@@ -2,6 +2,7 @@ module View.Button exposing
     ( adminPopup
     , cancelDeleteNotebook
     , clearValues
+    , cliPopup
     , cloneNotebook
     , createDataSet
     , deleteDataSet
@@ -27,6 +28,7 @@ module View.Button exposing
     , pullNotebook
     , resetClock
     , runCell
+    , runCommand
     , runTask
     , saveDataSetAsPrivate
     , saveDataSetAsPublic
@@ -416,6 +418,11 @@ submitTest =
     buttonTemplate [] SubmitTest "Test"
 
 
+runCommand : Element FrontendMsg
+runCommand =
+    buttonTemplate [] RunCommand "Run"
+
+
 
 -- ADMIN
 
@@ -428,6 +435,11 @@ adminPopup model =
 packagesPopup : FrontendModel -> Element FrontendMsg
 packagesPopup model =
     buttonTemplate [] (ChangePopup PackageListPopup) "Install Packages"
+
+
+cliPopup : FrontendModel -> Element FrontendMsg
+cliPopup model =
+    buttonTemplate [] (ChangePopup CLIPopup) "CLI"
 
 
 runTask : Element FrontendMsg

@@ -45,6 +45,7 @@ type alias FrontendModel =
     , inputDescription : String
     , inputComments : String
     , inputData : String
+    , inputCommand : String
     , inputPackages : String
     , inputInitialStateValue : String
 
@@ -162,6 +163,7 @@ type FrontendMsg
     | InputDescription String
     | InputComments String
     | InputData String
+    | InputCommand String
     | InputPackages String
     | InputAuthor String
     | InputInitialStateValue String
@@ -186,6 +188,7 @@ type FrontendMsg
       -- CELL
     | SubmitPackageList
     | SubmitTest
+    | RunCommand
     | PackageListSent (Result Http.Error String)
     | ClearNotebookValues
     | ExecuteNotebook
@@ -263,6 +266,7 @@ type PopupState
     | EditDataSetPopup Notebook.DataSet.DataSetMetaData
     | SignUpPopup
     | PackageListPopup
+    | CLIPopup
     | NewNotebookPopup
     | StateEditorPopup
     | ViewPublicDataSetsPopup
