@@ -30,7 +30,11 @@ getPublicNotebook model clientId searchKey =
             ( model, Lamdera.sendToFrontend clientId (Types.SendMessage <| "Sorry, that notebook does not exist") )
 
         Just notebook ->
-            ( model, Cmd.batch [ Lamdera.sendToFrontend clientId (Types.GotPublicNotebook notebook), Lamdera.sendToFrontend clientId (Types.SendMessage <| "Found: " ++ notebook.title) ] )
+            ( model
+            , Cmd.batch
+                [ Lamdera.sendToFrontend clientId (Types.GotPublicNotebook notebook)
+                ]
+            )
 
 
 importNewBook : BackendModel -> String -> String -> Book -> ( BackendModel, Cmd BackendMsg )

@@ -651,14 +651,11 @@ updateFromBackend msg model =
                 book =
                     Notebook.Book.initializeCellState book_
 
-                newModel_ =
+                newModel =
                     { model
                         | evalState = Notebook.EvalCell.updateEvalStateWithCells book.cells Notebook.Types.emptyEvalState
                         , currentBook = book
                     }
-
-                ( newModel, cmd ) =
-                    Message.postMessage ("Gotbook: " ++ book.title) MSYellow newModel_
 
                 addOrReplaceBook xbook books =
                     if List.any (\b -> b.id == xbook.id) books then
@@ -675,7 +672,6 @@ updateFromBackend msg model =
             , Cmd.batch
                 [ sendToBackend (GetPublicNotebooks (Just book) currentUser.username)
                 , Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__Install_via GotPublicNotebook")
-                , cmd
                 ]
             )
 
