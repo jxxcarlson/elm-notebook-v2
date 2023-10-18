@@ -326,7 +326,7 @@ update msg model =
 
         GotPackagesFromCompiler result ->
             case result of
-                Err e ->
+                Err _ ->
                     Message.postMessage "E.4" Types.MSRed model
 
                 Ok packageList ->
@@ -345,7 +345,7 @@ update msg model =
                     Message.postMessage "E.3" Types.MSYellow model
 
                 Ok str ->
-                    Message.postMessage str Types.MSBlue model
+                    Message.postMessage ("PackageListSent: " ++ str) Types.MSYellow model
 
         ClearNotebookValues ->
             Notebook.Update.clearNotebookValues model.currentBook model
@@ -623,7 +623,7 @@ updateFromBackend msg model =
                 | currentBook = book
                 , books = addOrReplaceBook book model.books
               }
-            , Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__package names (GotNotebook)")
+            , Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__Install_via GotNotebook")
             )
 
         GotPublicNotebook book_ ->
@@ -662,7 +662,7 @@ updateFromBackend msg model =
               }
             , Cmd.batch
                 [ sendToBackend (GetPublicNotebooks (Just book) currentUser.username)
-                , Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__package names (GotPublicNotebook!!!)")
+                , Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__Install_via GotPublicNotebook")
                 , cmd
                 ]
             )
@@ -695,7 +695,7 @@ updateFromBackend msg model =
                             in
                             Message.postMessage "No notebook specified, using first one" Types.MSBlue newModel
                                 |> (\( model_, cmd ) ->
-                                        ( model_, Cmd.batch [ cmd, Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__package names (1*)") ] )
+                                        ( model_, Cmd.batch [ cmd, Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__Install_via GotNotebooks") ] )
                                    )
 
                 Just currentBook ->

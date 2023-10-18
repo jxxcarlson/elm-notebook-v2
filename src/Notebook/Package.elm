@@ -186,6 +186,10 @@ elmPackageSummaryDecoder =
 
 requestPackagesFromCompiler : Cmd Types.FrontendMsg
 requestPackagesFromCompiler =
+    let
+        _ =
+            Debug.log "__requestPackagesFromCompiler" True
+    in
     Http.post
         { url =
             case Env.mode of
