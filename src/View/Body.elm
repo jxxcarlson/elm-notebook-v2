@@ -34,12 +34,13 @@ view model user =
             , E.width E.fill
             ]
             [ viewNotebookList model user
-            , declarationsOrErrorReport model user
+            , declarationsOrErrorReport model
             ]
         ]
 
 
-declarationsOrErrorReport model user =
+declarationsOrErrorReport : FrontendModel -> Element FrontendMsg
+declarationsOrErrorReport model =
     let
         rawErrorSummary : List (List Notebook.Types.MessageItem)
         rawErrorSummary =
@@ -56,15 +57,18 @@ declarationsOrErrorReport model user =
     if errorSummary == [] then
         declarations model
 
-    else
+    else if model.showErrorPanel then
         reportErrors model model.currentBook.cells errorSummary
+
+    else
+        declarations model
 
 
 reportLabelColor =
     E.rgb 1 0.5 0
 
 
-reportErrors : FrontendModel -> List Notebook.Cell.Cell -> List (List (Element msg)) -> Element msg
+reportErrors : FrontendModel -> List Notebook.Cell.Cell -> List (List (Element FrontendMsg)) -> Element FrontendMsg
 reportErrors model cells errorSummary =
     let
         errorKeys_ : List ( List Int, String )
@@ -78,7 +82,7 @@ reportErrors model cells errorSummary =
                 |> List.map (\s -> ( Notebook.Cell.locate s cells, s ))
                 |> List.sortBy (\( loc, _ ) -> loc)
 
-        errorKeys : Element msg
+        errorKeys : Element FrontendMsg
         errorKeys =
             E.column
                 [ E.spacing 24
@@ -99,7 +103,8 @@ reportErrors model cells errorSummary =
         , E.paddingEach
             { top = 18, bottom = 36, left = 0, right = 0 }
         ]
-        [ E.row
+        [ View.Button.toggleShowErrorPanel model.showErrorPanel
+        , E.row
             [ E.paddingXY 18 0
             , Background.color (E.rgb 0 0 0)
             , E.paddingXY 12 24
@@ -180,6 +185,7 @@ declarations model =
             [ E.el [ Font.underline ] (E.text <| "Types and Declarations")
             , E.el [] (E.text <| "(" ++ String.fromInt (Dict.size model.evalState.decls + Dict.size model.evalState.types) ++ ")")
             , E.el [ E.paddingEach { left = 3, right = 0, top = 0, bottom = 0 } ] View.Button.updateDeclarationsDictionary
+            , View.Button.toggleShowErrorPanel model.showErrorPanel
             ]
         , E.el
             [ E.height (E.px <| View.Geometry.loweRightSidePanelHeight model)

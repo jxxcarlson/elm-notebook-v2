@@ -41,6 +41,7 @@ module View.Button exposing
     , stateEditor
     , submitPackageList
     , submitTest
+    , toggleShowErrorPanel
     , toggleTheme
     , toggleViewPrivateDataSets
     , toggleViewPublicDataSets
@@ -411,6 +412,15 @@ setUpUser =
 submitPackageList : Element FrontendMsg
 submitPackageList =
     buttonTemplate [] SubmitPackageList "Install"
+
+
+toggleShowErrorPanel : Bool -> Element FrontendMsg
+toggleShowErrorPanel showErrorPanel =
+    if showErrorPanel then
+        Button.smallPrimary { msg = ToggleShowErrorPanel, status = Button.Active, label = Button.Text "Hide Errors", tooltipText = Nothing }
+
+    else
+        Button.smallPrimary { msg = ToggleShowErrorPanel, status = Button.Active, label = Button.Text "Show Errors", tooltipText = Nothing }
 
 
 submitTest : Element FrontendMsg

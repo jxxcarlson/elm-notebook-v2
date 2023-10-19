@@ -54,6 +54,7 @@ type alias FrontendModel =
     , privateDataSetMetaDataList : List Notebook.DataSet.DataSetMetaData
 
     -- NOTEBOOKS
+    , showErrorPanel : Bool
     , theme : Notebook.Book.Theme
     , evalState : Notebook.Types.EvalState
     , packagesFromCompiler : List { name : String, version : String }
@@ -199,6 +200,7 @@ type FrontendMsg
     | ChangeCellInsertionDirection Notebook.Types.CellDirection
     | NewCodeCell CellState Int
     | NewMarkdownCell CellState Int
+    | ToggleShowErrorPanel
     | DeleteCell Int
     | MoveCell Int DirectionToMove
     | EditCell Cell

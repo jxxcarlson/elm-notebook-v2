@@ -78,6 +78,7 @@ init url key =
       , messageId = 0
 
       -- NOTEBOOK (NEW)
+      , showErrorPanel = True
       , theme = Notebook.Book.DarkTheme
       , packagesFromCompiler = []
       , packageDict = Dict.empty
@@ -513,6 +514,9 @@ update msg model =
 
         NewMarkdownCell cellState index ->
             Notebook.Update.makeNewCell model cellState CTMarkdown index
+
+        ToggleShowErrorPanel ->
+            ( { model | showErrorPanel = not model.showErrorPanel }, Cmd.none )
 
         DeleteCell index ->
             if List.length model.currentBook.cells <= 1 then
