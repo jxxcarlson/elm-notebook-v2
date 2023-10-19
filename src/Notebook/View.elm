@@ -213,7 +213,7 @@ render viewData report =
 
         --,    E.paddingEach { top = 24, bottom = 24, left = 24, right = 0 }
         --, E.height (E.px 400)
-        , E.scrollbarY
+        --, E.scrollbarY
         , Background.color (E.rgb 0 0 0)
         ]
         --(Notebook.ErrorReporter.prepareReport viewData.errorOffset report)

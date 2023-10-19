@@ -58,15 +58,31 @@ errorSummary cells =
             []
 
         errors ->
+            let
+                _ =
+                    Debug.log "__Length errors__" (List.length errors)
+            in
             List.map (prepareReport 0 >> Element.column []) errors
 
 
 collateErrors : List Cell -> List (List Notebook.Types.MessageItem)
 collateErrors cells =
-    cells
-        |> List.map .report
-        |> List.filterMap identity
-        |> List.Extra.uniqueBy (List.map Notebook.Types.toString)
+    let
+        collatedData =
+            cells
+                |> List.map .report
+                |> List.filterMap identity
+
+        --|> List.Extra.uniqueBy (List.map Notebook.Types.toString)
+        _ =
+            Debug.log "__Length (collatedData)" (List.length collatedData)
+    in
+    collatedData
+
+
+
+-- report : Maybe (List Notebook.Types.MessageItem)
+-- |> List.Extra.uniqueBy (List.map Notebook.Types.toString)
 
 
 errorsToString : List Cell -> String
@@ -280,11 +296,23 @@ adjustErrorLocation errorOffset messageItem =
             messageItem
 
 
+messageItemFilter : String -> MessageItem -> Bool
+messageItemFilter key item =
+    case item of
+        Plain str ->
+            not <| String.contains key str
+
+        Styled styledString ->
+            not <| String.contains key styledString.string
+
+
 prepareReport : Int -> List MessageItem -> List (Element msg)
 prepareReport errorOffset report_ =
     let
         report =
-            List.map (adjustErrorLocation errorOffset) report_
+            report_
+                |> List.filter (messageItemFilter "Evergreen")
+                |> List.map (adjustErrorLocation errorOffset)
 
         groups : List (List MessageItem)
         groups =

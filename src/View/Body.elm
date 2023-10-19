@@ -10,6 +10,7 @@ import Notebook.Book exposing (Book)
 import Notebook.Cell
 import Notebook.ErrorReporter
 import Notebook.Eval
+import Notebook.Types
 import Notebook.View
 import Types exposing (FrontendModel, FrontendMsg)
 import UILibrary.Color as Color
@@ -40,14 +41,17 @@ view model user =
 
 declarationsOrErrorReport model user =
     let
+        rawErrorSummary : List (List Notebook.Types.MessageItem)
+        rawErrorSummary =
+            Notebook.ErrorReporter.collateErrors model.currentBook.cells
+
         -- errorSummary : List (Element msg)
         errorSummary : List (List (Element msg))
         errorSummary =
-            Notebook.ErrorReporter.collateErrors model.currentBook.cells
-                |> List.map (Notebook.ErrorReporter.prepareReport 0)
+            rawErrorSummary |> List.map (Notebook.ErrorReporter.prepareReport 0)
 
         _ =
-            Debug.log "__errorSummary Length__" (List.length errorSummary)
+            Debug.log "__errorSummary Length__" ( List.length rawErrorSummary, List.length errorSummary )
     in
     if errorSummary == [] then
         declarations model
@@ -80,6 +84,8 @@ reportErrors model cells errorSummary =
                 [ E.spacing 24
                 , E.paddingEach { left = 12, right = 12, top = 12, bottom = 24 }
                 , Background.color (E.rgb 0 0 0)
+                , E.height (E.px 200)
+                , E.scrollbarY
                 ]
                 (List.map (\( loc, s ) -> E.paragraph [ E.spacing 8 ] [ displayLocation loc, E.text s ]) errorKeys_)
     in
@@ -101,11 +107,10 @@ reportErrors model cells errorSummary =
             , E.width (E.px <| View.Geometry.sidePanelWidth model)
             ]
             [ E.el
-                [ Font.underline
-                , Font.size 20
+                [ Font.size 18
                 , Font.color reportLabelColor
                 ]
-                (E.text <| "Errors")
+                (E.text <| "Errors (" ++ String.fromInt (List.length errorKeys_) ++ ")")
             ]
         , if String.contains "You are trying to import" (Notebook.ErrorReporter.errorsToString model.currentBook.cells) then
             E.paragraph
@@ -126,10 +131,9 @@ reportErrors model cells errorSummary =
         , E.el
             [ Font.color reportLabelColor
             , Font.size 16
-            , Font.underline
             , E.paddingEach { left = 12, right = 0, top = 18, bottom = 12 }
             ]
-            (E.text "Details")
+            (E.text ("Details (" ++ String.fromInt (List.length errorSummary) ++ ")"))
         , E.column
             [ E.height (E.px <| View.Geometry.loweRightSidePanelHeight model)
             , E.width (E.px <| View.Geometry.sidePanelWidth model)
@@ -137,8 +141,17 @@ reportErrors model cells errorSummary =
             ]
             (List.indexedMap
                 (\k summary ->
-                    E.paragraph []
-                        [ E.el [ Font.color reportLabelColor ] (E.text (String.fromInt k ++ ": "))
+                    E.paragraph
+                        [ if k == 0 then
+                            E.paddingEach { left = 0, top = 36, bottom = 0, right = 0 }
+
+                          else
+                            E.paddingEach { left = 0, top = 12, bottom = 0, right = 0 }
+                        ]
+                        [ E.column [ Font.color reportLabelColor, Font.size 14, E.paddingEach { left = 12, top = 12, bottom = 4, right = 0 } ]
+                            [ E.text (String.fromInt (k + 1) ++ ".")
+                            , E.text "______________________"
+                            ]
                         , E.column [ E.paddingXY 12 12, Background.color (E.rgb 0 0 0), E.spacing 12 ] summary
                         ]
                 )
@@ -149,7 +162,7 @@ reportErrors model cells errorSummary =
 
 displayLocation : List Int -> Element msg
 displayLocation ks =
-    ks |> List.map String.fromInt |> String.join " " |> (\s -> E.el [ Font.color reportLabelColor ] (E.text <| "Cell " ++ s ++ ": "))
+    ks |> List.map ((\k -> k + 1) >> String.fromInt) |> String.join " " |> (\s -> E.el [ Font.color reportLabelColor ] (E.text <| "Cell " ++ s ++ ": "))
 
 
 declarations model =
