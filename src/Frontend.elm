@@ -634,6 +634,7 @@ updateFromBackend msg model =
             ( { newModel
                 | currentBook = book
                 , books = addOrReplaceBook book model.books
+                , showErrorPanel = True
               }
             , Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__Install_via GotNotebook")
             )
@@ -666,6 +667,7 @@ updateFromBackend msg model =
             in
             ( { newModel
                 | currentUser = Just currentUser
+                , showErrorPanel = True
                 , showNotebooks = ShowPublicNotebooks
                 , books = addOrReplaceBook book model.books
               }
@@ -715,7 +717,11 @@ updateFromBackend msg model =
                             Debug.log "__package names (2)" currentBook.packageNames
 
                         newModel =
-                            { model | evalState = Notebook.EvalCell.updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState, currentBook = currentBook }
+                            { model
+                                | showErrorPanel = True
+                                , evalState = Notebook.EvalCell.updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState
+                                , currentBook = currentBook
+                            }
                     in
                     Message.postMessage ("**Got:  " :: currentBook.packageNames |> String.join ", ") Types.MSBlue newModel
                         |> (\( model_, cmd ) ->

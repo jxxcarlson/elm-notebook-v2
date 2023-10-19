@@ -83,6 +83,7 @@ setCurrentNotebook model book =
             in
             ( { newModel
                 | currentUser = Just user
+                , showErrorPanel = True
               }
             , Cmd.batch
                 [ sendToBackend (UpdateUserWith user)
