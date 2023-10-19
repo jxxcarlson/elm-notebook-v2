@@ -55,7 +55,7 @@ view model =
 
                 --, View.Utility.showIfIsAdmin model Button.runTask
                 , Button.packagesPopup model
-                , Button.cliPopup model
+                , View.Utility.showIfIsAdmin model (Button.cliPopup model)
 
                 --, E.el [ Font.color (E.rgb 1 1 1) ] (E.text <| String.left 4 model.currentBook.id)
                 --, View.Utility.showIfIsAdmin model Button.sendProgramToBeCompiled
