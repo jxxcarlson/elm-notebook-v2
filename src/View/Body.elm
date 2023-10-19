@@ -58,26 +58,47 @@ declarations model user =
 
 --prepareReport : Int -> List MessageItem -> List (Element msg)
 --prepareReport errorOffset report_
+-- You are trying to import
 
 
 reportErrors model errorSummary =
     E.column
         [ Font.size 14
-        , E.spacing 18
+        , E.spacing 0
         , E.width (E.px <| View.Geometry.sidePanelWidth model)
         , Border.widthEach { left = 2, right = 0, top = 0, bottom = 0 }
         , Border.color (E.rgb255 73 78 89)
-
-        --, View.Style.monospace
         , E.paddingEach
             { top = 18, bottom = 36, left = 0, right = 0 }
         ]
-        [ E.row [ E.paddingXY 18 0, E.spacing 8, E.width (E.px <| View.Geometry.sidePanelWidth model) ]
-            [ E.el [ Font.underline ] (E.text <| "Errors")
-
-            --, E.el [] (E.text <| "(" ++ String.fromInt (Dict.size model.evalState.decls + Dict.size model.evalState.types) ++ ")")
-            --, E.el [ E.paddingEach { left = 3, right = 0, top = 0, bottom = 0 } ] View.Button.updateDeclarationsDictionary
+        [ E.row
+            [ E.paddingXY 18 0
+            , Background.color (E.rgb 0 0 0)
+            , E.paddingXY 12 24
+            , E.spacing 8
+            , E.width (E.px <| View.Geometry.sidePanelWidth model)
             ]
+            [ E.el
+                [ Font.underline
+                , Font.size 18
+                , Font.color (E.rgb 1 0 0)
+                ]
+                (E.text <| "Errors")
+            ]
+        , if String.contains "You are trying to import" (Notebook.ErrorReporter.errorsToString model.currentBook.cells) then
+            E.paragraph
+                [ Font.size 14
+                , Background.color (E.rgb 0 0 0)
+                , Font.color (E.rgb 1 1 0)
+                , E.paddingXY 12 12
+                ]
+                [ E.text "Please click on the \"Install Packages\" button & install the missing package(s). "
+                , E.text
+                    "Then click on \"Clear Values\" or \"Run all Cells\""
+                ]
+
+          else
+            E.none
         , E.column
             [ E.height (E.px <| View.Geometry.loweRightSidePanelHeight model)
             , E.width (E.px <| View.Geometry.sidePanelWidth model)
