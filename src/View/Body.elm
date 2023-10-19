@@ -5,7 +5,9 @@ import Element as E exposing (Element)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
+import List.Extra
 import Notebook.Book exposing (Book)
+import Notebook.Cell
 import Notebook.ErrorReporter
 import Notebook.Eval
 import Notebook.View
@@ -20,10 +22,6 @@ import View.Style
 
 view : FrontendModel -> User.User -> Element FrontendMsg
 view model user =
-    let
-        errorSummary =
-            Notebook.ErrorReporter.collateErrors model.currentBook.cells |> List.length |> Debug.log "__ERROR_SUMMARY"
-    in
     E.row
         [ E.width (E.px (View.Geometry.appWidth model))
         , E.height (E.px (View.Geometry.bodyHeight model))
@@ -35,39 +33,63 @@ view model user =
             , E.width E.fill
             ]
             [ viewNotebookList model user
-            , declarations model user
+            , declarationsOrErrorReport model user
             ]
         ]
 
 
-declarations model user =
+declarationsOrErrorReport model user =
     let
-        errorSummary : List (Element msg)
+        -- errorSummary : List (Element msg)
+        errorSummary : List (List (Element msg))
         errorSummary =
             Notebook.ErrorReporter.collateErrors model.currentBook.cells
                 |> List.map (Notebook.ErrorReporter.prepareReport 0)
-                |> List.map (E.column [ E.paddingXY 12 12, Background.color (E.rgb 0 0 0), E.spacing 12 ])
+
+        _ =
+            Debug.log "__errorSummary Length__" (List.length errorSummary)
     in
     if errorSummary == [] then
-        declarations_ model user
+        declarations model
 
     else
-        reportErrors model errorSummary
+        reportErrors model model.currentBook.cells errorSummary
 
 
-
---prepareReport : Int -> List MessageItem -> List (Element msg)
---prepareReport errorOffset report_
--- You are trying to import
+reportLabelColor =
+    E.rgb 1 0.5 0
 
 
-reportErrors model errorSummary =
+reportErrors : FrontendModel -> List Notebook.Cell.Cell -> List (List (Element msg)) -> Element msg
+reportErrors model cells errorSummary =
+    let
+        errorKeys_ : List ( List Int, String )
+        errorKeys_ =
+            Notebook.ErrorReporter.errorKeys cells
+                |> List.map (String.split "|")
+                |> List.map (List.Extra.getAt 1)
+                |> List.filterMap identity
+                |> List.map String.trim
+                |> List.Extra.unique
+                |> List.map (\s -> ( Notebook.Cell.locate s cells, s ))
+                |> List.sortBy (\( loc, _ ) -> loc)
+
+        errorKeys : Element msg
+        errorKeys =
+            E.column
+                [ E.spacing 24
+                , E.paddingEach { left = 12, right = 12, top = 12, bottom = 24 }
+                , Background.color (E.rgb 0 0 0)
+                ]
+                (List.map (\( loc, s ) -> E.paragraph [ E.spacing 8 ] [ displayLocation loc, E.text s ]) errorKeys_)
+    in
     E.column
         [ Font.size 14
         , E.spacing 0
         , E.width (E.px <| View.Geometry.sidePanelWidth model)
         , Border.widthEach { left = 2, right = 0, top = 0, bottom = 0 }
         , Border.color (E.rgb255 73 78 89)
+        , Background.color (E.rgb 0 0 0)
         , E.paddingEach
             { top = 18, bottom = 36, left = 0, right = 0 }
         ]
@@ -80,8 +102,8 @@ reportErrors model errorSummary =
             ]
             [ E.el
                 [ Font.underline
-                , Font.size 18
-                , Font.color (E.rgb 1 0 0)
+                , Font.size 20
+                , Font.color reportLabelColor
                 ]
                 (E.text <| "Errors")
             ]
@@ -92,23 +114,45 @@ reportErrors model errorSummary =
                 , Font.color (E.rgb 1 1 0)
                 , E.paddingXY 12 12
                 ]
-                [ E.text "Please click on the \"Install Packages\" button & install the missing package(s). "
+                [ E.text "You are trying to import a package that is not installed. "
+                , E.text "Please click on the \"Install Packages\" button & install the missing package(s). "
                 , E.text
                     "Then click on \"Clear Values\" or \"Run all Cells\""
                 ]
 
           else
             E.none
+        , errorKeys
+        , E.el
+            [ Font.color reportLabelColor
+            , Font.size 16
+            , Font.underline
+            , E.paddingEach { left = 12, right = 0, top = 18, bottom = 12 }
+            ]
+            (E.text "Details")
         , E.column
             [ E.height (E.px <| View.Geometry.loweRightSidePanelHeight model)
             , E.width (E.px <| View.Geometry.sidePanelWidth model)
             , E.scrollbarY
             ]
-            errorSummary
+            (List.indexedMap
+                (\k summary ->
+                    E.paragraph []
+                        [ E.el [ Font.color reportLabelColor ] (E.text (String.fromInt k ++ ": "))
+                        , E.column [ E.paddingXY 12 12, Background.color (E.rgb 0 0 0), E.spacing 12 ] summary
+                        ]
+                )
+                errorSummary
+            )
         ]
 
 
-declarations_ model user =
+displayLocation : List Int -> Element msg
+displayLocation ks =
+    ks |> List.map String.fromInt |> String.join " " |> (\s -> E.el [ Font.color reportLabelColor ] (E.text <| "Cell " ++ s ++ ": "))
+
+
+declarations model =
     E.column
         [ Font.size 14
         , E.spacing 18

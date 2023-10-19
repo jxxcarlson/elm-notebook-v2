@@ -29,3 +29,8 @@ type CellValue
 type CellState
     = CSEdit
     | CSView
+
+
+locate : String -> List Cell -> List Int
+locate text cells =
+    List.map .index <| List.filter (\cell -> String.contains text cell.text && cell.tipe == CTCode) cells

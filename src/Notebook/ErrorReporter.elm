@@ -1,6 +1,7 @@
 module Notebook.ErrorReporter exposing
     ( collateErrors
     , decodeErrorReporter
+    , errorKeys
     , errorsToString
     , prepareReport
     , stringToMessageItem
@@ -76,6 +77,22 @@ errorsToString cells =
         |> List.Extra.uniqueBy (List.map Notebook.Types.toString)
         |> List.map (List.map Notebook.Types.toString >> String.join "\n")
         |> String.join "\n\n"
+
+
+errorsToStringListList : List { a | report : Maybe (List MessageItem) } -> List (List String)
+errorsToStringListList cells =
+    cells
+        |> List.map .report
+        |> List.filterMap identity
+        |> List.Extra.uniqueBy (List.map Notebook.Types.toString)
+        |> List.map (List.map Notebook.Types.toString)
+
+
+errorKeys : List Cell -> List String
+errorKeys cells =
+    errorsToStringListList cells
+        |> List.concat
+        |> List.filter (\item -> String.contains "|" item)
 
 
 renderMessageItem : MessageItem -> Element msg

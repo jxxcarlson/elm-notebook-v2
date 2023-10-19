@@ -217,7 +217,7 @@ render viewData report =
         , Background.color (E.rgb 0 0 0)
         ]
         --(Notebook.ErrorReporter.prepareReport viewData.errorOffset report)
-        [ E.el [ Font.color (E.rgb 1 0 0) ] (E.text "Error") ]
+        [ E.el [ Font.color (E.rgb 1 0.5 0) ] (E.text "Error") ]
 
 
 viewSuccess : ViewData -> Cell -> Element FrontendMsg
