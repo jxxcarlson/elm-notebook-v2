@@ -6,6 +6,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Notebook.Book exposing (Book)
+import Notebook.ErrorReporter
 import Notebook.Eval
 import Notebook.View
 import Types exposing (FrontendModel, FrontendMsg)
@@ -19,6 +20,10 @@ import View.Style
 
 view : FrontendModel -> User.User -> Element FrontendMsg
 view model user =
+    let
+        errorSummary =
+            Notebook.ErrorReporter.collateErrors model.currentBook.cells |> List.length |> Debug.log "__ERROR_SUMMARY"
+    in
     E.row
         [ E.width (E.px (View.Geometry.appWidth model))
         , E.height (E.px (View.Geometry.bodyHeight model))
@@ -36,6 +41,53 @@ view model user =
 
 
 declarations model user =
+    let
+        errorSummary : List (Element msg)
+        errorSummary =
+            Notebook.ErrorReporter.collateErrors model.currentBook.cells
+                |> List.map (Notebook.ErrorReporter.prepareReport 0)
+                |> List.map (E.column [ E.paddingXY 12 12, Background.color (E.rgb 0 0 0), E.spacing 12 ])
+    in
+    if errorSummary == [] then
+        declarations_ model user
+
+    else
+        reportErrors model errorSummary
+
+
+
+--prepareReport : Int -> List MessageItem -> List (Element msg)
+--prepareReport errorOffset report_
+
+
+reportErrors model errorSummary =
+    E.column
+        [ Font.size 14
+        , E.spacing 18
+        , E.width (E.px <| View.Geometry.sidePanelWidth model)
+        , Border.widthEach { left = 2, right = 0, top = 0, bottom = 0 }
+        , Border.color (E.rgb255 73 78 89)
+
+        --, View.Style.monospace
+        , E.paddingEach
+            { top = 18, bottom = 36, left = 0, right = 0 }
+        ]
+        [ E.row [ E.paddingXY 18 0, E.spacing 8, E.width (E.px <| View.Geometry.sidePanelWidth model) ]
+            [ E.el [ Font.underline ] (E.text <| "Errors")
+
+            --, E.el [] (E.text <| "(" ++ String.fromInt (Dict.size model.evalState.decls + Dict.size model.evalState.types) ++ ")")
+            --, E.el [ E.paddingEach { left = 3, right = 0, top = 0, bottom = 0 } ] View.Button.updateDeclarationsDictionary
+            ]
+        , E.column
+            [ E.height (E.px <| View.Geometry.loweRightSidePanelHeight model)
+            , E.width (E.px <| View.Geometry.sidePanelWidth model)
+            , E.scrollbarY
+            ]
+            errorSummary
+        ]
+
+
+declarations_ model user =
     E.column
         [ Font.size 14
         , E.spacing 18

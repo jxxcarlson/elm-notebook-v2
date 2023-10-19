@@ -12,6 +12,7 @@ module Notebook.Types exposing
     , StyledString
     , cleanElmPackageSummary
     , emptyEvalState
+    , toString
     )
 
 import Dict exposing (Dict)
@@ -107,3 +108,13 @@ type alias StyledString =
     , color : Maybe String
     , string : String
     }
+
+
+toString : MessageItem -> String
+toString item =
+    case item of
+        Plain str ->
+            str
+
+        Styled styledString ->
+            styledString.string

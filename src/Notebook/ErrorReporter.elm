@@ -1,5 +1,6 @@
 module Notebook.ErrorReporter exposing
-    ( decodeErrorReporter
+    ( collateErrors
+    , decodeErrorReporter
     , prepareReport
     , stringToMessageItem
     )
@@ -11,6 +12,7 @@ import Element exposing (..)
 import Element.Font as Font
 import Json.Decode as D
 import List.Extra
+import Notebook.Cell exposing (Cell)
 import Notebook.Parser
 import Notebook.Types exposing (MessageItem(..), StyledString)
 
@@ -45,6 +47,24 @@ type alias Problem =
     , region : Region
     , message : List MessageItem
     }
+
+
+errorSummary : List Cell -> List (Element msg)
+errorSummary cells =
+    case collateErrors cells of
+        [] ->
+            []
+
+        errors ->
+            List.map (prepareReport 0 >> Element.column []) errors
+
+
+collateErrors : List Cell -> List (List Notebook.Types.MessageItem)
+collateErrors cells =
+    cells
+        |> List.map .report
+        |> List.filterMap identity
+        |> List.Extra.uniqueBy (List.map Notebook.Types.toString)
 
 
 renderMessageItem : MessageItem -> Element msg
