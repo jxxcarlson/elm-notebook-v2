@@ -44,7 +44,7 @@ notSignedInHeader model =
             [ View.Input.username model
             , View.Input.password model
             , Button.signIn
-            , E.row [ E.width E.fill, E.paddingXY 8 8, View.Style.bgGray 0 ] [ Message.viewSmall 350 model ]
+            , E.row [ E.width E.fill, E.paddingXY 8 8, View.Style.bgGray 0 ] [ Message.view 350 30 model ]
             ]
         , welcomeLink
         , Button.manualLarge

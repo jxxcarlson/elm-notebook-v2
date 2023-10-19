@@ -1,4 +1,4 @@
-module Message exposing (postMessage, removeMessageAfterDelay, viewSmall)
+module Message exposing (postMessage, removeMessageAfterDelay, view)
 
 import Element as E exposing (Element)
 import Element.Font as Font
@@ -24,8 +24,8 @@ removeMessageAfterDelay id =
     Process.sleep (32 * 1000) |> Task.perform (always (Types.ExecuteDelayedMessageRemoval id))
 
 
-viewSmall : Int -> Types.FrontendModel -> Element Types.FrontendMsg
-viewSmall width model =
+view : Int -> Int -> Types.FrontendModel -> Element Types.FrontendMsg
+view width height model =
     let
         actualMessages =
             model.messages |> List.filter (\m -> List.member m.status messageTypes)
@@ -39,7 +39,7 @@ viewSmall width model =
     else
         E.paragraph
             [ E.width (E.px width)
-            , E.height (E.px 60) --E.fill
+            , E.height (E.px height)
             , E.paddingXY 4 12
             , View.Style.bgGray 0.0
             , View.Style.fgGray 1.0
@@ -48,31 +48,6 @@ viewSmall width model =
             , E.scrollbarX
             ]
             (actualMessages |> List.map handleMessageInFooter |> List.intersperse (E.el [ Font.size 12, Font.color (E.rgb 0.4 0.4 1.0) ] (E.text ", ")))
-
-
-view : Types.FrontendModel -> Element Types.FrontendMsg
-view model =
-    let
-        messageTypes =
-            if model.showEditor then
-                [ Types.MSBlue
-
-                --, Types.MSYellow
-                , Types.MSRed
-                ]
-
-            else
-                [ Types.MSBlue, Types.MSRed ]
-    in
-    E.paragraph
-        [ E.width E.fill
-        , E.height (E.px 30)
-        , E.paddingXY 8 8
-        , View.Style.bgGray 0.1
-        , View.Style.fgGray 1.0
-        , E.spacing 12
-        ]
-        (model.messages |> List.filter (\m -> List.member m.status messageTypes) |> List.map handleMessageInFooter)
 
 
 

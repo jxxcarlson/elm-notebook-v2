@@ -102,4 +102,4 @@ displayMessages model =
         , View.Style.bgGray 0.1
         , E.centerY
         ]
-        (Message.viewSmall 800 model)
+        (Message.view 800 30 model)

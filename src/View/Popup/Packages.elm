@@ -55,7 +55,7 @@ view model =
                     ]
                     [ Font.color (E.rgb 0.9 0.9 0.9) ]
                 , E.column
-                    [ E.height (E.px 250)
+                    [ E.height (E.px 150)
                     , E.width (E.px 500)
                     , E.scrollbarY
                     , Font.color (ThemedColor.themedTextColor viewData.theme)
@@ -73,7 +73,7 @@ view model =
                     [ View.Button.submitPackageList
                     , View.Button.dismissPopup
                     ]
-                , E.el [ E.width E.fill, E.paddingXY 8 8, View.Style.bgGray 0 ] (Message.viewSmall 250 model)
+                , E.el [ E.width E.fill, E.paddingXY 8 8, View.Style.bgGray 0 ] (Message.view 500 180 model)
                 ]
 
         _ ->

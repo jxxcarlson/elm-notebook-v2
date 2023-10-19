@@ -107,7 +107,7 @@ command model =
 
 
 submitPackageList model attr labelAttr =
-    multiLineTemplate2 attr labelAttr 500 250 "Packages to submit:" InputPackages model.inputPackages
+    multiLineTemplate2 attr labelAttr 500 150 "Packages to submit:" InputPackages model.inputPackages
 
 
 
