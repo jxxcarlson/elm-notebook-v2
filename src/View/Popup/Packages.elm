@@ -42,7 +42,7 @@ view model =
                 , Element.Border.color (ThemedColor.themedPopupDividerColor viewData.theme)
                 , Background.color (ThemedColor.themedPopupBackgroundColor viewData.theme)
                 , Font.color (ThemedColor.themedValueTextColor viewData.theme)
-                , E.moveUp (View.Geometry.appHeight model - 90 |> toFloat)
+                , E.moveUp (View.Geometry.appHeight model - 130 |> toFloat)
                 ]
                 [ E.row [ E.spacing 12 ]
                     [ E.el [ Font.bold, Font.size 14, Font.color (E.rgb 0.9 0.9 0.9) ] (E.text "Packages for this notebook")
@@ -73,7 +73,7 @@ view model =
                     [ View.Button.submitPackageList
                     , View.Button.dismissPopup
                     ]
-                , E.el [ E.width E.fill, E.paddingXY 8 8, View.Style.bgGray 0 ] (Message.view 500 180 model)
+                , E.el [ E.width E.fill, E.paddingXY 8 8, View.Style.bgGray 0 ] (Message.view 500 90 model)
                 ]
 
         _ ->
