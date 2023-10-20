@@ -205,7 +205,7 @@ render : ViewData -> Notebook.Types.ErrorReport -> Element FrontendMsg
 render viewData report =
     let
         ( k, messageList ) =
-            Notebook.ErrorReporter.prepareReport report
+            Notebook.ErrorReporter.renderReport report
     in
     E.column
         [ E.paddingXY 8 8

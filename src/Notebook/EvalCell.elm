@@ -11,6 +11,7 @@ import Message
 import Notebook.Book
 import Notebook.Cell as Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
 import Notebook.CellHelper
+import Notebook.ErrorReporter
 import Notebook.Eval as Eval
 import Notebook.Parser
 import Notebook.Types exposing (EvalState)
@@ -57,7 +58,13 @@ executeNotebook model =
             List.range 0 (List.length model.currentBook.cells)
 
         commands =
-            List.indexedMap createDelayedCommand indices
+            List.indexedMap (\k index -> createDelayedCommand2 k (Types.ExecuteCell index)) indices
+
+        errorReportDelay =
+            1 + List.length indices
+
+        delayedCollateErrorReportsCmd =
+            createDelayedCommand2 errorReportDelay Types.UpdateErrorReports
     in
     ( { model
         | currentBook = newBook
@@ -73,14 +80,14 @@ executeNotebook model =
                 model.books
         , evalState = newEvalState
       }
-    , Cmd.batch commands
+    , Cmd.batch (delayedCollateErrorReportsCmd :: commands)
     )
 
 
-createDelayedCommand : Int -> Int -> Cmd FrontendMsg
-createDelayedCommand idx _ =
-    Process.sleep (toFloat (idx * 50))
-        |> Task.perform (\_ -> Types.ExecuteCell idx)
+createDelayedCommand2 : Int -> FrontendMsg -> Cmd FrontendMsg
+createDelayedCommand2 delay msg =
+    Process.sleep (toFloat (delay * 10))
+        |> Task.perform (\_ -> msg)
 
 
 executeCell : Int -> Model -> ( Model, Cmd FrontendMsg )
@@ -112,7 +119,7 @@ executeCell cellIndex model =
                                     ( { model
                                         | currentCell = Just cleanCell
                                         , currentBook = cleanBook
-                                        , evalState = newEvalState
+                                        , evalState = newEvalState |> Debug.log "@@EvalState"
                                       }
                                     , Eval.requestEvaluation newEvalState cell sourceText
                                     )

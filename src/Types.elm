@@ -54,7 +54,7 @@ type alias FrontendModel =
     , privateDataSetMetaDataList : List Notebook.DataSet.DataSetMetaData
 
     -- NOTEBOOKS
-    , rawErrorSummary : List Notebook.Types.ErrorReport
+    , errorReports : List Notebook.Types.ErrorReport
     , showErrorPanel : Bool
     , theme : Notebook.Book.Theme
     , evalState : Notebook.Types.EvalState
@@ -196,6 +196,7 @@ type FrontendMsg
     | ExecuteNotebook
     | UpdateDeclarationsDictionary
     | ExecuteCell Int
+    | UpdateErrorReports
     | FetchDependencies String
     | ToggleCellLock Cell
     | ChangeCellInsertionDirection Notebook.Types.CellDirection
@@ -243,6 +244,10 @@ type FrontendMsg
       -- ADMIN
     | AdminRunTask
     | GetUsers
+
+
+type Command
+    = XCell Int
 
 
 type alias Message =

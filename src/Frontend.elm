@@ -30,6 +30,7 @@ import Notebook.Cell exposing (CellState(..), CellType(..), CellValue(..))
 import Notebook.Codec
 import Notebook.Compile
 import Notebook.DataSet
+import Notebook.ErrorReporter
 import Notebook.Eval
 import Notebook.EvalCell
 import Notebook.Package
@@ -78,7 +79,7 @@ init url key =
       , messageId = 0
 
       -- NOTEBOOK (NEW)
-      , rawErrorSummary = []
+      , errorReports = []
       , showErrorPanel = True
       , theme = Notebook.Book.DarkTheme
       , packagesFromCompiler = []
@@ -201,6 +202,9 @@ update msg model =
 
         ExecuteCell k ->
             Notebook.EvalCell.executeCell k model
+
+        UpdateErrorReports ->
+            ( { model | errorReports = Notebook.ErrorReporter.collateErrorReports model.currentBook.cells }, Cmd.none )
 
         ReceivedFromJS str ->
             Frontend.ElmCompilerInterop.receiveReplDataFromJS model str

@@ -5,7 +5,7 @@ module Notebook.ErrorReporter exposing
     , errorKeys
     , errorKeysFromCells
     , errorsToString
-    , prepareReport
+    , renderReport
     , stringToMessageItem
     )
 
@@ -79,7 +79,7 @@ errorSummary cells =
             []
 
         errors ->
-            List.map (prepareReport >> (\( k, xx ) -> ( k, Element.column [] xx ))) errors |> Debug.log "@@@@errorSummary"
+            List.map (renderReport >> (\( k, xx ) -> ( k, Element.column [] xx ))) errors |> Debug.log "@@@@errorSummary"
 
 
 collateErrorReports : List Cell -> List ErrorReport
@@ -329,8 +329,8 @@ messageItemFilter key item =
             not <| String.contains key styledString.string
 
 
-prepareReport : ErrorReport -> RenderedErrorReport
-prepareReport ( k, items__ ) =
+renderReport : ErrorReport -> RenderedErrorReport
+renderReport ( k, items__ ) =
     let
         items_ =
             List.map removeOffsetAndBar items__
