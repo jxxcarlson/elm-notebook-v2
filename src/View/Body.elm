@@ -7,7 +7,7 @@ import Element.Border as Border
 import Element.Font as Font
 import List.Extra
 import Notebook.Book exposing (Book)
-import Notebook.Cell
+import Notebook.Cell exposing (Cell)
 import Notebook.ErrorReporter
 import Notebook.Eval
 import Notebook.Types
@@ -64,35 +64,15 @@ declarationsOrErrorReport model =
         declarations model
 
 
-reportLabelColor =
-    E.rgb 1 0.5 0
+
+-- REPORT_ERRORS
 
 
 reportErrors : FrontendModel -> List Notebook.Cell.Cell -> List ( Int, List (Element FrontendMsg) ) -> Element FrontendMsg
 reportErrors model cells errorSummary =
     let
-        errorKeys_ : List ( List Int, String )
         errorKeys_ =
-            Notebook.ErrorReporter.errorKeys cells
-                |> List.map (String.split "|")
-                |> List.map (List.Extra.getAt 1)
-                |> List.filterMap identity
-                |> List.map String.trim
-                |> List.Extra.unique
-                |> List.map (\s -> ( Notebook.Cell.locate s cells, s ))
-                |> List.sortBy (\( loc, _ ) -> loc)
-
-        errorKeys : Element FrontendMsg
-        errorKeys =
-            E.column
-                [ E.spacing 24
-                , E.paddingEach { left = 12, right = 12, top = 12, bottom = 24 }
-                , Background.color (E.rgb 0 0 0)
-                , E.height (E.px 200)
-                , E.scrollbarY
-                , View.Style.monospace
-                ]
-                (List.map (\( loc, s ) -> E.paragraph [ E.spacing 8 ] [ displayLocation loc, E.text s ]) errorKeys_)
+            Notebook.ErrorReporter.errorKeysFromCells cells
     in
     E.column
         [ Font.size 14
@@ -101,80 +81,117 @@ reportErrors model cells errorSummary =
         , Border.widthEach { left = 2, right = 0, top = 0, bottom = 0 }
         , Border.color (E.rgb255 73 78 89)
         , Background.color (E.rgb 0 0 0)
+        , View.Style.monospace
         , E.paddingEach
             { top = 18, bottom = 36, left = 0, right = 0 }
         ]
-        [ View.Button.toggleShowErrorPanel model.showErrorPanel
-        , E.row
-            [ E.paddingXY 18 0
-            , Background.color (E.rgb 0 0 0)
-            , E.paddingXY 12 24
-            , E.spacing 8
-            , E.width (E.px <| View.Geometry.sidePanelWidth model)
-            ]
-            [ E.el
-                [ Font.size 18
-                , Font.color reportLabelColor
-                ]
-                (E.text <| "Error summary: " ++ String.fromInt (List.length errorKeys_))
-            ]
-        , if String.contains "You are trying to import" (Notebook.ErrorReporter.errorsToString model.currentBook.cells) then
-            E.paragraph
-                [ Font.size 14
-                , Background.color (E.rgb 0 0 0)
-                , Font.color (E.rgb 1 1 0)
-                , E.paddingXY 12 12
-                ]
-                [ E.text "You are trying to import a package that is not installed. "
-                , E.text "Please click on the \"Install Packages\" button & install the missing package(s). "
-                , E.text
-                    "Then click on \"Clear Values\" or \"Run all Cells\""
-                ]
+        ([ View.Button.toggleShowErrorPanel model.showErrorPanel
+         , errorSummaryHeading model errorKeys_
+         , importPackageWarning model
+         , makeErrorKeys errorKeys_
+         ]
+            ++ errorDetails model errorSummary
+        )
 
-          else
-            E.none
-        , errorKeys
-        , E.el
-            [ Font.color reportLabelColor
-            , Font.size 16
-            , E.paddingEach { left = 12, right = 0, top = 18, bottom = 12 }
-            ]
-            (E.text ("Details: " ++ String.fromInt (List.length errorSummary)))
-        , E.column
-            [ E.height (E.px <| View.Geometry.loweRightSidePanelHeight model)
-            , E.width (E.px <| View.Geometry.sidePanelWidth model)
-            , E.scrollbarY
-            ]
-            (List.indexedMap
-                (\k ( cIndex, summary ) ->
-                    E.paragraph
-                        [ if k == 0 then
-                            E.paddingEach { left = 0, top = 36, bottom = 0, right = 0 }
 
-                          else
-                            E.paddingEach { left = 0, top = 12, bottom = 0, right = 0 }
-                        ]
-                        [ E.column [ Font.color reportLabelColor, Font.size 14, E.paddingEach { left = 12, top = 12, bottom = 4, right = 0 } ]
-                            [ E.text <| "Cell: " ++ (String.fromInt (cIndex + 1) ++ ".")
-                            , E.text "______________________"
-                            ]
-                        , E.column
-                            [ E.paddingXY 12 12
-                            , View.Style.monospace
-                            , Background.color (E.rgb 0 0 0)
-                            , E.spacing 12
-                            ]
-                            summary
-                        ]
-                )
-                errorSummary
-            )
+
+-- HELPERS FOR REPORT_ERRORS
+
+
+errorDetails model errorSummary =
+    [ E.el
+        [ Font.color reportLabelColor
+        , Font.size 16
+        , E.paddingEach { left = 12, right = 0, top = 18, bottom = 12 }
         ]
+        (E.text ("Details: " ++ String.fromInt (List.length errorSummary)))
+    , E.column
+        [ E.height (E.px <| View.Geometry.loweRightSidePanelHeight model)
+        , E.width (E.px <| View.Geometry.sidePanelWidth model)
+        , E.scrollbarY
+        ]
+        (List.indexedMap
+            (\k ( cIndex, summary ) ->
+                E.paragraph
+                    [ if k == 0 then
+                        E.paddingEach { left = 0, top = 36, bottom = 0, right = 0 }
+
+                      else
+                        E.paddingEach { left = 0, top = 12, bottom = 0, right = 0 }
+                    ]
+                    [ E.column [ Font.color reportLabelColor, Font.size 14, E.paddingEach { left = 12, top = 12, bottom = 4, right = 0 } ]
+                        [ E.text <| "Cell: " ++ (String.fromInt (cIndex + 1) ++ ".")
+                        , E.text "______________________"
+                        ]
+                    , E.column
+                        [ E.paddingXY 12 12
+                        , View.Style.monospace
+                        , Background.color (E.rgb 0 0 0)
+                        , E.spacing 12
+                        ]
+                        summary
+                    ]
+            )
+            errorSummary
+        )
+    ]
+
+
+makeErrorKeys : List ( List Int, String ) -> Element msg
+makeErrorKeys errorKeys_ =
+    E.column
+        [ E.spacing 24
+        , E.paddingEach { left = 12, right = 12, top = 12, bottom = 24 }
+        , E.height (E.px 200)
+        , E.scrollbarY
+        ]
+        (List.map (\( loc, s ) -> E.paragraph [ E.spacing 8 ] [ displayLocation loc, E.text s ]) errorKeys_)
+
+
+reportLabelColor =
+    E.rgb 1 0.5 0
+
+
+errorSummaryHeading model errorKeys_ =
+    E.row
+        [ E.paddingXY 18 0
+        , E.paddingXY 12 24
+        , E.spacing 8
+        , E.width (E.px <| View.Geometry.sidePanelWidth model)
+        ]
+        [ E.el
+            [ Font.size 18
+            , Font.color reportLabelColor
+            ]
+            (E.text <| "Error summary: " ++ String.fromInt (List.length errorKeys_))
+        ]
+
+
+importPackageWarning model =
+    if String.contains "You are trying to import" (Notebook.ErrorReporter.errorsToString model.currentBook.cells) then
+        E.paragraph
+            [ Font.size 14
+            , Background.color (E.rgb 0 0 0)
+            , Font.color (E.rgb 1 1 0)
+            , E.paddingXY 12 12
+            ]
+            [ E.text "You are trying to import a package that is not installed. "
+            , E.text "Please click on the \"Install Packages\" button & install the missing package(s). "
+            , E.text
+                "Then click on \"Clear Values\" or \"Run all Cells\""
+            ]
+
+    else
+        E.none
 
 
 displayLocation : List Int -> Element msg
 displayLocation ks =
     ks |> List.map ((\k -> k + 1) >> String.fromInt) |> String.join " " |> (\s -> E.el [ Font.color reportLabelColor ] (E.text <| "Cell " ++ s ++ ": "))
+
+
+
+-- END OF HELPERS FOR REPORT_ERRORS
 
 
 declarations model =

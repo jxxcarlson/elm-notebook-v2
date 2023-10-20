@@ -2,6 +2,7 @@ module Notebook.ErrorReporter exposing
     ( collateErrorReports
     , decodeErrorReporter
     , errorKeys
+    , errorKeysFromCells
     , errorsToString
     , prepareReport
     , stringToMessageItem
@@ -50,6 +51,18 @@ type alias Problem =
     , region : Region
     , message : List MessageItem
     }
+
+
+errorKeysFromCells : List Cell -> List ( List Int, String )
+errorKeysFromCells cells =
+    errorKeys cells
+        |> List.map (String.split "|")
+        |> List.map (List.Extra.getAt 1)
+        |> List.filterMap identity
+        |> List.map String.trim
+        |> List.Extra.unique
+        |> List.map (\s -> ( Notebook.Cell.locate s cells, s ))
+        |> List.sortBy (\( loc, _ ) -> loc)
 
 
 errorSummary : List Cell -> List ( Int, Element msg )
