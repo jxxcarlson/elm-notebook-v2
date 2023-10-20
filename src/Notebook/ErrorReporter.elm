@@ -1,5 +1,7 @@
 module Notebook.ErrorReporter exposing
-    ( collateErrorReports
+    ( ErrorReport
+    , RenderedErrorReport
+    , collateErrorReports
     , decodeErrorReporter
     , errorKeys
     , errorKeysFromCells
@@ -18,7 +20,16 @@ import List.Extra
 import Notebook.Cell exposing (Cell)
 import Notebook.Parser
 import Notebook.Types exposing (MessageItem(..), StyledString)
+import Types
 import View.Style
+
+
+type alias ErrorReport =
+    ( Int, List MessageItem )
+
+
+type alias RenderedErrorReport =
+    ( Int, List (Element Types.FrontendMsg) )
 
 
 type alias ReplError =
@@ -65,7 +76,7 @@ errorKeysFromCells cells =
         |> List.sortBy (\( loc, _ ) -> loc)
 
 
-errorSummary : List Cell -> List ( Int, Element msg )
+errorSummary : List Cell -> List ( Int, Element Types.FrontendMsg )
 errorSummary cells =
     case collateErrorReports cells of
         [] ->
@@ -73,11 +84,6 @@ errorSummary cells =
 
         errors ->
             List.map (prepareReport >> (\( k, xx ) -> ( k, Element.column [] xx ))) errors
-
-
-
---prepareReport : Int -> ( Int, List MessageItem ) -> ( Int, List (Element msg) )
---prepareReport errorOffset ( k, items_ )
 
 
 collateErrorReports : List Cell -> List ( Int, List Notebook.Types.MessageItem )
@@ -342,21 +348,47 @@ messageItemFilter key item =
 --  _@SECOND: Just (Styled { bold = False, color = Just "RED", string = "^^", underline = False })
 
 
-prepareReport : ( Int, List MessageItem ) -> ( Int, List (Element msg) )
+prepareReport : ErrorReport -> RenderedErrorReport
 prepareReport ( k, items_ ) =
+    let
+        _ =
+            Debug.log "_@prepareReport" items_
+    in
     case items_ of
         first_ :: second_ :: rest ->
             let
-                strr =
+                str =
                     case first_ of
-                        Notebook.Types.Plain str ->
-                            str
+                        Notebook.Types.Plain str_ ->
+                            str_ |> Debug.log "_@FIRST, str"
 
                         _ ->
                             "NADA"
 
+                errorItem =
+                    Notebook.Parser.getErrorItem str |> Debug.log "_@ERROR ITEM"
+
+                locationOfBar =
+                    Notebook.Parser.getPrefixTillBar str |> Maybe.map String.length |> Debug.log "_@LOCATION OF BAR"
+
+                indices =
+                    case errorItem of
+                        Nothing ->
+                            [] |> Debug.log "_@NO INDICES"
+
+                        Just target ->
+                            String.indices target str |> Debug.log "_@INDICES"
+
+                offset =
+                    case ( locationOfBar, List.Extra.getAt 1 indices ) of
+                        ( Just loc, Just ind ) ->
+                            ind - loc - 2
+
+                        _ ->
+                            0
+
                 first =
-                    adjustErrorLocation first_
+                    adjustErrorLocation first_ |> Debug.log "_@FIRST, str, (2)"
 
                 second =
                     case second_ of
@@ -364,11 +396,19 @@ prepareReport ( k, items_ ) =
                             second_
 
                         Styled styledString ->
-                            Styled { styledString | string = String.repeat n " " ++ styledString.string }
+                            Styled { styledString | string = String.repeat offset " " ++ styledString.string }
 
                 n =
-                    Notebook.Parser.getErrorOffset strr |> Maybe.withDefault 0 |> Debug.log "_@ERROR_OFFSET"
+                    Notebook.Parser.getErrorOffset str |> Maybe.withDefault 0
 
+                prefixTillBar =
+                    Notebook.Parser.getPrefixTillBar str |> Maybe.withDefault ""
+
+                mm =
+                    Notebook.Parser.getErrorOffset str
+                        |> Maybe.withDefault 0
+
+                -- str |> String.replace prefixTillBar "" |> String.length |> Debug.log "_@ERROR_OFFSET"
                 --_ =
                 --    Debug.log "_@FIRST" strr
                 _ =

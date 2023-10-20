@@ -1,7 +1,11 @@
 module Notebook.Parser exposing
     ( Classification(..)
     , classify
+    , getErrorItem
+    , getErrorItemLength
     , getErrorOffset
+    , getPrefixTillBacktick
+    , getPrefixTillBar
     , numberOfLeadingSpaces
     , replItemParser
     )
@@ -32,6 +36,77 @@ getErrorOffset str =
 
         Err _ ->
             Nothing
+
+
+getPrefixTillBar : String -> Maybe String
+getPrefixTillBar str =
+    case run getPrefixTillBarParser str of
+        Ok prefix ->
+            Just prefix
+
+        Err _ ->
+            Nothing
+
+
+getPrefixTillBarParser : Parser String
+getPrefixTillBarParser =
+    succeed (\a b src -> String.slice a b src)
+        |= getOffset
+        |. chompUntil "|"
+        |. symbol "|"
+        |= getOffset
+        |= getSource
+
+
+getErrorItemLength : Parser Int
+getErrorItemLength =
+    succeed identity
+        |. chompUntil "``"
+        |. symbol "`"
+        |= getOffset
+        |. chompUntil "``"
+        |. symbol "`"
+
+
+getErrorItem : String -> Maybe String
+getErrorItem str =
+    case run getErrorItemParser str of
+        Ok prefix ->
+            Just prefix
+
+        Err _ ->
+            Nothing
+
+
+getErrorItemParser : Parser String
+getErrorItemParser =
+    succeed (\a b src -> String.slice a b src)
+        |. chompUntil "`"
+        |. symbol "`"
+        |= getOffset
+        |. chompUntil "`"
+        |= getOffset
+        |= getSource
+
+
+getPrefixTillBacktick : String -> Maybe String
+getPrefixTillBacktick str =
+    case run getPrefixTillBacktickParser str of
+        Ok prefix ->
+            Just prefix
+
+        Err _ ->
+            Nothing
+
+
+getPrefixTillBacktickParser : Parser String
+getPrefixTillBacktickParser =
+    succeed (\a b src -> String.slice a b src)
+        |= getOffset
+        |. chompUntil "`"
+        |. symbol "`"
+        |= getOffset
+        |= getSource
 
 
 errorOffsetParser : Parser Int

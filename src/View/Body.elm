@@ -8,7 +8,7 @@ import Element.Font as Font
 import List.Extra
 import Notebook.Book exposing (Book)
 import Notebook.Cell exposing (Cell)
-import Notebook.ErrorReporter
+import Notebook.ErrorReporter exposing (ErrorReport, RenderedErrorReport)
 import Notebook.Eval
 import Notebook.Types
 import Notebook.View
@@ -42,19 +42,15 @@ view model user =
 declarationsOrErrorReport : FrontendModel -> Element FrontendMsg
 declarationsOrErrorReport model =
     let
-        rawErrorSummary : List ( Int, List Notebook.Types.MessageItem )
+        rawErrorSummary : List ErrorReport
         rawErrorSummary =
             Notebook.ErrorReporter.collateErrorReports model.currentBook.cells
 
-        -- errorSummary : List (Element msg)
-        errorSummary : List ( Int, List (Element msg) )
+        errorSummary : List RenderedErrorReport
         errorSummary =
             rawErrorSummary |> List.map Notebook.ErrorReporter.prepareReport
-
-        _ =
-            Debug.log "__errorSummary Length__" ( List.length rawErrorSummary, List.length errorSummary )
     in
-    if errorSummary == [] then
+    if rawErrorSummary == [] then
         declarations model
 
     else if model.showErrorPanel then
@@ -68,12 +64,35 @@ declarationsOrErrorReport model =
 -- REPORT_ERRORS
 
 
-reportErrors : FrontendModel -> List Notebook.Cell.Cell -> List ( Int, List (Element FrontendMsg) ) -> Element FrontendMsg
+reportErrors : FrontendModel -> List Notebook.Cell.Cell -> List RenderedErrorReport -> Element FrontendMsg
 reportErrors model cells errorSummary =
     let
         errorKeys_ =
             Notebook.ErrorReporter.errorKeysFromCells cells
+
+        summaryCells =
+            errorKeys_ |> List.map Tuple.first |> List.concat |> Debug.log "__@@summaryCells__"
+
+        cellsInErrorSummary : List Int
+        cellsInErrorSummary =
+            errorSummary |> List.map (\( k, _ ) -> k) |> Debug.log "__@@cellsInErrorSummary__"
     in
+    errorReporterStyle model
+        ([ View.Button.toggleShowErrorPanel model.showErrorPanel
+         , errorSummaryHeading model errorKeys_
+         , importPackageWarning model
+         , makeErrorKeys errorKeys_
+         ]
+            --++ errorDetails model (List.filter (\( k, _ ) -> List.member (k + 1) summaryCells) errorSummary)
+            ++ errorDetails model errorSummary
+        )
+
+
+
+-- HELPERS FOR REPORT_ERRORS
+
+
+errorReporterStyle model =
     E.column
         [ Font.size 14
         , E.spacing 0
@@ -85,33 +104,23 @@ reportErrors model cells errorSummary =
         , E.paddingEach
             { top = 18, bottom = 36, left = 0, right = 0 }
         ]
-        ([ View.Button.toggleShowErrorPanel model.showErrorPanel
-         , errorSummaryHeading model errorKeys_
-         , importPackageWarning model
-         , makeErrorKeys errorKeys_
-         ]
-            ++ errorDetails model errorSummary
-        )
 
 
-
--- HELPERS FOR REPORT_ERRORS
-
-
-errorDetails model errorSummary =
+errorDetails : FrontendModel -> List RenderedErrorReport -> List (Element FrontendMsg)
+errorDetails model listOfRenderedErrorReports =
     [ E.el
         [ Font.color reportLabelColor
         , Font.size 16
         , E.paddingEach { left = 12, right = 0, top = 18, bottom = 12 }
         ]
-        (E.text ("Details: " ++ String.fromInt (List.length errorSummary)))
+        (E.text ("Details: " ++ String.fromInt (List.length listOfRenderedErrorReports)))
     , E.column
         [ E.height (E.px <| View.Geometry.loweRightSidePanelHeight model)
         , E.width (E.px <| View.Geometry.sidePanelWidth model)
         , E.scrollbarY
         ]
         (List.indexedMap
-            (\k ( cIndex, summary ) ->
+            (\k ( cIndex, report ) ->
                 E.paragraph
                     [ if k == 0 then
                         E.paddingEach { left = 0, top = 36, bottom = 0, right = 0 }
@@ -127,10 +136,10 @@ errorDetails model errorSummary =
                         [ E.paddingXY 12 12
                         , E.spacing 12
                         ]
-                        summary
+                        report
                     ]
             )
-            errorSummary
+            listOfRenderedErrorReports
         )
     ]
 
@@ -150,6 +159,10 @@ reportLabelColor =
     E.rgb 1 0.5 0
 
 
+
+-- errorSummaryHeading : { a | windowWidth : Int } -> List b -> Element msg
+
+
 errorSummaryHeading model errorKeys_ =
     E.row
         [ E.paddingXY 18 0
@@ -165,6 +178,7 @@ errorSummaryHeading model errorKeys_ =
         ]
 
 
+importPackageWarning : FrontendModel -> Element msg
 importPackageWarning model =
     if String.contains "You are trying to import" (Notebook.ErrorReporter.errorsToString model.currentBook.cells) then
         E.paragraph
