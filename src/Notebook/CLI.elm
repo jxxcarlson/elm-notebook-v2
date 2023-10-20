@@ -35,14 +35,8 @@ executeCommand_ command book =
     case P.run commandParser command of
         Ok (RemoveCells from to) ->
             let
-                _ =
-                    Debug.log "__(from, to)" ( from, to )
-
                 cells =
                     book.cells
-
-                _ =
-                    Debug.log "__Old length" (List.length cells)
 
                 newCells =
                     cells

@@ -71,11 +71,11 @@ reportErrors model cells errorSummary =
             Notebook.ErrorReporter.errorKeysFromCells cells
 
         summaryCells =
-            errorKeys_ |> List.map Tuple.first |> List.concat |> Debug.log "__@@summaryCells__"
+            errorKeys_ |> List.map Tuple.first |> List.concat
 
         cellsInErrorSummary : List Int
         cellsInErrorSummary =
-            errorSummary |> List.map (\( k, _ ) -> k) |> Debug.log "__@@cellsInErrorSummary__"
+            errorSummary |> List.map (\( k, _ ) -> k)
     in
     errorReporterStyle model
         ([ View.Button.toggleShowErrorPanel model.showErrorPanel

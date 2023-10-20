@@ -40,7 +40,7 @@ gotElmJsonDict model result =
 submitPackageListFromUserInput model =
     let
         packageNames =
-            makePackageList model |> Debug.log "__submitPackageListFromUserInput"
+            makePackageList model
 
         currentBook =
             model.currentBook
@@ -124,9 +124,6 @@ nowSendPackageList model =
 installNewPackages : List String -> Cmd Types.FrontendMsg
 installNewPackages packageList =
     let
-        _ =
-            Debug.log "__installNewPackages" packageList
-
         n =
             packageList |> List.length
 
@@ -186,10 +183,6 @@ elmPackageSummaryDecoder =
 
 requestPackagesFromCompiler : Cmd Types.FrontendMsg
 requestPackagesFromCompiler =
-    let
-        _ =
-            Debug.log "__requestPackagesFromCompiler" True
-    in
     Http.post
         { url =
             case Env.mode of

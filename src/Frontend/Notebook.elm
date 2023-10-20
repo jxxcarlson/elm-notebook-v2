@@ -88,7 +88,7 @@ setCurrentNotebook model book =
             , Cmd.batch
                 [ sendToBackend (UpdateUserWith user)
                 , sendToBackend (SaveNotebook previousBook)
-                , Notebook.Package.installNewPackages (currentBook.packageNames |> Debug.log "__Package names")
+                , Notebook.Package.installNewPackages currentBook.packageNames
                 ]
             )
 

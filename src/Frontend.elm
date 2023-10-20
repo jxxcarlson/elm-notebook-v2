@@ -612,12 +612,6 @@ updateFromBackend msg model =
 
         GotNotebook book_ ->
             let
-                _ =
-                    Debug.log "__GotNotebook, title" book_.title
-
-                _ =
-                    Debug.log "__GotNotebook, packages" book_.packageNames
-
                 book =
                     Notebook.Book.initializeCellState book_
 
@@ -636,7 +630,7 @@ updateFromBackend msg model =
                 , books = addOrReplaceBook book model.books
                 , showErrorPanel = True
               }
-            , Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__Install_via GotNotebook")
+            , Notebook.Package.installNewPackages book.packageNames
             )
 
         GotPublicNotebook book_ ->
@@ -673,15 +667,11 @@ updateFromBackend msg model =
               }
             , Cmd.batch
                 [ sendToBackend (GetPublicNotebooks (Just book) currentUser.username)
-                , Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__Install_via GotPublicNotebook")
+                , Notebook.Package.installNewPackages book.packageNames
                 ]
             )
 
         GotNotebooks maybeNotebook books ->
-            let
-                _ =
-                    Debug.log "__GotNotebooks__" (List.length books)
-            in
             case maybeNotebook of
                 Nothing ->
                     case List.head books of
@@ -690,12 +680,6 @@ updateFromBackend msg model =
 
                         Just book ->
                             let
-                                _ =
-                                    Debug.log "__current book (1)" book.title
-
-                                _ =
-                                    Debug.log "__package names (1)" book.packageNames
-
                                 newModel =
                                     { model
                                         | evalState = Notebook.EvalCell.updateEvalStateWithCells book.cells Notebook.Types.emptyEvalState
@@ -705,17 +689,11 @@ updateFromBackend msg model =
                             in
                             Message.postMessage "OK.1" Types.MSBlue newModel
                                 |> (\( model_, cmd ) ->
-                                        ( model_, Cmd.batch [ cmd, Notebook.Package.installNewPackages (book.packageNames |> Debug.log "__Install_via GotNotebooks") ] )
+                                        ( model_, Cmd.batch [ cmd, Notebook.Package.installNewPackages book.packageNames ] )
                                    )
 
                 Just currentBook ->
                     let
-                        _ =
-                            Debug.log "__current book (2)" currentBook.title
-
-                        _ =
-                            Debug.log "__package names (2)" currentBook.packageNames
-
                         newModel =
                             { model
                                 | showErrorPanel = True
@@ -725,7 +703,7 @@ updateFromBackend msg model =
                     in
                     Message.postMessage ("**Got:  " :: currentBook.packageNames |> String.join ", ") Types.MSBlue newModel
                         |> (\( model_, cmd ) ->
-                                ( { model_ | books = books, currentBook = currentBook }, Cmd.batch [ cmd, Notebook.Package.installNewPackages (currentBook.packageNames |> Debug.log "__package names (1*)") ] )
+                                ( { model_ | books = books, currentBook = currentBook }, Cmd.batch [ cmd, Notebook.Package.installNewPackages currentBook.packageNames ] )
                            )
 
 

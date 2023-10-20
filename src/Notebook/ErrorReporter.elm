@@ -101,7 +101,6 @@ collateErrorReports cells =
             cells
                 |> List.map (\c -> foo c)
                 |> List.filterMap identity
-                |> Debug.log "___collatedData"
     in
     collatedData
 
@@ -184,9 +183,6 @@ renderMessageItem messageItem =
                 padding_ =
                     if String.contains "^" styledString.string then
                         let
-                            _ =
-                                Debug.log "_@StyledString with ^" styledString.string
-
                             n =
                                 Notebook.Parser.numberOfLeadingSpaces styledString.string
                         in
@@ -302,8 +298,8 @@ err =
     ]
 
 
-adjustErrorLocation : MessageItem -> MessageItem
-adjustErrorLocation messageItem =
+removeOffsetAndBar : MessageItem -> MessageItem
+removeOffsetAndBar messageItem =
     case messageItem of
         Plain str ->
             case Notebook.Parser.getErrorOffset str of
@@ -320,9 +316,6 @@ adjustErrorLocation messageItem =
 
                         revisedStr =
                             String.replace target replacement str
-
-                        _ =
-                            Debug.log "__revisedStr" ( Notebook.Parser.numberOfLeadingSpaces revisedStr, revisedStr )
                     in
                     Plain revisedStr
 
@@ -349,46 +342,46 @@ messageItemFilter key item =
 
 
 prepareReport : ErrorReport -> RenderedErrorReport
-prepareReport ( k, items_ ) =
+prepareReport ( k, items__ ) =
     let
-        _ =
-            Debug.log "_@prepareReport" items_
+        items_ =
+            List.map removeOffsetAndBar items__
     in
     case items_ of
         first_ :: second_ :: rest ->
             let
-                str =
+                stringInFirstItem =
                     case first_ of
                         Notebook.Types.Plain str_ ->
-                            str_ |> Debug.log "_@FIRST, str"
+                            str_
 
                         _ ->
                             "NADA"
 
-                errorItem =
-                    Notebook.Parser.getErrorItem str |> Debug.log "_@ERROR ITEM"
-
-                locationOfBar =
-                    Notebook.Parser.getPrefixTillBar str |> Maybe.map String.length |> Debug.log "_@LOCATION OF BAR"
-
-                indices =
-                    case errorItem of
-                        Nothing ->
-                            [] |> Debug.log "_@NO INDICES"
-
-                        Just target ->
-                            String.indices target str |> Debug.log "_@INDICES"
-
-                offset =
-                    case ( locationOfBar, List.Extra.getAt 1 indices ) of
-                        ( Just loc, Just ind ) ->
-                            ind - loc - 2
+                foo =
+                    case String.split "\n\n" stringInFirstItem of
+                        [ _, b ] ->
+                            b
 
                         _ ->
+                            stringInFirstItem
+
+                mErrorItem =
+                    Notebook.Parser.getErrorItem stringInFirstItem
+
+                offset =
+                    case mErrorItem of
+                        Nothing ->
                             0
 
+                        Just errorItem ->
+                            String.indices errorItem foo
+                                |> List.head
+                                |> Maybe.withDefault 0
+                                |> (\x -> max (x - 2) 0)
+
                 first =
-                    adjustErrorLocation first_ |> Debug.log "_@FIRST, str, (2)"
+                    first_
 
                 second =
                     case second_ of
@@ -398,32 +391,13 @@ prepareReport ( k, items_ ) =
                         Styled styledString ->
                             Styled { styledString | string = String.repeat offset " " ++ styledString.string }
 
-                n =
-                    Notebook.Parser.getErrorOffset str |> Maybe.withDefault 0
-
-                prefixTillBar =
-                    Notebook.Parser.getPrefixTillBar str |> Maybe.withDefault ""
-
-                mm =
-                    Notebook.Parser.getErrorOffset str
-                        |> Maybe.withDefault 0
-
-                -- str |> String.replace prefixTillBar "" |> String.length |> Debug.log "_@ERROR_OFFSET"
-                --_ =
-                --    Debug.log "_@FIRST" strr
-                _ =
-                    Debug.log "_@SECOND" second
-
-                --_@FIRST: "I cannot find a `Fi` variant:\n\n6|   size (Fi 1 7)\n           "
-                -- @SECOND: Styled { bold = False, color = Just "RED", string = "^^", underline = False }
                 items =
                     rest
                         |> List.filter (messageItemFilter "Evergreen")
 
-                --|> List.map (adjustErrorLocation errorOffset)
                 groups : List (List MessageItem)
                 groups =
-                    groupMessageItemsHelp (breakMessages (adjustErrorLocation first :: second :: items))
+                    groupMessageItemsHelp (breakMessages (removeOffsetAndBar first :: second :: items))
 
                 bar : List (Element msg)
                 bar =
