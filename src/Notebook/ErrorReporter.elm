@@ -1,5 +1,5 @@
 module Notebook.ErrorReporter exposing
-    ( collateErrors
+    ( collateErrorReports
     , decodeErrorReporter
     , errorKeys
     , errorsToString
@@ -51,26 +51,35 @@ type alias Problem =
     }
 
 
-errorSummary : List Cell -> List (Element msg)
+errorSummary : List Cell -> List ( Int, Element msg )
 errorSummary cells =
-    case collateErrors cells of
+    case collateErrorReports cells of
         [] ->
             []
 
         errors ->
-            let
-                _ =
-                    Debug.log "__Length errors__" (List.length errors)
-            in
-            List.map (prepareReport 0 >> Element.column []) errors
+            List.map (prepareReport 0 >> (\( k, xx ) -> ( k, Element.column [] xx ))) errors
 
 
-collateErrors : List Cell -> List (List Notebook.Types.MessageItem)
-collateErrors cells =
+
+--prepareReport : Int -> ( Int, List MessageItem ) -> ( Int, List (Element msg) )
+--prepareReport errorOffset ( k, items_ )
+
+
+collateErrorReports : List Cell -> List ( Int, List Notebook.Types.MessageItem )
+collateErrorReports cells =
     let
+        foo c =
+            case c.report of
+                Nothing ->
+                    Nothing
+
+                Just report ->
+                    Just ( c.index, report )
+
         collatedData =
             cells
-                |> List.map .report
+                |> List.map (\c -> foo c)
                 |> List.filterMap identity
 
         --|> List.Extra.uniqueBy (List.map Notebook.Types.toString)
@@ -288,7 +297,8 @@ adjustErrorLocation errorOffset messageItem =
                             String.fromInt offset ++ "|"
 
                         replacement =
-                            String.fromInt (offset - errorOffset) ++ "| "
+                            -- String.fromInt (offset - errorOffset) ++ "| "
+                            ""
                     in
                     Plain (String.replace target replacement str)
 
@@ -306,17 +316,22 @@ messageItemFilter key item =
             not <| String.contains key styledString.string
 
 
-prepareReport : Int -> List MessageItem -> List (Element msg)
-prepareReport errorOffset report_ =
+
+--collateErrorReports : List Cell -> List ( Int, List Notebook.Types.MessageItem )
+--collateErrorReports cells
+
+
+prepareReport : Int -> ( Int, List MessageItem ) -> ( Int, List (Element msg) )
+prepareReport errorOffset ( k, items_ ) =
     let
-        report =
-            report_
+        items =
+            items_
                 |> List.filter (messageItemFilter "Evergreen")
                 |> List.map (adjustErrorLocation errorOffset)
 
         groups : List (List MessageItem)
         groups =
-            groupMessageItemsHelp (breakMessages report)
+            groupMessageItemsHelp (breakMessages items)
 
         bar : List (Element msg)
         bar =
@@ -324,7 +339,7 @@ prepareReport errorOffset report_ =
                 |> List.map (List.map (\item -> renderMessageItem item))
                 |> List.map (\group_ -> paragraph [] group_)
     in
-    bar
+    ( k, bar )
 
 
 groupMessageItemsHelp : List MessageItem -> List (List MessageItem)

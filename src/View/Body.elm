@@ -42,12 +42,12 @@ view model user =
 declarationsOrErrorReport : FrontendModel -> Element FrontendMsg
 declarationsOrErrorReport model =
     let
-        rawErrorSummary : List (List Notebook.Types.MessageItem)
+        rawErrorSummary : List ( Int, List Notebook.Types.MessageItem )
         rawErrorSummary =
-            Notebook.ErrorReporter.collateErrors model.currentBook.cells
+            Notebook.ErrorReporter.collateErrorReports model.currentBook.cells
 
         -- errorSummary : List (Element msg)
-        errorSummary : List (List (Element msg))
+        errorSummary : List ( Int, List (Element msg) )
         errorSummary =
             rawErrorSummary |> List.map (Notebook.ErrorReporter.prepareReport 0)
 
@@ -68,7 +68,7 @@ reportLabelColor =
     E.rgb 1 0.5 0
 
 
-reportErrors : FrontendModel -> List Notebook.Cell.Cell -> List (List (Element FrontendMsg)) -> Element FrontendMsg
+reportErrors : FrontendModel -> List Notebook.Cell.Cell -> List ( Int, List (Element FrontendMsg) ) -> Element FrontendMsg
 reportErrors model cells errorSummary =
     let
         errorKeys_ : List ( List Int, String )
@@ -115,7 +115,7 @@ reportErrors model cells errorSummary =
                 [ Font.size 18
                 , Font.color reportLabelColor
                 ]
-                (E.text <| "Errors (" ++ String.fromInt (List.length errorKeys_) ++ ")")
+                (E.text <| "Error summary: " ++ String.fromInt (List.length errorKeys_))
             ]
         , if String.contains "You are trying to import" (Notebook.ErrorReporter.errorsToString model.currentBook.cells) then
             E.paragraph
@@ -138,14 +138,14 @@ reportErrors model cells errorSummary =
             , Font.size 16
             , E.paddingEach { left = 12, right = 0, top = 18, bottom = 12 }
             ]
-            (E.text ("Details (" ++ String.fromInt (List.length errorSummary) ++ ")"))
+            (E.text ("Details: " ++ String.fromInt (List.length errorSummary)))
         , E.column
             [ E.height (E.px <| View.Geometry.loweRightSidePanelHeight model)
             , E.width (E.px <| View.Geometry.sidePanelWidth model)
             , E.scrollbarY
             ]
             (List.indexedMap
-                (\k summary ->
+                (\k ( cIndex, summary ) ->
                     E.paragraph
                         [ if k == 0 then
                             E.paddingEach { left = 0, top = 36, bottom = 0, right = 0 }
@@ -154,7 +154,7 @@ reportErrors model cells errorSummary =
                             E.paddingEach { left = 0, top = 12, bottom = 0, right = 0 }
                         ]
                         [ E.column [ Font.color reportLabelColor, Font.size 14, E.paddingEach { left = 12, top = 12, bottom = 4, right = 0 } ]
-                            [ E.text (String.fromInt (k + 1) ++ ".")
+                            [ E.text <| "Cell: " ++ (String.fromInt (cIndex + 1) ++ ".")
                             , E.text "______________________"
                             ]
                         , E.column [ E.paddingXY 12 12, Background.color (E.rgb 0 0 0), E.spacing 12 ] summary
