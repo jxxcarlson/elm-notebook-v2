@@ -82,17 +82,9 @@ collateErrorReports cells =
             cells
                 |> List.map (\c -> foo c)
                 |> List.filterMap identity
-
-        --|> List.Extra.uniqueBy (List.map Notebook.Types.toString)
-        _ =
-            Debug.log "__Length (collatedData)" (List.length collatedData)
+                |> Debug.log "___collatedData"
     in
     collatedData
-
-
-
--- report : Maybe (List Notebook.Types.MessageItem)
--- |> List.Extra.uniqueBy (List.map Notebook.Types.toString)
 
 
 errorsToString : List Cell -> String
