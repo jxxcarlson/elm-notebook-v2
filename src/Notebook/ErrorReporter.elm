@@ -164,12 +164,19 @@ renderMessageItem messageItem =
 
                 padding_ =
                     if String.contains "^" styledString.string then
-                        paddingXY 15 8
+                        let
+                            _ =
+                                Debug.log "_@StyledString with ^" styledString.string
+
+                            n =
+                                Notebook.Parser.numberOfLeadingSpaces styledString.string
+                        in
+                        paddingXY (8 * n) 8
 
                     else
                         paddingXY 8 8
             in
-            el [ padding_, Font.color color, style ] (text styledString.string)
+            el [ padding_, Font.color color, style, View.Style.monospace ] (text styledString.string)
 
 
 stringToMessageItem : String -> MessageItem
