@@ -90,6 +90,7 @@ reportErrors model cells errorSummary =
                 , Background.color (E.rgb 0 0 0)
                 , E.height (E.px 200)
                 , E.scrollbarY
+                , View.Style.monospace
                 ]
                 (List.map (\( loc, s ) -> E.paragraph [ E.spacing 8 ] [ displayLocation loc, E.text s ]) errorKeys_)
     in
@@ -157,7 +158,13 @@ reportErrors model cells errorSummary =
                             [ E.text <| "Cell: " ++ (String.fromInt (cIndex + 1) ++ ".")
                             , E.text "______________________"
                             ]
-                        , E.column [ E.paddingXY 12 12, Background.color (E.rgb 0 0 0), E.spacing 12 ] summary
+                        , E.column
+                            [ E.paddingXY 12 12
+                            , View.Style.monospace
+                            , Background.color (E.rgb 0 0 0)
+                            , E.spacing 12
+                            ]
+                            summary
                         ]
                 )
                 errorSummary
