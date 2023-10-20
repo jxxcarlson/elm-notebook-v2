@@ -297,10 +297,15 @@ adjustErrorLocation messageItem =
                             String.fromInt offset ++ "|"
 
                         replacement =
-                            -- String.fromInt (offset - errorOffset) ++ "| "
                             ""
+
+                        revisedStr =
+                            String.replace target replacement str
+
+                        _ =
+                            Debug.log "__revisedStr" ( Notebook.Parser.numberOfLeadingSpaces revisedStr, revisedStr )
                     in
-                    Plain (String.replace target replacement str)
+                    Plain revisedStr
 
         Styled _ ->
             messageItem
