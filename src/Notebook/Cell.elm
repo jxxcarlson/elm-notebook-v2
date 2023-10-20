@@ -10,7 +10,7 @@ type alias Cell =
     , value : CellValue
     , cellState : CellState
     , locked : Bool
-    , report : Maybe (List Notebook.Types.MessageItem)
+    , report : ( Int, Maybe (List Notebook.Types.MessageItem) )
     , replData : Maybe Notebook.Types.ReplData
     }
 
@@ -38,4 +38,4 @@ locate text cells =
 
 hasErrors : List Cell -> Bool
 hasErrors cells =
-    List.any (\cell -> cell.report /= Nothing) cells
+    List.any (\cell -> Tuple.second cell.report /= Nothing) cells

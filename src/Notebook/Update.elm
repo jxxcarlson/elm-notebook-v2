@@ -55,7 +55,7 @@ clearNotebookValues book model =
                             { cell
                                 | value = CVNone
                                 , cellState = CSView
-                                , report = Nothing
+                                , report = ( cell.index, Nothing )
                                 , replData = Nothing
                             }
                         )
@@ -151,7 +151,7 @@ makeNewCell model cellState cellType index =
             , tipe = cellType
             , cellState = cellState
             , locked = False
-            , report = Nothing
+            , report = ( 0, Nothing )
             , replData = Nothing
             }
 

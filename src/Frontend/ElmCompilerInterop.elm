@@ -49,7 +49,7 @@ handleReplyFromElmCompiler model cell result =
             if Notebook.Eval.hasReplError str then
                 let
                     newCell =
-                        { cell | report = Just <| Notebook.Eval.reportError str }
+                        { cell | report = ( cell.index, Just <| Notebook.Eval.reportError str ) }
 
                     newBook =
                         Notebook.Book.replaceCell newCell model.currentBook

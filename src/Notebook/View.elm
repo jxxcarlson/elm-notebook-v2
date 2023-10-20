@@ -189,10 +189,10 @@ viewValue viewData cell =
 
         CTCode ->
             case cell.report of
-                Just report ->
+                ( _, Just report ) ->
                     viewFailure viewData cell report
 
-                Nothing ->
+                ( _, Nothing ) ->
                     viewSuccess viewData cell
 
 

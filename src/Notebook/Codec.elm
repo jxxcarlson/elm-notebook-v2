@@ -69,7 +69,7 @@ cellCodec =
         |> Codec.field "value" .value cellValueCodec
         |> Codec.field "cellState" .cellState cellStateCodec
         |> Codec.field "locked" .locked Codec.bool
-        |> Codec.field "report" .report (Codec.maybe <| Codec.list messageItemCodec)
+        |> Codec.field "report" .report (Codec.tuple Codec.int (Codec.maybe <| Codec.list messageItemCodec))
         |> Codec.field "replData" .replData (Codec.maybe <| replDataCodec)
         |> Codec.buildObject
 

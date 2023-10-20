@@ -43,7 +43,7 @@ executeNotebook model =
                         (\cell ->
                             { cell
                                 | value = CVNone
-                                , report = Nothing
+                                , report = ( cell.index, Nothing )
                                 , replData = Nothing
                                 , cellState = CSView
                             }
@@ -108,7 +108,7 @@ executeCell cellIndex model =
                                 Notebook.Parser.Expr sourceText ->
                                     let
                                         cleanCell =
-                                            { cell | report = Nothing, replData = Nothing, value = CVNone }
+                                            { cell | report = ( cell.index, Nothing ), replData = Nothing, value = CVNone }
 
                                         cleanBook =
                                             Notebook.CellHelper.updateBookWithCell cleanCell model.currentBook
@@ -208,7 +208,7 @@ processCell cellState cellIndex model_ =
         Just cell ->
             case cell.tipe of
                 Cell.CTCode ->
-                    processCode model { cell | report = Nothing, replData = Nothing, cellState = CSView }
+                    processCode model { cell | report = ( cell.index, Nothing ), replData = Nothing, cellState = CSView }
 
                 Cell.CTMarkdown ->
                     processMarkdown model { cell | cellState = CSView }

@@ -66,7 +66,7 @@ scratchPad username =
           , value = CVMarkdown "This is a *test*"
           , cellState = CSView
           , locked = False
-          , report = Nothing
+          , report = ( 0, Nothing )
           , replData = Nothing
           }
         , { index = 1
@@ -75,7 +75,7 @@ scratchPad username =
           , value = CVNone
           , cellState = CSView
           , locked = False
-          , report = Nothing
+          , report = ( 1, Nothing )
           , replData = Nothing
           }
         ]
@@ -104,7 +104,7 @@ new author title =
           , value = CVMarkdown "This is a *test*"
           , cellState = CSView
           , locked = False
-          , report = Nothing
+          , report = ( 0, Nothing )
           , replData = Nothing
           }
         , { index = 1
@@ -113,7 +113,7 @@ new author title =
           , value = CVNone
           , cellState = CSView
           , locked = False
-          , report = Nothing
+          , report = ( 0, Nothing )
           , replData = Nothing
           }
         ]
@@ -142,7 +142,7 @@ newBook author title =
           , value = CVMarkdown "This is a *test*"
           , cellState = CSView
           , locked = False
-          , report = Nothing
+          , report = ( 0, Nothing )
           , replData = Nothing
           }
         , { index = 1
@@ -151,7 +151,7 @@ newBook author title =
           , value = CVNone
           , cellState = CSView
           , locked = False
-          , report = Nothing
+          , report = ( 1, Nothing )
           , replData = Nothing
           }
         ]
@@ -219,7 +219,7 @@ setReplDataAt index report book =
             List.map
                 (\cell ->
                     if cell.index == index then
-                        { cell | report = report }
+                        { cell | report = ( index, report ) }
 
                     else
                         cell

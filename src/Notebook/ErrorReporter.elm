@@ -85,17 +85,18 @@ errorSummary cells =
 collateErrorReports : List Cell -> List ErrorReport
 collateErrorReports cells =
     let
-        foo c =
+        extractErrorReport : Cell -> Maybe ErrorReport
+        extractErrorReport c =
             case c.report of
-                Nothing ->
+                ( _, Nothing ) ->
                     Nothing
 
-                Just report ->
-                    Just ( c.index, report )
+                ( index, Just report ) ->
+                    Just ( index, report )
 
         collatedData =
             cells
-                |> List.map (\c -> foo c)
+                |> List.map (\c -> extractErrorReport c)
                 |> List.filterMap identity
     in
     collatedData
@@ -104,17 +105,17 @@ collateErrorReports cells =
 errorsToString : List Cell -> String
 errorsToString cells =
     cells
-        |> List.map .report
+        |> List.map (.report >> Tuple.second)
         |> List.filterMap identity
         |> List.Extra.uniqueBy (List.map Notebook.Types.toString)
         |> List.map (List.map Notebook.Types.toString >> String.join "\n")
         |> String.join "\n\n"
 
 
-errorsToStringListList : List { a | report : Maybe (List MessageItem) } -> List (List String)
+errorsToStringListList : List Cell -> List (List String)
 errorsToStringListList cells =
     cells
-        |> List.map .report
+        |> List.map (.report >> Tuple.second)
         |> List.filterMap identity
         |> List.Extra.uniqueBy (List.map Notebook.Types.toString)
         |> List.map (List.map Notebook.Types.toString)
