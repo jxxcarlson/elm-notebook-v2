@@ -284,8 +284,8 @@ err =
     ]
 
 
-adjustErrorLocation : Int -> MessageItem -> MessageItem
-adjustErrorLocation errorOffset messageItem =
+adjustErrorLocation : MessageItem -> MessageItem
+adjustErrorLocation messageItem =
     case messageItem of
         Plain str ->
             case Notebook.Parser.getErrorOffset str of
