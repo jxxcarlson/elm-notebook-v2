@@ -2,6 +2,7 @@ module Notebook.Parser exposing
     ( Classification(..)
     , classify
     , getErrorOffset
+    , numberOfLeadingSpaces
     , replItemParser
     )
 
@@ -40,6 +41,23 @@ errorOffsetParser =
         |. symbol "\n\n"
         |= Parser.int
         |. symbol "|"
+
+
+numberOfLeadingSpaces : String -> Int
+numberOfLeadingSpaces str =
+    case run leadingSpaceParser str of
+        Ok offset ->
+            offset
+
+        Err _ ->
+            0
+
+
+leadingSpaceParser : Parser Int
+leadingSpaceParser =
+    succeed identity
+        |. chompWhile (\c -> c == ' ')
+        |= getOffset
 
 
 type Classification
