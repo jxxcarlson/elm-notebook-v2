@@ -17,6 +17,7 @@ import List.Extra
 import Notebook.Cell exposing (Cell)
 import Notebook.Parser
 import Notebook.Types exposing (MessageItem(..), StyledString)
+import View.Style
 
 
 type alias ReplError =
