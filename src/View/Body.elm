@@ -125,8 +125,6 @@ errorDetails model errorSummary =
                         ]
                     , E.column
                         [ E.paddingXY 12 12
-                        , View.Style.monospace
-                        , Background.color (E.rgb 0 0 0)
                         , E.spacing 12
                         ]
                         summary
@@ -171,7 +169,6 @@ importPackageWarning model =
     if String.contains "You are trying to import" (Notebook.ErrorReporter.errorsToString model.currentBook.cells) then
         E.paragraph
             [ Font.size 14
-            , Background.color (E.rgb 0 0 0)
             , Font.color (E.rgb 1 1 0)
             , E.paddingXY 12 12
             ]
