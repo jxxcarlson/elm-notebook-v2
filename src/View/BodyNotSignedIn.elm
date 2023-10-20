@@ -30,7 +30,7 @@ view model =
             ]
             [ E.column [ Font.size 16, E.spacing 16, E.paddingEach { left = 0, right = 0, top = 12, bottom = 48 } ]
                 [ E.paragraph [ E.spacing 8 ]
-                    [ E.text "Elm Notebook is a web app for writing and running Elm code. "
+                    [ E.text "Elm Notebook is a web app for writing and running Elm code.  "
                     , E.text "Cells contain either text or Elm code. "
                     , E.el [ Font.italic, Font.color (E.rgb 0.65 0.65 1.0) ] (E.text "For the time being, ")
                     , E.el [ Font.italic, Font.color (E.rgb 0.65 0.65 1.0) ] (E.text "Elm Notebook cannot run any functions which produce graphics ")
