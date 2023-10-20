@@ -49,7 +49,7 @@ declarationsOrErrorReport model =
         -- errorSummary : List (Element msg)
         errorSummary : List ( Int, List (Element msg) )
         errorSummary =
-            rawErrorSummary |> List.map (Notebook.ErrorReporter.prepareReport 0)
+            rawErrorSummary |> List.map Notebook.ErrorReporter.prepareReport
 
         _ =
             Debug.log "__errorSummary Length__" ( List.length rawErrorSummary, List.length errorSummary )

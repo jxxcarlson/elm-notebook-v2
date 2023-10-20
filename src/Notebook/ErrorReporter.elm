@@ -59,7 +59,7 @@ errorSummary cells =
             []
 
         errors ->
-            List.map (prepareReport 0 >> (\( k, xx ) -> ( k, Element.column [] xx ))) errors
+            List.map (prepareReport >> (\( k, xx ) -> ( k, Element.column [] xx ))) errors
 
 
 
@@ -324,27 +324,64 @@ messageItemFilter key item =
 
 --collateErrorReports : List Cell -> List ( Int, List Notebook.Types.MessageItem )
 --collateErrorReports cells
+--_@FIRST: Just (Plain "I cannot find a `Fi` variant:\n\n6|   Fi 1 7\n     ")
+--
+--  _@SECOND: Just (Styled { bold = False, color = Just "RED", string = "^^", underline = False })
 
 
-prepareReport : Int -> ( Int, List MessageItem ) -> ( Int, List (Element msg) )
-prepareReport errorOffset ( k, items_ ) =
-    let
-        items =
-            items_
-                |> List.filter (messageItemFilter "Evergreen")
-                |> List.map (adjustErrorLocation errorOffset)
+prepareReport : ( Int, List MessageItem ) -> ( Int, List (Element msg) )
+prepareReport ( k, items_ ) =
+    case items_ of
+        first_ :: second_ :: rest ->
+            let
+                strr =
+                    case first_ of
+                        Notebook.Types.Plain str ->
+                            str
 
-        groups : List (List MessageItem)
-        groups =
-            groupMessageItemsHelp (breakMessages items)
+                        _ ->
+                            "NADA"
 
-        bar : List (Element msg)
-        bar =
-            groups
-                |> List.map (List.map (\item -> renderMessageItem item))
-                |> List.map (\group_ -> paragraph [] group_)
-    in
-    ( k, bar )
+                first =
+                    adjustErrorLocation first_
+
+                second =
+                    case second_ of
+                        Plain _ ->
+                            second_
+
+                        Styled styledString ->
+                            Styled { styledString | string = String.repeat n " " ++ styledString.string }
+
+                n =
+                    Notebook.Parser.getErrorOffset strr |> Maybe.withDefault 0 |> Debug.log "_@ERROR_OFFSET"
+
+                --_ =
+                --    Debug.log "_@FIRST" strr
+                _ =
+                    Debug.log "_@SECOND" second
+
+                --_@FIRST: "I cannot find a `Fi` variant:\n\n6|   size (Fi 1 7)\n           "
+                -- @SECOND: Styled { bold = False, color = Just "RED", string = "^^", underline = False }
+                items =
+                    rest
+                        |> List.filter (messageItemFilter "Evergreen")
+
+                --|> List.map (adjustErrorLocation errorOffset)
+                groups : List (List MessageItem)
+                groups =
+                    groupMessageItemsHelp (breakMessages (adjustErrorLocation first :: second :: items))
+
+                bar : List (Element msg)
+                bar =
+                    groups
+                        |> List.map (List.map (\item -> renderMessageItem item))
+                        |> List.map (\group_ -> paragraph [] group_)
+            in
+            ( k, bar )
+
+        _ ->
+            ( k, [] )
 
 
 groupMessageItemsHelp : List MessageItem -> List (List MessageItem)
