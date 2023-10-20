@@ -414,9 +414,13 @@ submitPackageList =
     buttonTemplate [] SubmitPackageList "Install"
 
 
-toggleShowErrorPanel : Bool -> Element FrontendMsg
-toggleShowErrorPanel showErrorPanel =
-    if showErrorPanel then
+toggleShowErrorPanel : FrontendModel -> Element FrontendMsg
+toggleShowErrorPanel model =
+    let
+        foo =
+            1
+    in
+    if model.showErrorPanel then
         Button.smallPrimary { msg = ToggleShowErrorPanel, status = Button.Active, label = Button.Text "Hide Errors", tooltipText = Nothing }
 
     else

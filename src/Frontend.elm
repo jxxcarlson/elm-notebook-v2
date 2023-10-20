@@ -78,6 +78,7 @@ init url key =
       , messageId = 0
 
       -- NOTEBOOK (NEW)
+      , rawErrorSummary = []
       , showErrorPanel = True
       , theme = Notebook.Book.DarkTheme
       , packagesFromCompiler = []

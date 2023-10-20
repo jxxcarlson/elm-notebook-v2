@@ -2,6 +2,7 @@ module Notebook.Types exposing
     ( CellDirection(..)
     , ElmPackage
     , ElmPackageSummary
+    , ErrorReport
     , EvalState
     , ExposedModules
     , MessageItem(..)
@@ -100,6 +101,10 @@ type CellDirection
 type MessageItem
     = Plain String
     | Styled StyledString
+
+
+type alias ErrorReport =
+    ( Int, List MessageItem )
 
 
 type alias StyledString =

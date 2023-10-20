@@ -1,6 +1,5 @@
 module Notebook.ErrorReporter exposing
-    ( ErrorReport
-    , RenderedErrorReport
+    ( RenderedErrorReport
     , collateErrorReports
     , decodeErrorReporter
     , errorKeys
@@ -19,13 +18,9 @@ import Json.Decode as D
 import List.Extra
 import Notebook.Cell exposing (Cell)
 import Notebook.Parser
-import Notebook.Types exposing (MessageItem(..), StyledString)
+import Notebook.Types exposing (ErrorReport, MessageItem(..), StyledString)
 import Types
 import View.Style
-
-
-type alias ErrorReport =
-    ( Int, List MessageItem )
 
 
 type alias RenderedErrorReport =
@@ -74,6 +69,7 @@ errorKeysFromCells cells =
         |> List.Extra.unique
         |> List.map (\s -> ( Notebook.Cell.locate s cells, s ))
         |> List.sortBy (\( loc, _ ) -> loc)
+        |> Debug.log "@@@@errorKeysFromCells"
 
 
 errorSummary : List Cell -> List ( Int, Element Types.FrontendMsg )
@@ -83,10 +79,10 @@ errorSummary cells =
             []
 
         errors ->
-            List.map (prepareReport >> (\( k, xx ) -> ( k, Element.column [] xx ))) errors
+            List.map (prepareReport >> (\( k, xx ) -> ( k, Element.column [] xx ))) errors |> Debug.log "@@@@errorSummary"
 
 
-collateErrorReports : List Cell -> List ( Int, List Notebook.Types.MessageItem )
+collateErrorReports : List Cell -> List ErrorReport
 collateErrorReports cells =
     let
         foo c =
@@ -331,14 +327,6 @@ messageItemFilter key item =
 
         Styled styledString ->
             not <| String.contains key styledString.string
-
-
-
---collateErrorReports : List Cell -> List ( Int, List Notebook.Types.MessageItem )
---collateErrorReports cells
---_@FIRST: Just (Plain "I cannot find a `Fi` variant:\n\n6|   Fi 1 7\n     ")
---
---  _@SECOND: Just (Styled { bold = False, color = Just "RED", string = "^^", underline = False })
 
 
 prepareReport : ErrorReport -> RenderedErrorReport

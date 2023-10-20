@@ -190,19 +190,23 @@ viewValue viewData cell =
         CTCode ->
             case cell.report of
                 Just report ->
-                    viewFailure viewData report
+                    viewFailure viewData cell report
 
                 Nothing ->
                     viewSuccess viewData cell
 
 
-viewFailure : ViewData -> List Notebook.Types.MessageItem -> Element FrontendMsg
-viewFailure viewData report =
-    render viewData report
+viewFailure : ViewData -> Cell -> List Notebook.Types.MessageItem -> Element FrontendMsg
+viewFailure viewData cell report =
+    render viewData ( cell.index, report )
 
 
-render : ViewData -> List Notebook.Types.MessageItem -> Element FrontendMsg
+render : ViewData -> Notebook.Types.ErrorReport -> Element FrontendMsg
 render viewData report =
+    let
+        ( k, messageList ) =
+            Notebook.ErrorReporter.prepareReport report
+    in
     E.column
         [ E.paddingXY 8 8
         , Font.color (E.rgb 0.9 0.9 0.9)
@@ -216,7 +220,12 @@ render viewData report =
         --, E.scrollbarY
         , Background.color (E.rgb 0 0 0)
         ]
-        --(Notebook.ErrorReporter.prepareReport viewData.errorOffset report)
+        -- [ E.el [ Font.color (E.rgb 1 0.5 0) ] (E.text "Error") ]
+        -- (Notebook.ErrorReporter.prepareReport viewData.errorOffset report)
+        --[ E.text ("Cell: " ++ String.fromInt k)
+        --, E.column [] messageList
+        --]
+        -- messageList
         [ E.el [ Font.color (E.rgb 1 0.5 0) ] (E.text "Error") ]
 
 

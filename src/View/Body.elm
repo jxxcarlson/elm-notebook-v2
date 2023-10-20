@@ -8,9 +8,9 @@ import Element.Font as Font
 import List.Extra
 import Notebook.Book exposing (Book)
 import Notebook.Cell exposing (Cell)
-import Notebook.ErrorReporter exposing (ErrorReport, RenderedErrorReport)
+import Notebook.ErrorReporter exposing (RenderedErrorReport)
 import Notebook.Eval
-import Notebook.Types
+import Notebook.Types exposing (ErrorReport)
 import Notebook.View
 import Types exposing (FrontendModel, FrontendMsg)
 import UILibrary.Color as Color
@@ -78,7 +78,7 @@ reportErrors model cells errorSummary =
             errorSummary |> List.map (\( k, _ ) -> k)
     in
     errorReporterStyle model
-        ([ View.Button.toggleShowErrorPanel model.showErrorPanel
+        ([ View.Button.toggleShowErrorPanel model
          , errorSummaryHeading model errorKeys_
          , importPackageWarning model
          , makeErrorKeys errorKeys_
@@ -205,6 +205,7 @@ displayLocation ks =
 -- END OF HELPERS FOR REPORT_ERRORS
 
 
+declarations : FrontendModel -> Element FrontendMsg
 declarations model =
     E.column
         [ Font.size 14
@@ -220,7 +221,7 @@ declarations model =
             [ E.el [ Font.underline ] (E.text <| "Types and Declarations")
             , E.el [] (E.text <| "(" ++ String.fromInt (Dict.size model.evalState.decls + Dict.size model.evalState.types) ++ ")")
             , E.el [ E.paddingEach { left = 3, right = 0, top = 0, bottom = 0 } ] View.Button.updateDeclarationsDictionary
-            , View.Button.toggleShowErrorPanel model.showErrorPanel
+            , View.Button.toggleShowErrorPanel model
             ]
         , E.el
             [ E.height (E.px <| View.Geometry.loweRightSidePanelHeight model)

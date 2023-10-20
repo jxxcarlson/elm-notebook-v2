@@ -54,6 +54,7 @@ type alias FrontendModel =
     , privateDataSetMetaDataList : List Notebook.DataSet.DataSetMetaData
 
     -- NOTEBOOKS
+    , rawErrorSummary : List Notebook.Types.ErrorReport
     , showErrorPanel : Bool
     , theme : Notebook.Book.Theme
     , evalState : Notebook.Types.EvalState
