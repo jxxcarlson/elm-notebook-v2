@@ -94,12 +94,36 @@ collateErrorReports cells =
                 ( index, Just report ) ->
                     Just ( index, report )
 
+        collatedData : List ErrorReport
         collatedData =
             cells
                 |> List.map (\c -> extractErrorReport c)
                 |> List.filterMap identity
+                |> Debug.log "@@@@collateErrorReports"
+
+        collatedData2 : List ErrorReport
+        collatedData2 =
+            List.foldl (\( index, report ) acc -> addOrReferenceBack ( index, report ) acc) [] collatedData
+
+        addOrReferenceBack : ErrorReport -> List ErrorReport -> List ErrorReport
+        addOrReferenceBack ( index, rawReport ) acc_ =
+            case List.Extra.find (\( _, rawReport_ ) -> rawReport_ == rawReport) acc_ of
+                Nothing ->
+                    ( index, rawReport ) :: acc_
+
+                Just ( idx, _ ) ->
+                    let
+                        messageItem : MessageItem
+                        messageItem =
+                            Styled { bold = False, underline = False, color = Just "yellow", string = "Duplicate error, see cell " ++ String.fromInt (idx + 1) }
+
+                        messageItem2 : MessageItem
+                        messageItem2 =
+                            Styled { bold = False, underline = False, color = Just "yellow", string = "............." }
+                    in
+                    ( index, [ messageItem, messageItem2 ] ) :: acc_
     in
-    collatedData
+    List.reverse collatedData2 |> Debug.log "@@@@collateErrorReports2"
 
 
 errorsToString : List Cell -> String

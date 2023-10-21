@@ -59,13 +59,6 @@ reportErrors model cells errorSummary =
     let
         errorKeys_ =
             Notebook.ErrorReporter.errorKeysFromCells cells
-
-        summaryCells =
-            errorKeys_ |> List.map Tuple.first |> List.concat
-
-        cellsInErrorSummary : List Int
-        cellsInErrorSummary =
-            errorSummary |> List.map (\( k, _ ) -> k)
     in
     errorReporterStyle model
         ([ View.Button.toggleShowErrorPanel model
@@ -73,7 +66,6 @@ reportErrors model cells errorSummary =
          , importPackageWarning model
          , makeErrorKeys errorKeys_
          ]
-            --++ errorDetails model (List.filter (\( k, _ ) -> List.member (k + 1) summaryCells) errorSummary)
             ++ errorDetails model errorSummary
         )
 
@@ -111,7 +103,7 @@ errorDetails model listOfRenderedErrorReports =
         ]
         (List.indexedMap
             (\k ( cIndex, report ) ->
-                E.paragraph
+                E.column
                     [ if k == 0 then
                         E.paddingEach { left = 0, top = 36, bottom = 0, right = 0 }
 
@@ -125,6 +117,8 @@ errorDetails model listOfRenderedErrorReports =
                     , E.column
                         [ E.paddingXY 12 12
                         , E.spacing 12
+                        , View.Style.monospace
+                        , E.width (E.px 500)
                         ]
                         report
                     ]

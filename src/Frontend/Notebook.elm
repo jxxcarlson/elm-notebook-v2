@@ -54,6 +54,7 @@ type alias Model =
 
 
 setCurrentNotebook model book =
+    -- @TODO: Init book
     case model.currentUser of
         Nothing ->
             ( model, Cmd.none )
@@ -84,6 +85,7 @@ setCurrentNotebook model book =
             ( { newModel
                 | currentUser = Just user
                 , showErrorPanel = True
+                , errorReports = []
               }
             , Cmd.batch
                 [ sendToBackend (UpdateUserWith user)
