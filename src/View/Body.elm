@@ -9,7 +9,7 @@ import Notebook.Book exposing (Book)
 import Notebook.Cell exposing (Cell)
 import Notebook.ErrorReporter exposing (RenderedErrorReport)
 import Notebook.Eval
-import Notebook.Types exposing (ErrorReport)
+import Notebook.Types exposing (ErrorReport, MessageItem(..))
 import Notebook.View
 import Types exposing (FrontendModel, FrontendMsg)
 import UILibrary.Color as Color
@@ -40,11 +40,15 @@ view model user =
 
 declarationsOrErrorReport : FrontendModel -> Element FrontendMsg
 declarationsOrErrorReport model =
-    if model.errorReports == [] then
-        declarations model
-
-    else if model.showErrorPanel then
-        reportErrors model model.currentBook.cells (model.errorReports |> List.map Notebook.ErrorReporter.renderReport)
+    let
+        _ =
+            Debug.log "@@@errorReports" model.errorReports
+    in
+    if model.errorReports /= [] && model.errorReports /= [ ( 0, [ Plain "end" ] ) ] && model.showErrorPanel then
+        reportErrors
+            model
+            model.currentBook.cells
+            (model.errorReports |> List.map Notebook.ErrorReporter.renderReport)
 
     else
         declarations model
