@@ -99,10 +99,9 @@ collateErrorReports cells =
             cells
                 |> List.map (\c -> extractErrorReport c)
                 |> List.filterMap identity
-
-        collatedData2 : List ErrorReport
-        collatedData2 =
-            List.foldl (\( index, report ) acc -> addOrReferenceBack ( index, report ) acc) [] collatedData
+                -- Below: flag duplicates
+                |> List.foldl (\( index, report ) acc -> addOrReferenceBack ( index, report ) acc) []
+                |> Debug.log "@@@@collatedData"
 
         addOrReferenceBack : ErrorReport -> List ErrorReport -> List ErrorReport
         addOrReferenceBack ( index, rawReport ) acc_ =
@@ -122,7 +121,7 @@ collateErrorReports cells =
                     in
                     ( index, [ messageItem, messageItem2 ] ) :: acc_
     in
-    List.reverse collatedData2
+    List.reverse (( 0, [ Plain "end" ] ) :: collatedData)
 
 
 errorsToString : List Cell -> String

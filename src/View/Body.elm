@@ -90,42 +90,52 @@ errorReporterStyle model =
 
 errorDetails : FrontendModel -> List RenderedErrorReport -> List (Element FrontendMsg)
 errorDetails model listOfRenderedErrorReports =
-    [ E.el
-        [ Font.color reportLabelColor
-        , Font.size 16
-        , E.paddingEach { left = 12, right = 0, top = 18, bottom = 12 }
-        ]
-        (E.text ("Details: " ++ String.fromInt (List.length listOfRenderedErrorReports)))
+    [ separator
+    , detailHeading listOfRenderedErrorReports
     , E.column
         [ E.height (E.px <| View.Geometry.loweRightSidePanelHeight model)
         , E.width (E.px <| View.Geometry.sidePanelWidth model)
         , E.scrollbarY
         ]
         (List.indexedMap
-            (\k ( cIndex, report ) ->
-                E.column
-                    [ if k == 0 then
-                        E.paddingEach { left = 0, top = 36, bottom = 0, right = 0 }
-
-                      else
-                        E.paddingEach { left = 0, top = 12, bottom = 0, right = 0 }
-                    ]
-                    [ E.column [ Font.color reportLabelColor, Font.size 14, E.paddingEach { left = 12, top = 12, bottom = 4, right = 0 } ]
-                        [ E.text <| "Cell: " ++ (String.fromInt (cIndex + 1) ++ ".")
-                        , E.text "______________________"
-                        ]
-                    , E.column
-                        [ E.paddingXY 12 12
-                        , E.spacing 12
-                        , View.Style.monospace
-                        , E.width (E.px 500)
-                        ]
-                        report
-                    ]
-            )
+            (\k ( cIndex, report ) -> renderReport cIndex report)
             listOfRenderedErrorReports
         )
     ]
+
+
+separator =
+    E.el
+        [ Font.color reportLabelColor
+        , Font.size 16
+        , E.paddingEach { left = 12, right = 0, top = 12, bottom = 12 }
+        ]
+        (E.text "===================================================")
+
+
+detailHeading listOfRenderedErrorReports =
+    E.el
+        [ Font.color reportLabelColor
+        , Font.size 16
+        , E.paddingEach { left = 12, right = 0, top = 18, bottom = 12 }
+        ]
+        (E.text ("Details: " ++ String.fromInt (List.length listOfRenderedErrorReports)))
+
+
+renderReport cIndex report =
+    E.column
+        []
+        [ E.column [ Font.color reportLabelColor, Font.size 14, E.paddingEach { left = 12, top = 12, bottom = 4, right = 0 } ]
+            [ E.text <| "Cell: " ++ (String.fromInt (cIndex + 1) ++ ".")
+            , E.text "______________________"
+            ]
+        , E.column
+            [ E.paddingXY 12 12
+            , E.spacing 8
+            , View.Style.monospace
+            ]
+            report
+        ]
 
 
 makeErrorKeys : List ( List Int, String ) -> Element msg
