@@ -99,7 +99,6 @@ collateErrorReports cells =
             cells
                 |> List.map (\c -> extractErrorReport c)
                 |> List.filterMap identity
-                |> Debug.log "@@@@collateErrorReports"
 
         collatedData2 : List ErrorReport
         collatedData2 =
@@ -123,7 +122,7 @@ collateErrorReports cells =
                     in
                     ( index, [ messageItem, messageItem2 ] ) :: acc_
     in
-    List.reverse collatedData2 |> Debug.log "@@@@collateErrorReports2"
+    List.reverse collatedData2
 
 
 errorsToString : List Cell -> String
