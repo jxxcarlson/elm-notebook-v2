@@ -113,10 +113,10 @@ collateErrorReports cells =
                 -- Below: flag duplicates
                 |> List.foldl (\( index, report ) acc -> addOrReferenceBack ( index, report ) acc) []
                 |> Debug.log "@@@@collatedData"
-                |> Notebook.RepeatingBlocks.removeOneRepeatingBlock
-                |> Notebook.RepeatingBlocks.removeOneRepeatingBlock
-                |> Notebook.RepeatingBlocks.removeOneRepeatingBlock
 
+        --|> Notebook.RepeatingBlocks.removeOneRepeatingBlock (\a b -> Tuple.second a == Tuple.second b)
+        --|> Notebook.RepeatingBlocks.removeOneRepeatingBlock (\a b -> Tuple.second a == Tuple.second b)
+        --|> Notebook.RepeatingBlocks.removeOneRepeatingBlock (\a b -> Tuple.second a == Tuple.second b)
         addOrReferenceBack : ErrorReport -> List ErrorReport -> List ErrorReport
         addOrReferenceBack ( index, rawReport ) acc_ =
             case List.Extra.find (\( _, rawReport_ ) -> rawReport_ == rawReport) acc_ of

@@ -85,66 +85,66 @@ type alias State a =
     { found : Bool, repeatingBlock : List a, first : a, input : List a }
 
 
-removeOneRepeatingBlock : List a -> List a
-removeOneRepeatingBlock items =
-    removeOneRepeatingBlockHelper { removed = False, index = 0, items = items } |> .items
+removeOneRepeatingBlock : (a -> a -> Bool) -> List a -> List a
+removeOneRepeatingBlock eq items =
+    removeOneRepeatingBlockHelper eq { removed = False, index = 0, items = items } |> .items
 
 
-removeOneRepeatingBlockHelper : { removed : Bool, index : Int, items : List a } -> { removed : Bool, index : Int, items : List a }
-removeOneRepeatingBlockHelper { removed, index, items } =
+removeOneRepeatingBlockHelper : (a -> a -> Bool) -> { removed : Bool, index : Int, items : List a } -> { removed : Bool, index : Int, items : List a }
+removeOneRepeatingBlockHelper eq { removed, index, items } =
     if removed then
         { removed = removed, index = index, items = items }
 
     else
         let
             smaller =
-                removeRepeatingBlockAt index items
+                removeRepeatingBlockAt eq index items
         in
         if List.length smaller < List.length items then
             { removed = True, index = index, items = smaller }
 
         else if index < List.length items - 1 then
-            removeOneRepeatingBlockHelper { removed = False, index = index + 1, items = items }
+            removeOneRepeatingBlockHelper eq { removed = False, index = index + 1, items = items }
 
         else
             { removed = False, index = index, items = items }
 
 
-removeRepeatingBlockAt : Int -> List a -> List a
-removeRepeatingBlockAt k items =
+removeRepeatingBlockAt : (a -> a -> Bool) -> Int -> List a -> List a
+removeRepeatingBlockAt eq k items =
     let
         ( before, after ) =
             List.Extra.splitAt k items
     in
-    before ++ findRepeatingBlock after
+    before ++ findRepeatingBlock eq after
 
 
-removeRepeatingBlock : List a -> List a
-removeRepeatingBlock items =
+removeRepeatingBlock : (a -> a -> Bool) -> List a -> List a
+removeRepeatingBlock eq items =
     let
         repeatingBlock =
-            findRepeatingBlock items
+            findRepeatingBlock eq items
     in
-    removeBlock repeatingBlock items
+    removeBlock eq repeatingBlock items
 
 
-removeBlock : List a -> List a -> List a
-removeBlock keyBlock items =
+removeBlock : (a -> a -> Bool) -> List a -> List a -> List a
+removeBlock eq keyBlock items =
     let
         ( keyBlock_, items_ ) =
-            removeBlockHelper ( keyBlock, items )
+            removeBlockHelper eq ( keyBlock, items )
     in
     keyBlock ++ items_
 
 
-removeBlockHelper : ( List a, List a ) -> ( List a, List a )
-removeBlockHelper ( keyBlock, items ) =
+removeBlockHelper : (a -> a -> Bool) -> ( List a, List a ) -> ( List a, List a )
+removeBlockHelper eq ( keyBlock, items ) =
     let
         n =
             List.length keyBlock
     in
-    if matchBlock keyBlock items then
-        removeBlockHelper ( keyBlock, List.drop n items )
+    if matchBlock eq keyBlock items then
+        removeBlockHelper eq ( keyBlock, List.drop n items )
 
     else
         ( keyBlock, items )
@@ -163,8 +163,8 @@ removeBlockHelper ( keyBlock, items ) =
     False : Bool
 
 -}
-matchBlock : List a -> List a -> Bool
-matchBlock keyBlock targetItems =
+matchBlock : (a -> a -> Bool) -> List a -> List a -> Bool
+matchBlock eq keyBlock targetItems =
     case ( List.head keyBlock, List.head targetItems ) of
         ( Nothing, _ ) ->
             True
@@ -173,8 +173,8 @@ matchBlock keyBlock targetItems =
             False
 
         ( Just keyItem, Just targetItem ) ->
-            if keyItem == targetItem then
-                matchBlock (List.drop 1 keyBlock) (List.drop 1 targetItems)
+            if eq keyItem targetItem then
+                matchBlock eq (List.drop 1 keyBlock) (List.drop 1 targetItems)
 
             else
                 False
@@ -188,8 +188,8 @@ matchBlock keyBlock targetItems =
     [1,2,3]
 
 -}
-findRepeatingBlock : List a -> List a
-findRepeatingBlock input =
+findRepeatingBlock : (a -> a -> Bool) -> List a -> List a
+findRepeatingBlock eq input =
     case List.head input of
         Nothing ->
             []
@@ -199,26 +199,26 @@ findRepeatingBlock input =
                 state =
                     { found = False, repeatingBlock = [ item ], first = item, input = List.drop 1 input }
             in
-            loop state |> .repeatingBlock |> List.reverse
+            loop eq state |> .repeatingBlock |> List.reverse
 
 
-loop : State a -> State a
-loop state =
+loop : (a -> a -> Bool) -> State a -> State a
+loop eq state =
     if state.found || state.input == [] then
         state
 
     else
-        loop (nextState state)
+        loop eq (nextState eq state)
 
 
-nextState : State a -> State a
-nextState state =
+nextState : (a -> a -> Bool) -> State a -> State a
+nextState eq state =
     case List.head state.input of
         Nothing ->
             state
 
         Just item ->
-            if item == state.first then
+            if eq item state.first then
                 { state | found = True, input = List.drop 1 state.input }
 
             else
