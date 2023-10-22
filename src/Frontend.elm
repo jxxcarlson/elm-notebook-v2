@@ -711,10 +711,7 @@ updateFromBackend msg model =
                                 , currentBook = currentBook |> Notebook.Book.clearValues
                             }
                     in
-                    Message.postMessage ("**Got:  " :: currentBook.packageNames |> String.join ", ") Types.MSBlue newModel
-                        |> (\( model_, cmd ) ->
-                                ( { model_ | books = books, currentBook = currentBook }, Cmd.batch [ cmd, Notebook.Package.installNewPackages currentBook.packageNames ] )
-                           )
+                    ( { newModel | books = books, currentBook = currentBook }, Cmd.batch [ Notebook.Package.installNewPackages currentBook.packageNames ] )
 
 
 view : Model -> { title : String, body : List (Html.Html FrontendMsg) }
