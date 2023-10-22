@@ -65,7 +65,9 @@ setCurrentNotebook model book =
                     model.currentBook
 
                 currentBook =
-                    Notebook.Book.initializeCellState book |> (\b -> { b | dirty = False })
+                    Notebook.Book.initializeCellState book
+                        |> (\b -> { b | dirty = False })
+                        |> Notebook.Book.clearValues
 
                 newBooks =
                     model.books

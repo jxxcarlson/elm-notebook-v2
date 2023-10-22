@@ -3,6 +3,7 @@ module Notebook.Book exposing
     , DirectionToMove(..)
     , Theme(..)
     , ViewData
+    , clearValues
     , initializeCellState
     , moveCellUpDown
     , new
@@ -83,6 +84,23 @@ scratchPad username =
     , packageNames = []
     , tags = []
     , options = Dict.fromList []
+    }
+
+
+clearValues : Book -> Book
+clearValues book =
+    { book
+        | cells =
+            List.map
+                (\cell ->
+                    { cell
+                        | value = CVNone
+                        , cellState = CSView
+                        , report = ( cell.index, Nothing )
+                        , replData = Nothing
+                    }
+                )
+                book.cells
     }
 
 

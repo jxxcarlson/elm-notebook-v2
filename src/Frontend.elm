@@ -408,6 +408,7 @@ update msg model =
             Frontend.Notebook.importLoaded model dataString
 
         SetCurrentNotebook book ->
+            -- @NOTE: Init Book
             Frontend.Notebook.setCurrentNotebook model book
 
         TogglePublic ->
@@ -616,6 +617,7 @@ updateFromBackend msg model =
             ( { model | packageDict = packageDict }, Cmd.none )
 
         GotNotebook book_ ->
+            -- @NOTE: Init Book
             let
                 book =
                     Notebook.Book.initializeCellState book_
@@ -631,7 +633,7 @@ updateFromBackend msg model =
                     { model | evalState = Notebook.EvalCell.updateEvalStateWithCells book.cells Notebook.Types.emptyEvalState, currentBook = book }
             in
             ( { newModel
-                | currentBook = book
+                | currentBook = book |> Notebook.Book.clearValues
                 , books = addOrReplaceBook book model.books
                 , showErrorPanel = True
               }
@@ -639,6 +641,7 @@ updateFromBackend msg model =
             )
 
         GotPublicNotebook book_ ->
+            -- @NOTE: Init Book
             let
                 currentUser =
                     case model.currentUser of
@@ -654,7 +657,7 @@ updateFromBackend msg model =
                 newModel =
                     { model
                         | evalState = Notebook.EvalCell.updateEvalStateWithCells book.cells Notebook.Types.emptyEvalState
-                        , currentBook = book
+                        , currentBook = book |> Notebook.Book.clearValues
                     }
 
                 addOrReplaceBook xbook books =
@@ -677,6 +680,7 @@ updateFromBackend msg model =
             )
 
         GotNotebooks maybeNotebook books ->
+            -- @NOTE: Init Book
             case maybeNotebook of
                 Nothing ->
                     case List.head books of
@@ -703,7 +707,7 @@ updateFromBackend msg model =
                             { model
                                 | showErrorPanel = True
                                 , evalState = Notebook.EvalCell.updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState
-                                , currentBook = currentBook
+                                , currentBook = currentBook |> Notebook.Book.clearValues
                             }
                     in
                     Message.postMessage ("**Got:  " :: currentBook.packageNames |> String.join ", ") Types.MSBlue newModel

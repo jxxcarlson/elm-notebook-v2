@@ -3,7 +3,9 @@ module View.Footer exposing (view)
 import Element as E exposing (Element)
 import Element.Font as Font
 import Message
+import Notebook.Types exposing (MessageItem(..))
 import Predicate
+import Types exposing (FrontendModel, FrontendMsg)
 import UILibrary.Color as Color
 import View.Button as Button
 import View.Geometry
@@ -56,7 +58,7 @@ view model =
                 --, View.Utility.showIfIsAdmin model Button.runTask
                 , Button.packagesPopup model
                 , Button.cliPopup model
-                , E.el [ Font.color (E.rgb 1 0.5 0) ] (E.text <| String.fromInt (List.length model.errorReports) ++ " errors")
+                , errorIndicator model
 
                 --, E.el [ Font.color (E.rgb 1 1 1) ] (E.text <| String.left 4 model.currentBook.id)
                 --, View.Utility.showIfIsAdmin model Button.sendProgramToBeCompiled
@@ -93,6 +95,25 @@ view model =
                 --, View.Input.cloneReference model
                 ]
         )
+
+
+errorIndicator : { a | errorReports : List Notebook.Types.ErrorReport } -> Element FrontendMsg
+errorIndicator model =
+    let
+        filteredReports =
+            model.errorReports
+                |> List.filter (\report -> report /= ( 0, [ Plain "end" ] ))
+    in
+    E.el [ Font.color (E.rgb 1 0.5 0) ]
+        (E.text <|
+            String.fromInt (List.length filteredReports)
+                ++ " errors"
+        )
+
+
+
+--type alias ErrorReport =
+--    ( Int, List MessageItem )
 
 
 displayMessages model =

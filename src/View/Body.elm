@@ -123,7 +123,7 @@ detailHeading listOfRenderedErrorReports =
         , Font.size 16
         , E.paddingEach { left = 12, right = 0, top = 18, bottom = 12 }
         ]
-        (E.text ("Details: " ++ String.fromInt (List.length listOfRenderedErrorReports)))
+        (E.text ("Details: " ++ String.fromInt (List.length listOfRenderedErrorReports - 1)))
 
 
 renderReport cIndex report =
