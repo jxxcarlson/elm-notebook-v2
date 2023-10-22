@@ -120,7 +120,7 @@ separator =
 detailHeading listOfRenderedErrorReports =
     E.el
         [ Font.color reportLabelColor
-        , Font.size 16
+        , Font.size 14
         , E.paddingEach { left = 12, right = 0, top = 18, bottom = 12 }
         ]
         (E.text ("Details: " ++ String.fromInt (List.length listOfRenderedErrorReports - 1)))
@@ -129,14 +129,19 @@ detailHeading listOfRenderedErrorReports =
 renderReport cIndex report =
     E.column
         []
-        [ E.column [ Font.color reportLabelColor, Font.size 14, E.paddingEach { left = 12, top = 12, bottom = 4, right = 0 } ]
+        [ E.column
+            [ Font.color reportLabelColor
+            , Font.size 12
+            , E.paddingEach { left = 12, top = 12, bottom = 4, right = 0 }
+            ]
             [ E.text <| "Cell: " ++ (String.fromInt (cIndex + 1) ++ ".")
             , E.text "______________________"
             ]
         , E.column
             [ E.paddingXY 12 12
-            , E.spacing 8
+            , E.spacing 7
             , View.Style.monospace
+            , Font.size 12
             ]
             report
         ]
@@ -145,9 +150,10 @@ renderReport cIndex report =
 makeErrorKeys : List ( List Int, String ) -> Element msg
 makeErrorKeys errorKeys_ =
     E.column
-        [ E.spacing 24
+        [ E.spacing 12
         , E.paddingEach { left = 12, right = 12, top = 12, bottom = 24 }
-        , E.height (E.px 200)
+        , Font.size 12
+        , E.height (E.px 150)
         , E.scrollbarY
         ]
         (List.map (\( loc, s ) -> E.paragraph [ E.spacing 8 ] [ displayLocation loc, E.text s ]) errorKeys_)
@@ -164,12 +170,12 @@ reportLabelColor =
 errorSummaryHeading model errorKeys_ =
     E.row
         [ E.paddingXY 18 0
-        , E.paddingXY 12 24
+        , E.paddingXY 12 12
         , E.spacing 8
         , E.width (E.px <| View.Geometry.sidePanelWidth model)
         ]
         [ E.el
-            [ Font.size 18
+            [ Font.size 16
             , Font.color reportLabelColor
             ]
             (E.text <| "Error summary: " ++ String.fromInt (List.length errorKeys_))
