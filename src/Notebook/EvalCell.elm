@@ -67,7 +67,7 @@ executeNotebook model =
             createDelayedCommand2 errorReportDelay Types.UpdateErrorReports
     in
     ( { model
-        | currentBook = newBook
+        | currentBook = newBook |> Notebook.Book.clearValues
         , books =
             List.map
                 (\book ->
@@ -79,6 +79,7 @@ executeNotebook model =
                 )
                 model.books
         , evalState = newEvalState
+        , errorReports = []
       }
     , Cmd.batch (delayedCollateErrorReportsCmd :: commands)
     )
