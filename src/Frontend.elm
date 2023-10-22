@@ -351,12 +351,13 @@ update msg model =
             ( model, Cmd.none )
 
         PackageListSent result ->
-            case result of
-                Err _ ->
-                    Message.postMessage "E.3" Types.MSYellow model
-
-                Ok str ->
-                    Message.postMessage ("Sent: " ++ str) Types.MSBlue model
+            --case result of
+            --    Err _ ->
+            --        Message.postMessage "E.3" Types.MSYellow model
+            --
+            --    Ok str ->
+            --        Message.postMessage ("Sent: " ++ str) Types.MSBlue model
+            ( model, Cmd.none )
 
         ClearNotebookValues ->
             Notebook.Update.clearNotebookValues model.currentBook model

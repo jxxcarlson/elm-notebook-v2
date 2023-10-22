@@ -1,5 +1,8 @@
 module Notebook.RepeatingBlocks exposing
-    ( foobar
+    ( fibar
+    , findRepeatingBlock
+    , findRepeatingBlockAt
+    , foobar
     , foobar2
     , messageItemToComparable
     , occurrenceStats
@@ -9,6 +12,8 @@ module Notebook.RepeatingBlocks exposing
     , removeRepeatingBlock
     , removeRepeatingBlockAt
     , subsequences
+    , test
+    , test2
     )
 
 import List.Extra
@@ -92,6 +97,10 @@ removeOneRepeatingBlock eq items =
 
 removeOneRepeatingBlockHelper : (a -> a -> Bool) -> { removed : Bool, index : Int, items : List a } -> { removed : Bool, index : Int, items : List a }
 removeOneRepeatingBlockHelper eq { removed, index, items } =
+    let
+        _ =
+            Debug.log "START" True
+    in
     if removed then
         { removed = removed, index = index, items = items }
 
@@ -101,13 +110,13 @@ removeOneRepeatingBlockHelper eq { removed, index, items } =
                 removeRepeatingBlockAt eq index items
         in
         if List.length smaller < List.length items then
-            { removed = True, index = index, items = smaller }
+            { removed = True, index = index, items = smaller } |> Debug.log "@#SMALLER"
 
         else if index < List.length items - 1 then
-            removeOneRepeatingBlockHelper eq { removed = False, index = index + 1, items = items }
+            removeOneRepeatingBlockHelper eq { removed = False, index = index + 1, items = items } |> Debug.log "@#NEXT"
 
         else
-            { removed = False, index = index, items = items }
+            { removed = False, index = index, items = items } |> Debug.log "@#DONE"
 
 
 removeRepeatingBlockAt : (a -> a -> Bool) -> Int -> List a -> List a
@@ -116,7 +125,7 @@ removeRepeatingBlockAt eq k items =
         ( before, after ) =
             List.Extra.splitAt k items
     in
-    before ++ findRepeatingBlock eq after
+    before ++ removeRepeatingBlock eq after
 
 
 removeRepeatingBlock : (a -> a -> Bool) -> List a -> List a
@@ -202,6 +211,15 @@ findRepeatingBlock eq input =
             loop eq state |> .repeatingBlock |> List.reverse
 
 
+findRepeatingBlockAt : (a -> a -> Bool) -> Int -> List a -> List a
+findRepeatingBlockAt eq k input =
+    let
+        ( before, after ) =
+            List.Extra.splitAt k input
+    in
+    findRepeatingBlock eq after
+
+
 loop : (a -> a -> Bool) -> State a -> State a
 loop eq state =
     if state.found || state.input == [] then
@@ -223,6 +241,117 @@ nextState eq state =
 
             else
                 { state | repeatingBlock = item :: state.repeatingBlock, input = List.drop 1 state.input }
+
+
+test =
+    [ Plain "I cannot find a `Op` type: executeRPN : String -> Result (List Op) Int\n"
+    , Styled { bold = False, color = Just "RED", string = "^^", underline = False }
+    , Plain "I cannot find a `Op` type: executeRPN : String -> Result (List Op) Int\n"
+    , Styled { bold = False, color = Just "RED", string = "^^", underline = False }
+    ]
+
+
+test2 =
+    [ Plain "I cannot find a `Op` type: executeRPN : String -> Result (List Op) Int\n"
+    , Styled { bold = False, color = Just "RED", string = "^^", underline = False }
+    , Plain "I cannot find a `Op` type:| executeOps : List Op -> List Op\n                      "
+    , Styled { bold = False, color = Just "RED", string = "^^", underline = False }
+    , Plain "I cannot find a `Op` type: executeRPN : String -> Result (List Op) Int\n"
+    , Styled { bold = False, color = Just "RED", string = "^^", underline = False }
+    ]
+
+
+fibar__ : List ErrorReport
+fibar__ =
+    [ fibar_ ]
+
+
+fibar_ : ErrorReport
+fibar_ =
+    ( 7, fibar )
+
+
+fibar : List MessageItem
+fibar =
+    [ Plain "I cannot find a `Op` type:\n\n18| executeRPN : String -> Result (List Op) Int\n                                        "
+    , Styled { bold = False, color = Just "RED", string = "^^", underline = False }
+    , Plain "\nThese names seem close though:\n\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Opp", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Bool", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Cmd", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Int", underline = False }
+    , Plain "\n\nNote: Evergreen migrations need access to all custom type variants. Make sure\nboth `Op` and `Evergreen.VX.Op` are exposed.\n\n"
+    , Styled { bold = False, color = Nothing, string = "Hint", underline = True }
+    , Plain ": Read <https://elm-lang.org/0.19.1/imports> to see how `import`\ndeclarations work in Elm."
+    , Plain "I cannot find a `Op` type:\n\n16| executeOps : List Op -> List Op\n                      "
+    , Styled { bold = False, color = Just "RED", string = "^^", underline = False }
+    , Plain "\nThese names seem close though:\n\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Opp", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Bool", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Cmd", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Int", underline = False }
+    , Plain "\n\nNote: Evergreen migrations need access to all custom type variants. Make sure\nboth `Op` and `Evergreen.VX.Op` are exposed.\n\n"
+    , Styled { bold = False, color = Nothing, string = "Hint", underline = True }
+    , Plain ": Read <https://elm-lang.org/0.19.1/imports> to see how `import`\ndeclarations work in Elm."
+    , Plain "I cannot find a `Op` type:\n\n16| executeOps : List Op -> List Op\n                                 "
+    , Styled { bold = False, color = Just "RED", string = "^^", underline = False }
+    , Plain "\nThese names seem close though:\n\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Opp", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Bool", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Cmd", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Int", underline = False }
+    , Plain "\n\nNote: Evergreen migrations need access to all custom type variants. Make sure\nboth `Op` and `Evergreen.VX.Op` are exposed.\n\n"
+    , Styled { bold = False, color = Nothing, string = "Hint", underline = True }
+    , Plain ": Read <https://elm-lang.org/0.19.1/imports> to see how `import`\ndeclarations work in Elm."
+    , Plain "I cannot find a `Op` type:\n\n6| executeOp : Op -> List Op -> List Op\n               "
+    , Styled { bold = False, color = Just "RED", string = "^^", underline = False }
+    , Plain "\nThese names seem close though:\n\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Opp", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Bool", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Cmd", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Int", underline = False }
+    , Plain "\n\nNote: Evergreen migrations need access to all custom type variants. Make sure\nboth `Op` and `Evergreen.VX.Op` are exposed.\n\n"
+    , Styled { bold = False, color = Nothing, string = "Hint", underline = True }
+    , Plain ": Read <https://elm-lang.org/0.19.1/imports> to see how `import`\ndeclarations work in Elm."
+    , Plain "I cannot find a `Op` type:\n\n6| executeOp : Op -> List Op -> List Op\n                          "
+    , Styled { bold = False, color = Just "RED", string = "^^", underline = False }
+    , Plain "\nThese names seem close though:\n\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Opp", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Bool", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Cmd", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Int", underline = False }
+    , Plain "\n\nNote: Evergreen migrations need access to all custom type variants. Make sure\nboth `Op` and `Evergreen.VX.Op` are exposed.\n\n"
+    , Styled { bold = False, color = Nothing, string = "Hint", underline = True }
+    , Plain ": Read <https://elm-lang.org/0.19.1/imports> to see how `import`\ndeclarations work in Elm."
+    , Plain "I cannot find a `Op` type:\n\n6| executeOp : Op -> List Op -> List Op\n                                     "
+    , Styled { bold = False, color = Just "RED", string = "^^", underline = False }
+    , Plain "\nThese names seem close though:\n\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Opp", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Bool", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Cmd", underline = False }
+    , Plain "\n    "
+    , Styled { bold = False, color = Just "yellow", string = "Int", underline = False }
+    , Plain "\n\nNote: Evergreen migrations need access to all custom type variants. Make sure\nboth `Op` and `Evergreen.VX.Op` are exposed.\n\n"
+    , Styled { bold = False, color = Nothing, string = "Hint", underline = True }
+    , Plain ": Read <https://elm-lang.org/0.19.1/imports> to see how `import`\ndeclarations work in Elm."
+    ]
 
 
 foobar =

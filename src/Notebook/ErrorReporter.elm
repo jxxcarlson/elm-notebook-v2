@@ -1,6 +1,7 @@
 module Notebook.ErrorReporter exposing
     ( RenderedErrorReport
     , collateErrorReports
+    , compress
     , decodeErrorReporter
     , errorKeys
     , errorKeysFromCells
@@ -92,6 +93,11 @@ removeLineNumberAnnotations ( k, items ) =
     ( k, List.map Notebook.RepeatingBlocks.removeLineNumberAnnotation items )
 
 
+compress : List MessageItem -> List MessageItem
+compress =
+    Notebook.RepeatingBlocks.removeOneRepeatingBlock (\a b -> Notebook.Types.toString a == Notebook.Types.toString b)
+
+
 collateErrorReports : List Cell -> List ErrorReport
 collateErrorReports cells =
     let
@@ -114,9 +120,16 @@ collateErrorReports cells =
                 |> List.foldl (\( index, report ) acc -> addOrReferenceBack ( index, report ) acc) []
                 |> Debug.log "@@@@collatedData"
 
+        --|> List.map sortReport
+        --|> List.map (\( k, r ) -> ( k, compressor (r |> Debug.log "RRRR") ))
+        sortReport : ErrorReport -> ErrorReport
+        sortReport ( index, report ) =
+            ( index, List.sortBy (\item -> Notebook.Types.toString item) report )
+
         --|> Notebook.RepeatingBlocks.removeOneRepeatingBlock (\a b -> Tuple.second a == Tuple.second b)
         --|> Notebook.RepeatingBlocks.removeOneRepeatingBlock (\a b -> Tuple.second a == Tuple.second b)
         --|> Notebook.RepeatingBlocks.removeOneRepeatingBlock (\a b -> Tuple.second a == Tuple.second b)
+        -- (\a b -> Tuple.second a == Tuple.second b)
         addOrReferenceBack : ErrorReport -> List ErrorReport -> List ErrorReport
         addOrReferenceBack ( index, rawReport ) acc_ =
             case List.Extra.find (\( _, rawReport_ ) -> rawReport_ == rawReport) acc_ of
