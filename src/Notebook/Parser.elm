@@ -4,6 +4,7 @@ module Notebook.Parser exposing
     , getErrorItem
     , getErrorItemLength
     , getErrorOffset
+    , getLineNumberAnnotation
     , getPrefixTillBacktick
     , getPrefixTillBar
     , numberOfLeadingSpaces
@@ -21,6 +22,7 @@ import Parser
         , getChompedString
         , getOffset
         , getSource
+        , int
         , run
         , spaces
         , succeed
@@ -46,6 +48,28 @@ getPrefixTillBar str =
 
         Err _ ->
             Nothing
+
+
+getLineNumberAnnotation : String -> Maybe String
+getLineNumberAnnotation str =
+    case run lineNumberAnnotationParser str of
+        Ok prefix ->
+            Just prefix
+
+        Err _ ->
+            Nothing
+
+
+lineNumberAnnotationParser : Parser String
+lineNumberAnnotationParser =
+    succeed (\a b src -> String.slice a b src)
+        |. chompUntil "\n\n"
+        |= getOffset
+        |. symbol "\n\n"
+        |. int
+        |. symbol "|"
+        |= getOffset
+        |= getSource
 
 
 getPrefixTillBarParser : Parser String

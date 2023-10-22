@@ -18,6 +18,7 @@ import Json.Decode as D
 import List.Extra
 import Notebook.Cell exposing (Cell)
 import Notebook.Parser
+import Notebook.RepeatingBlocks
 import Notebook.Types exposing (ErrorReport, MessageItem(..), StyledString)
 import Types
 import View.Style
@@ -82,6 +83,15 @@ errorSummary cells =
             List.map (renderReport >> (\( k, xx ) -> ( k, Element.column [] xx ))) errors |> Debug.log "@@@@errorSummary"
 
 
+
+--               |> List.map Notebook.RepeatingBlocks.removeLineNumberAnnotation
+
+
+removeLineNumberAnnotations : ErrorReport -> ErrorReport
+removeLineNumberAnnotations ( k, items ) =
+    ( k, List.map Notebook.RepeatingBlocks.removeLineNumberAnnotation items )
+
+
 collateErrorReports : List Cell -> List ErrorReport
 collateErrorReports cells =
     let
@@ -99,9 +109,13 @@ collateErrorReports cells =
             cells
                 |> List.map (\c -> extractErrorReport c)
                 |> List.filterMap identity
+                |> List.map removeLineNumberAnnotations
                 -- Below: flag duplicates
                 |> List.foldl (\( index, report ) acc -> addOrReferenceBack ( index, report ) acc) []
                 |> Debug.log "@@@@collatedData"
+                |> Notebook.RepeatingBlocks.removeOneRepeatingBlock
+                |> Notebook.RepeatingBlocks.removeOneRepeatingBlock
+                |> Notebook.RepeatingBlocks.removeOneRepeatingBlock
 
         addOrReferenceBack : ErrorReport -> List ErrorReport -> List ErrorReport
         addOrReferenceBack ( index, rawReport ) acc_ =
@@ -317,31 +331,6 @@ err =
     ]
 
 
-removeOffsetAndBar : MessageItem -> MessageItem
-removeOffsetAndBar messageItem =
-    case messageItem of
-        Plain str ->
-            case Notebook.Parser.getErrorOffset str of
-                Nothing ->
-                    messageItem
-
-                Just offset ->
-                    let
-                        target =
-                            String.fromInt offset ++ "|"
-
-                        replacement =
-                            ""
-
-                        revisedStr =
-                            String.replace target replacement str
-                    in
-                    Plain revisedStr
-
-        Styled _ ->
-            messageItem
-
-
 messageItemFilter : String -> MessageItem -> Bool
 messageItemFilter key item =
     case item of
@@ -356,7 +345,7 @@ renderReport : ErrorReport -> RenderedErrorReport
 renderReport ( k, items__ ) =
     let
         items_ =
-            List.map removeOffsetAndBar items__
+            List.map Notebook.RepeatingBlocks.removeLineNumberAnnotation items__
     in
     case items_ of
         first_ :: second_ :: rest ->
@@ -408,7 +397,7 @@ renderReport ( k, items__ ) =
 
                 groups : List (List MessageItem)
                 groups =
-                    groupMessageItemsHelp (breakMessages (removeOffsetAndBar first :: second :: items))
+                    groupMessageItemsHelp (breakMessages (Notebook.RepeatingBlocks.removeLineNumberAnnotation first :: second :: items))
 
                 bar : List (Element msg)
                 bar =
