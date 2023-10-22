@@ -118,18 +118,15 @@ collateErrorReports cells =
                 |> List.map removeLineNumberAnnotations
                 -- Below: flag duplicates
                 |> List.foldl (\( index, report ) acc -> addOrReferenceBack ( index, report ) acc) []
-                |> Debug.log "@@@@collatedData"
 
-        --|> List.map sortReport
+        -- |> Debug.log "@@@@collatedData"
+        --|> List.map compress
+        compressReport : ( Int, List MessageItem ) -> ( Int, List MessageItem )
+        compressReport ( k, list ) =
+            ( k, Notebook.RepeatingBlocks.removeOneRepeatingBlock (\a b -> Notebook.Types.toString a == Notebook.Types.toString b) list )
+
         --|> List.map (\( k, r ) -> ( k, compressor (r |> Debug.log "RRRR") ))
-        sortReport : ErrorReport -> ErrorReport
-        sortReport ( index, report ) =
-            ( index, List.sortBy (\item -> Notebook.Types.toString item) report )
-
         --|> Notebook.RepeatingBlocks.removeOneRepeatingBlock (\a b -> Tuple.second a == Tuple.second b)
-        --|> Notebook.RepeatingBlocks.removeOneRepeatingBlock (\a b -> Tuple.second a == Tuple.second b)
-        --|> Notebook.RepeatingBlocks.removeOneRepeatingBlock (\a b -> Tuple.second a == Tuple.second b)
-        -- (\a b -> Tuple.second a == Tuple.second b)
         addOrReferenceBack : ErrorReport -> List ErrorReport -> List ErrorReport
         addOrReferenceBack ( index, rawReport ) acc_ =
             case List.Extra.find (\( _, rawReport_ ) -> rawReport_ == rawReport) acc_ of
