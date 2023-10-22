@@ -11,6 +11,7 @@ import Message
 import Notebook.Book
 import Notebook.Cell as Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
 import Notebook.CellHelper
+import Notebook.Config
 import Notebook.ErrorReporter
 import Notebook.Eval as Eval
 import Notebook.Parser
@@ -87,7 +88,7 @@ executeNotebook model =
 
 createDelayedCommand2 : Int -> FrontendMsg -> Cmd FrontendMsg
 createDelayedCommand2 delay msg =
-    Process.sleep (toFloat (delay * 10))
+    Process.sleep (toFloat (delay * Notebook.Config.delay))
         |> Task.perform (\_ -> msg)
 
 

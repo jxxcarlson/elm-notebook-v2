@@ -2,6 +2,7 @@ module Message exposing (postMessage, removeMessageAfterDelay, view)
 
 import Element as E exposing (Element)
 import Element.Font as Font
+import Notebook.Config
 import Process
 import Task
 import Types
@@ -21,7 +22,7 @@ postMessage str status model =
 
 
 removeMessageAfterDelay id =
-    Process.sleep (32 * 1000) |> Task.perform (always (Types.ExecuteDelayedMessageRemoval id))
+    Process.sleep (Notebook.Config.delay * 1000) |> Task.perform (always (Types.ExecuteDelayedMessageRemoval id))
 
 
 view : Int -> Int -> Types.FrontendModel -> Element Types.FrontendMsg

@@ -8,6 +8,10 @@ fastTickInterval =
     60
 
 
+delay =
+    50
+
+
 
 -- DARK THEME
 

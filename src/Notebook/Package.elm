@@ -8,6 +8,7 @@ import Json.Decode.Pipeline as Pipeline exposing (required)
 import Lamdera
 import Message
 import Notebook.Codec
+import Notebook.Config
 import Notebook.Types exposing (SimplePackageInfo)
 import Process
 import Task
@@ -134,10 +135,10 @@ installNewPackages packageList =
             List.map2 (\packageItem idx -> createDelayedCommand packageItem idx) packageList indices
 
         delayInMs =
-            (n + 1) * 50 |> toFloat
+            (n + 1) * Notebook.Config.delay |> toFloat
 
         delayInMs2 =
-            500 + (n + 1) * 50 |> toFloat
+            500 + (n + 1) * Notebook.Config.delay |> toFloat
 
         delayCmd =
             Process.sleep delayInMs |> Task.perform (always Types.ExecuteDelayedFunction)
