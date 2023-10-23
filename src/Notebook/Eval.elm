@@ -11,6 +11,7 @@ module Notebook.Eval exposing
     , replErrorOffset
     , reportError
     , requestEvaluation
+    , requestEvaluationAsTask
     , updateEvalStateWithPackages
     )
 
@@ -24,6 +25,7 @@ import Json.Encode as Encode
 import Notebook.Cell exposing (Cell)
 import Notebook.ErrorReporter as ErrorReporter
 import Notebook.Types exposing (EvalState, MessageItem(..), ReplData)
+import Task exposing (Task)
 import Types exposing (FrontendMsg)
 import Util
 
@@ -68,8 +70,62 @@ requestEvaluation evalState cell expr =
                 Development ->
                     "http://localhost:8000/repl"
         , body = Http.jsonBody (encodeExpr evalState expr)
-        , expect = Http.expectString (Types.GotReply cell)
+        , expect = Http.expectString (Types.GotReplyFromCompiler cell)
         }
+
+
+requestEvaluationAsTask : EvalState -> String -> Task Http.Error String
+requestEvaluationAsTask evalState expr =
+    Http.task
+        { method = "POST"
+        , headers = []
+        , url =
+            case Env.mode of
+                Production ->
+                    "https://repl.lamdera.com/repl"
+
+                Development ->
+                    "http://localhost:8000/repl"
+        , body = Http.jsonBody (encodeExpr evalState expr)
+
+        -- , expect = Http.expectString identity
+        , resolver = Http.stringResolver stringResolverToResult
+        , timeout = Nothing
+        }
+
+
+
+-- Helper function
+
+
+stringResolverToResult : Http.Response String -> Result Http.Error String
+stringResolverToResult response =
+    case response of
+        Http.BadUrl_ url ->
+            Err (Http.BadUrl url)
+
+        Http.Timeout_ ->
+            Err Http.Timeout
+
+        Http.NetworkError_ ->
+            Err Http.NetworkError
+
+        Http.BadStatus_ metadata body ->
+            Err (Http.BadStatus metadata.statusCode)
+
+        Http.GoodStatus_ metadata body ->
+            Ok body
+
+
+
+--task :
+--    { method : String
+--    , headers : List Header
+--    , url : String
+--    , body : Body
+--    , resolver : Resolver x a
+--    , timeout : Maybe Float
+--    }
 
 
 dictionaryLines : Dict String String -> Int

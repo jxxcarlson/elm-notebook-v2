@@ -99,14 +99,9 @@ view model =
 
 errorIndicator : { a | errorReports : List Notebook.Types.ErrorReport } -> Element FrontendMsg
 errorIndicator model =
-    let
-        filteredReports =
-            model.errorReports
-                |> List.filter (\report -> report /= ( 0, [ Plain "end" ] ))
-    in
     E.el [ Font.color (E.rgb 1 0.5 0) ]
         (E.text <|
-            String.fromInt (List.length filteredReports)
+            String.fromInt (List.length model.errorReports)
                 ++ " errors"
         )
 

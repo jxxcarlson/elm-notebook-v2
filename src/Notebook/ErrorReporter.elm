@@ -6,6 +6,7 @@ module Notebook.ErrorReporter exposing
     , errorKeys
     , errorKeysFromCells
     , errorsToString
+    , pairUp
     , renderReport
     , stringToMessageItem
     )
@@ -15,6 +16,7 @@ module Notebook.ErrorReporter exposing
 
 import Element exposing (..)
 import Element.Font as Font
+import Html.Attributes
 import Json.Decode as D
 import List.Extra
 import Notebook.Cell exposing (Cell)
@@ -23,6 +25,7 @@ import Notebook.RepeatingBlocks
 import Notebook.Types exposing (ErrorReport, MessageItem(..), StyledString)
 import Types
 import View.Style
+import View.Utility
 
 
 type alias RenderedErrorReport =
@@ -116,6 +119,8 @@ collateErrorReports cells =
                 |> List.map (\c -> extractErrorReport c)
                 |> List.filterMap identity
                 |> List.map removeLineNumberAnnotations
+                |> List.map (\( k, r ) -> ( k, List.filter (messageItemFilter "Evergreen") r ))
+                |> List.map (\( k, r ) -> ( k, fixTrailingSpaces r ))
                 -- Below: flag duplicates
                 |> List.foldl (\( index, report ) acc -> addOrReferenceBack ( index, report ) acc) []
 
@@ -138,14 +143,50 @@ collateErrorReports cells =
                         messageItem : MessageItem
                         messageItem =
                             Styled { bold = False, underline = False, color = Just "yellow", string = "Duplicate error, see cell " ++ String.fromInt (idx + 1) }
-
-                        messageItem2 : MessageItem
-                        messageItem2 =
-                            Styled { bold = False, underline = False, color = Just "yellow", string = "............." }
                     in
-                    ( index, [ messageItem, messageItem2 ] ) :: acc_
+                    ( index, [ messageItem ] ) :: acc_
     in
-    List.reverse (( 0, [ Plain "end" ] ) :: collatedData)
+    List.reverse collatedData
+
+
+pairUp : List a -> List ( a, a )
+pairUp items =
+    case items of
+        [] ->
+            []
+
+        first :: second :: rest ->
+            ( first, second ) :: pairUp rest
+
+        _ ->
+            []
+
+
+fixTrailingSpaces : List MessageItem -> List MessageItem
+fixTrailingSpaces items =
+    items
+        |> pairUp
+        |> List.map moveTrailingSpace
+        |> List.concat
+
+
+moveTrailingSpace : ( MessageItem, MessageItem ) -> List MessageItem
+moveTrailingSpace ( first, second ) =
+    let
+        spacer =
+            ""
+    in
+    case ( first, second ) of
+        ( Plain str, Styled styledString ) ->
+            case Notebook.Parser.getTrailingSpaces str of
+                Nothing ->
+                    [ first, second ]
+
+                Just trailingSpaces ->
+                    [ Plain str, Styled { styledString | string = String.dropLeft 1 trailingSpaces ++ spacer ++ styledString.string } ]
+
+        _ ->
+            [ first, second ]
 
 
 errorsToString : List Cell -> String
@@ -178,8 +219,11 @@ renderMessageItem : MessageItem -> Element msg
 renderMessageItem messageItem =
     case messageItem of
         Plain str ->
-            -- el [] (text (str |> String.replace "\n" ""))
-            el [] (text str)
+            if isBlank str then
+                Element.none
+
+            else
+                el [ View.Style.monospace ] (View.Utility.preformattedElement [] (Debug.log "@@S" str))
 
         Styled styledString ->
             let
@@ -222,19 +266,13 @@ renderMessageItem messageItem =
 
                     else
                         Font.unitalicized
-
-                padding_ =
-                    if String.contains "^" styledString.string then
-                        let
-                            n =
-                                Notebook.Parser.numberOfLeadingSpaces styledString.string
-                        in
-                        paddingXY (8 * n) 8
-
-                    else
-                        paddingXY 8 8
             in
-            el [ padding_, Font.color color, style, View.Style.monospace ] (text styledString.string)
+            el [ Font.color color, style, View.Style.monospace ] (View.Utility.preformattedElement [] (Debug.log "@@SS" styledString.string))
+
+
+isBlank : String -> Bool
+isBlank str =
+    (str |> String.replace "\n" "" |> String.trim) == ""
 
 
 stringToMessageItem : String -> MessageItem
@@ -353,6 +391,15 @@ messageItemFilter key item =
 
 renderReport : ErrorReport -> RenderedErrorReport
 renderReport ( k, items__ ) =
+    let
+        items_ =
+            List.map Notebook.RepeatingBlocks.removeLineNumberAnnotation items__
+    in
+    ( k, List.map renderMessageItem items_ )
+
+
+renderReport1 : ErrorReport -> RenderedErrorReport
+renderReport1 ( k, items__ ) =
     let
         items_ =
             List.map Notebook.RepeatingBlocks.removeLineNumberAnnotation items__

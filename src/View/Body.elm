@@ -80,15 +80,16 @@ reportErrors model cells errorSummary =
 
 errorReporterStyle model =
     E.column
-        [ Font.size 14
+        [ Font.size 12
         , E.spacing 0
         , E.width (E.px <| View.Geometry.sidePanelWidth model)
         , Border.widthEach { left = 2, right = 0, top = 0, bottom = 0 }
         , Border.color (E.rgb255 73 78 89)
         , Background.color (E.rgb 0 0 0)
         , View.Style.monospace
-        , E.paddingEach
-            { top = 18, bottom = 36, left = 0, right = 0 }
+
+        --, E.paddingEach
+        --    { top = 18, bottom = 36, left = 0, right = 0 }
         ]
 
 
@@ -123,7 +124,7 @@ detailHeading listOfRenderedErrorReports =
         , Font.size 14
         , E.paddingEach { left = 12, right = 0, top = 18, bottom = 12 }
         ]
-        (E.text ("Details: " ++ String.fromInt (List.length listOfRenderedErrorReports - 1)))
+        (E.text ("Details: " ++ String.fromInt (List.length listOfRenderedErrorReports)))
 
 
 renderReport cIndex report =
@@ -137,9 +138,10 @@ renderReport cIndex report =
             [ E.text <| "Cell: " ++ (String.fromInt (cIndex + 1) ++ ".")
             , E.text "______________________"
             ]
-        , E.column
+        , E.paragraph
             [ E.paddingXY 12 12
-            , E.spacing 7
+
+            --, E.spacing 7
             , View.Style.monospace
             , Font.size 12
             ]

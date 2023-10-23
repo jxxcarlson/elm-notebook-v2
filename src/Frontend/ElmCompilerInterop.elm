@@ -1,9 +1,11 @@
 module Frontend.ElmCompilerInterop exposing
     ( handleReplyFromElmCompiler
+    , handleReplyFromElmCompiler2
     , receiveReplDataFromJS
     )
 
 import Codec
+import List.Extra
 import Message
 import Notebook.Book
 import Notebook.Cell exposing (CellValue(..))
@@ -67,6 +69,47 @@ handleReplyFromElmCompiler model cell result =
                   }
                 , Ports.sendDataToJS str
                 )
+
+        Err _ ->
+            ( { model
+                | currentBook =
+                    Notebook.Book.setReplDataAt model.currentCellIndex
+                        Nothing
+                        model.currentBook
+              }
+            , Cmd.none
+            )
+
+
+handleReplyFromElmCompiler2 model k result =
+    case result of
+        Ok str ->
+            case List.Extra.getAt k model.currentBook.cells of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just oldCell ->
+                    if Notebook.Eval.hasReplError str then
+                        let
+                            newCell =
+                                { oldCell | report = ( oldCell.index, Just <| Notebook.Eval.reportError str ) }
+
+                            newBook =
+                                Notebook.Book.replaceCell newCell model.currentBook
+                        in
+                        ( { model
+                            | currentBook = newBook
+                          }
+                        , Cmd.none
+                        )
+
+                    else
+                        ( { model
+                            | currentCell = Just oldCell
+                            , currentBook = Notebook.Book.replaceCell { oldCell | replData = Nothing } model.currentBook
+                          }
+                        , Ports.sendDataToJS str
+                        )
 
         Err _ ->
             ( { model

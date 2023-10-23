@@ -86,6 +86,65 @@ executeNotebook model =
     )
 
 
+
+--
+--executeNotebookNew : Model -> ( Model, Cmd FrontendMsg )
+--executeNotebookNew model =
+--    let
+--        currentBook =
+--            model.currentBook
+--
+--        -- Close all cells and set report and replData to Nothing
+--        newBook =
+--            { currentBook
+--                | cells =
+--                    List.map
+--                        (\cell ->
+--                            { cell
+--                                | value = CVNone
+--                                , report = ( cell.index, Nothing )
+--                                , replData = Nothing
+--                                , cellState = CSView
+--                            }
+--                        )
+--                        currentBook.cells
+--            }
+--
+--        newEvalState =
+--            updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState
+--
+--        indices =
+--            List.range 0 (List.length model.currentBook.cells)
+--
+--        tasks =
+--            List.indexedMap (\k index -> createDelayedCommand2 k (Types.ExecuteCell index)) indices
+--
+--        -- requestEvaluationAsTask evalState expr
+--        errorReportDelay =
+--            1 + List.length indices
+--
+--        delayedCollateErrorReportsCmd =
+--            createDelayedCommand2 errorReportDelay Types.UpdateErrorReports
+--    in
+--    ( { model
+--        | currentBook = newBook |> Notebook.Book.clearValues
+--        , books =
+--            List.map
+--                (\book ->
+--                    if book.id == currentBook.id then
+--                        newBook
+--
+--                    else
+--                        book
+--                )
+--                model.books
+--        , evalState = newEvalState
+--        , errorReports = []
+--      }
+--    , Cmd.batch (delayedCollateErrorReportsCmd :: commands)
+--    )
+
+
 createDelayedCommand2 : Int -> FrontendMsg -> Cmd FrontendMsg
 createDelayedCommand2 delay msg =
     Process.sleep (toFloat (delay * Notebook.Config.delay))

@@ -7,6 +7,7 @@ module Notebook.Parser exposing
     , getLineNumberAnnotation
     , getPrefixTillBacktick
     , getPrefixTillBar
+    , getTrailingSpaces
     , numberOfLeadingSpaces
     , replItemParser
     )
@@ -28,6 +29,26 @@ import Parser
         , succeed
         , symbol
         )
+
+
+getTrailingSpaces : String -> Maybe String
+getTrailingSpaces str =
+    case run trailingSpacesParser str of
+        Ok suffix ->
+            Just suffix
+
+        Err _ ->
+            Nothing
+
+
+trailingSpacesParser : Parser String
+trailingSpacesParser =
+    succeed (\a b src -> String.slice a b src)
+        |. chompWhile (\c -> c /= '\n')
+        |= getOffset
+        |. chompWhile (\_ -> True)
+        |= getOffset
+        |= getSource
 
 
 getErrorOffset : String -> Maybe Int

@@ -215,8 +215,11 @@ update msg model =
         GotElmJsonDict result ->
             Notebook.Package.gotElmJsonDict model result
 
-        GotReply cell result ->
+        GotReplyFromCompiler cell result ->
             Frontend.ElmCompilerInterop.handleReplyFromElmCompiler model cell result
+
+        GotReplyFromCompiler2 k result ->
+            Frontend.ElmCompilerInterop.handleReplyFromElmCompiler2 model k result
 
         KeyboardMsg keyMsg ->
             Frontend.UIHelper.handleKeyPresses model keyMsg
