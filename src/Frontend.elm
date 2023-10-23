@@ -201,7 +201,8 @@ update msg model =
             ( { model | messages = List.filter (\m -> m.id /= id) model.messages }, Cmd.none )
 
         ExecuteCell k ->
-            Notebook.EvalCell.executeCell k model
+            -- Notebook.EvalCell.executeCell k model
+            ( model, Notebook.EvalCell.executeCellCommand k model )
 
         UpdateErrorReports ->
             ( { model | errorReports = Notebook.ErrorReporter.collateErrorReports model.currentBook.cells }, Cmd.none )
