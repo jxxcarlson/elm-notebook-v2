@@ -69,6 +69,7 @@ subscriptions model =
         , Time.every 3000 FETick
         , Sub.map KeyboardMsg Keyboard.subscriptions
         , Ports.receiveFromJS ReceivedFromJS
+        , Ports.receiveJSData ReceiveJSData
         ]
 
 
@@ -205,46 +206,37 @@ update msg model =
             ( model, Notebook.EvalCell.executeCellCommand k model )
 
         ExecuteCells result ->
-            let
-                _ =
-                    Debug.log "@@Here is ExecuteCells!!" True
-            in
             case result of
                 Err httpError ->
                     Message.postMessage "Error executing cells" Types.MSRed model
 
                 Ok compilerOutput ->
                     let
-                        oldBook =
-                            model.currentBook
-
-                        oldCells =
-                            oldBook.cells
-
-                        foo : List ( Model -> Model, Cmd FrontendMsg )
-                        foo =
-                            List.map
-                                (\( index, output ) ->
-                                    ElmCompilerInterop.updateCell model index output oldCells
-                                )
-                                compilerOutput
-
-                        cmds =
-                            List.map Tuple.second foo
-
-                        modelTransformers =
-                            List.map Tuple.first foo
-
-                        newModel =
-                            List.foldl (\f acc -> f acc) model modelTransformers
+                        commands : List (Cmd msg)
+                        commands =
+                            List.map (\( idx, str ) -> Ports.encodeIndexAndSourcePair ( idx, str ) |> Ports.sendJSData) compilerOutput
                     in
-                    ( model, Cmd.batch cmds )
+                    --( model, Notebook.EvalCell.compileCellsCmd model.evalState model.currentBook.cells )
+                    ( model, Cmd.batch commands )
 
         UpdateErrorReports ->
             ( { model | errorReports = Notebook.ErrorReporter.collateErrorReports model.currentBook.cells }, Cmd.none )
 
         ReceivedFromJS str ->
             ElmCompilerInterop.receiveReplDataFromJS model str
+
+        ReceiveJSData rawString ->
+            case String.split ":::" rawString of
+                [ indexAsString, executedCode ] ->
+                    case String.toInt indexAsString of
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                        Just index ->
+                            ElmCompilerInterop.receiveDataFromJS model ( index, executedCode )
+
+                _ ->
+                    ( model, Cmd.none )
 
         FetchDependencies packageName ->
             ( model, Notebook.Package.fetchElmJson packageName )

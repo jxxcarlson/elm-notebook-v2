@@ -1,5 +1,6 @@
 module Frontend.ElmCompilerInterop exposing
     ( handleReplyFromElmCompiler
+    , receiveDataFromJS
     , receiveReplDataFromJS
     , updateCell
     )
@@ -43,6 +44,28 @@ receiveReplDataFromJS model str =
 
         Err _ ->
             Message.postMessage "Error evaluating Elm code" Types.MSRed model
+
+
+receiveDataFromJS : Model -> ( Int, String ) -> ( Model, Cmd Msg )
+receiveDataFromJS model ( cellIndex, str ) =
+    case List.Extra.getAt cellIndex model.currentBook.cells of
+        Nothing ->
+            ( model, Cmd.none )
+
+        Just cell ->
+            case Codec.decodeString Notebook.Eval.replDataCodec str of
+                Ok replData ->
+                    let
+                        newCell =
+                            { cell | value = CVString replData.value, replData = Just replData }
+
+                        newBook =
+                            Notebook.Book.replaceCell newCell model.currentBook
+                    in
+                    ( { model | currentCell = Nothing, currentBook = newBook }, Cmd.none )
+
+                Err _ ->
+                    Message.postMessage "Error evaluating Elm code" Types.MSRed model
 
 
 handleReplyFromElmCompiler : Model -> Notebook.Cell.Cell -> Result error String -> ( Model, Cmd Types.FrontendMsg )

@@ -1,5 +1,6 @@
 module Notebook.EvalCell exposing
-    ( executeCell
+    ( compileCellsCmd
+    , executeCell
     , executeCellCommand
     , executeNotebook
     , processCell
@@ -92,7 +93,54 @@ executeNotebook model =
 
 compileCellsCmd : EvalState -> List Cell -> Cmd FrontendMsg
 compileCellsCmd evalState cells =
-    Task.attempt Types.ExecuteCells (compileJsForCells evalState cells)
+    let
+        filteredCells =
+            cells
+                |> List.map removeCommentsFromCell
+                |> List.filter passExpressionCellFilter
+    in
+    Task.attempt Types.ExecuteCells (compileJsForCells evalState filteredCells)
+
+
+removeCommentsFromCell : Cell -> Cell
+removeCommentsFromCell cell =
+    { cell | text = removeComments cell.text }
+
+
+removeComments : String -> String
+removeComments str =
+    let
+        lines =
+            String.lines str
+
+        noComments =
+            List.filter (\line -> String.left 2 line /= "--") lines
+    in
+    String.join "\n" noComments
+
+
+passExpressionCellFilter : Cell -> Bool
+passExpressionCellFilter cell =
+    case cell.tipe of
+        Cell.CTCode ->
+            case Notebook.Parser.classify cell.text of
+                Err _ ->
+                    False
+
+                Ok classif ->
+                    case classif of
+                        Notebook.Parser.Expr str ->
+                            if str == "" then
+                                False
+
+                            else
+                                True
+
+                        _ ->
+                            False
+
+        Cell.CTMarkdown ->
+            False
 
 
 compileJsForCells : EvalState -> List Cell -> Task Http.Error (List ( Int, String ))

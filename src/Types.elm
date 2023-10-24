@@ -7,6 +7,7 @@ import Browser.Navigation exposing (Key)
 import Dict exposing (Dict)
 import File exposing (File)
 import Http
+import Json.Encode as Encode
 import Keyboard
 import Lamdera exposing (ClientId)
 import Notebook.Book exposing (Book, DirectionToMove(..))
@@ -183,6 +184,7 @@ type FrontendMsg
     | GotReplyFromCompiler Cell (Result Http.Error String)
       -- | GotReplyFromCompiler2 Int (Result Http.Error String)
     | ReceivedFromJS String
+    | ReceiveJSData String
       -- DATA
     | AskToListDataSets DataSetDescription
     | AskToSaveDataSet Notebook.DataSet.DataSetMetaData

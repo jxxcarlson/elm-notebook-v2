@@ -61,6 +61,10 @@ updateEvalStateWithPackages packageSummary evalState =
 
 requestEvaluation : EvalState -> Cell -> String -> Cmd FrontendMsg
 requestEvaluation evalState cell expr =
+    let
+        _ =
+            Debug.log "@@requestEvaluation" expr
+    in
     Http.post
         { url =
             case Env.mode of
