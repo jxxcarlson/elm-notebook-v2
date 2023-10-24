@@ -1,5 +1,6 @@
 module Notebook.RepeatingBlocks exposing
-    ( fibar
+    ( compressReport
+    , fibar
     , findRepeatingBlock
     , findRepeatingBlockAt
     , foobar
@@ -7,7 +8,6 @@ module Notebook.RepeatingBlocks exposing
     , messageItemToComparable
     , occurrenceStats
     , occurrences
-    , removeLineNumberAnnotation
     , removeOneRepeatingBlock
     , removeRepeatingBlock
     , removeRepeatingBlockAt
@@ -19,6 +19,11 @@ module Notebook.RepeatingBlocks exposing
 import List.Extra
 import Notebook.Parser
 import Notebook.Types exposing (ErrorReport, MessageItem(..), StyledString)
+
+
+compressReport : ( Int, List MessageItem ) -> ( Int, List MessageItem )
+compressReport ( k, list ) =
+    ( k, removeOneRepeatingBlock (\a b -> Notebook.Types.toString a == Notebook.Types.toString b) list )
 
 
 occurrenceStats : (a -> comparable) -> List a -> List ( Int, a )
@@ -59,31 +64,6 @@ subsequences list =
 occurrences : a -> List a -> Int
 occurrences item list =
     List.filter (\x -> x == item) list |> List.length
-
-
-removeLineNumberAnnotation : MessageItem -> MessageItem
-removeLineNumberAnnotation messageItem =
-    case messageItem of
-        Plain str ->
-            case Notebook.Parser.getErrorOffset str of
-                Nothing ->
-                    messageItem
-
-                Just offset ->
-                    let
-                        target =
-                            "\n\n" ++ String.fromInt offset ++ "|"
-
-                        replacement =
-                            ""
-
-                        revisedStr =
-                            String.replace target replacement str
-                    in
-                    Plain revisedStr
-
-        Styled _ ->
-            messageItem
 
 
 type alias State a =

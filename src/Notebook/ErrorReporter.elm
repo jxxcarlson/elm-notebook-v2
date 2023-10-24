@@ -1,7 +1,6 @@
 module Notebook.ErrorReporter exposing
     ( RenderedErrorReport
     , collateErrorReports
-    , compress
     , decodeErrorReporter
     , errorKeys
     , errorKeysFromCells
@@ -16,12 +15,10 @@ module Notebook.ErrorReporter exposing
 
 import Element exposing (..)
 import Element.Font as Font
-import Html.Attributes
 import Json.Decode as D
 import List.Extra
 import Notebook.Cell exposing (Cell)
 import Notebook.Parser
-import Notebook.RepeatingBlocks
 import Notebook.Types exposing (ErrorReport, MessageItem(..), StyledString)
 import Types
 import View.Style
@@ -87,18 +84,9 @@ errorSummary cells =
             List.map (renderReport >> (\( k, xx ) -> ( k, Element.column [] xx ))) errors |> Debug.log "@@@@errorSummary"
 
 
-
---               |> List.map Notebook.RepeatingBlocks.removeLineNumberAnnotation
-
-
 removeLineNumberAnnotations : ErrorReport -> ErrorReport
 removeLineNumberAnnotations ( k, items ) =
-    ( k, List.map Notebook.RepeatingBlocks.removeLineNumberAnnotation items )
-
-
-compress : List MessageItem -> List MessageItem
-compress =
-    Notebook.RepeatingBlocks.removeOneRepeatingBlock (\a b -> Notebook.Types.toString a == Notebook.Types.toString b)
+    ( k, List.map removeLineNumberAnnotation items )
 
 
 collateErrorReports : List Cell -> List ErrorReport
@@ -124,14 +112,6 @@ collateErrorReports cells =
                 -- Below: flag duplicates
                 |> List.foldl (\( index, report ) acc -> addOrReferenceBack ( index, report ) acc) []
 
-        -- |> Debug.log "@@@@collatedData"
-        --|> List.map compress
-        compressReport : ( Int, List MessageItem ) -> ( Int, List MessageItem )
-        compressReport ( k, list ) =
-            ( k, Notebook.RepeatingBlocks.removeOneRepeatingBlock (\a b -> Notebook.Types.toString a == Notebook.Types.toString b) list )
-
-        --|> List.map (\( k, r ) -> ( k, compressor (r |> Debug.log "RRRR") ))
-        --|> Notebook.RepeatingBlocks.removeOneRepeatingBlock (\a b -> Tuple.second a == Tuple.second b)
         addOrReferenceBack : ErrorReport -> List ErrorReport -> List ErrorReport
         addOrReferenceBack ( index, rawReport ) acc_ =
             case List.Extra.find (\( _, rawReport_ ) -> rawReport_ == rawReport) acc_ of
@@ -223,7 +203,7 @@ renderMessageItem messageItem =
                 Element.none
 
             else
-                el [ View.Style.monospace ] (View.Utility.preformattedElement [] (Debug.log "@@S" str))
+                el [ View.Style.monospace ] (View.Utility.preformattedElement [] (Debug.log "@@Str" str))
 
         Styled styledString ->
             let
@@ -267,7 +247,7 @@ renderMessageItem messageItem =
                     else
                         Font.unitalicized
             in
-            el [ Font.color color, style, View.Style.monospace ] (View.Utility.preformattedElement [] (Debug.log "@@SS" styledString.string))
+            el [ Font.color color, style, View.Style.monospace ] (View.Utility.preformattedElement [] (Debug.log "@@STStr" styledString.string))
 
 
 isBlank : String -> Bool
@@ -393,16 +373,41 @@ renderReport : ErrorReport -> RenderedErrorReport
 renderReport ( k, items__ ) =
     let
         items_ =
-            List.map Notebook.RepeatingBlocks.removeLineNumberAnnotation items__
+            List.map removeLineNumberAnnotation items__
     in
     ( k, List.map renderMessageItem items_ )
+
+
+removeLineNumberAnnotation : MessageItem -> MessageItem
+removeLineNumberAnnotation messageItem =
+    case messageItem of
+        Plain str ->
+            case Notebook.Parser.getErrorOffset str of
+                Nothing ->
+                    messageItem
+
+                Just offset ->
+                    let
+                        target =
+                            "\n\n" ++ String.fromInt offset ++ "|"
+
+                        replacement =
+                            ""
+
+                        revisedStr =
+                            String.replace target replacement str
+                    in
+                    Plain revisedStr
+
+        Styled _ ->
+            messageItem
 
 
 renderReport1 : ErrorReport -> RenderedErrorReport
 renderReport1 ( k, items__ ) =
     let
         items_ =
-            List.map Notebook.RepeatingBlocks.removeLineNumberAnnotation items__
+            List.map removeLineNumberAnnotation items__
     in
     case items_ of
         first_ :: second_ :: rest ->
@@ -454,7 +459,7 @@ renderReport1 ( k, items__ ) =
 
                 groups : List (List MessageItem)
                 groups =
-                    groupMessageItemsHelp (breakMessages (Notebook.RepeatingBlocks.removeLineNumberAnnotation first :: second :: items))
+                    groupMessageItemsHelp (breakMessages (removeLineNumberAnnotation first :: second :: items))
 
                 bar : List (Element msg)
                 bar =

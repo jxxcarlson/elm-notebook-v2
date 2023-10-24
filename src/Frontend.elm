@@ -218,7 +218,6 @@ update msg model =
                         errorData : List ( Int, List MessageItem )
                         errorData =
                             List.filter (\( _, str ) -> Notebook.Eval.hasReplError str) compilerOutput
-                                |> Debug.log "@@ErrorData"
                                 |> List.map (\( idx, str ) -> ( idx, Notebook.Eval.reportError str ))
 
                         updateCellsWithReport : ( Int, List MessageItem ) -> List Cell -> List Cell
@@ -246,14 +245,10 @@ update msg model =
                         errorReports =
                             Notebook.ErrorReporter.collateErrorReports newCells
 
-                        _ =
-                            Debug.log "@@N_errorReports" (List.length errorReports)
-
                         commands : List (Cmd msg)
                         commands =
                             List.map (\( idx, str ) -> Ports.encodeIndexAndSourcePair ( idx, str ) |> Ports.sendJSData) errorFreeOutput
                     in
-                    --( model, Notebook.EvalCell.compileCellsCmd model.evalState model.currentBook.cells )
                     ( { model | currentBook = newBook, errorReports = errorReports }, Cmd.batch commands )
 
         UpdateErrorReports ->
