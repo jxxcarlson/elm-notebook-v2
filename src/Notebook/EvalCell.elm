@@ -15,7 +15,6 @@ import Notebook.Book
 import Notebook.Cell as Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
 import Notebook.CellHelper
 import Notebook.Config
-import Notebook.ErrorReporter
 import Notebook.Eval as Eval
 import Notebook.Parser
 import Notebook.Types exposing (EvalState)
@@ -57,18 +56,6 @@ executeNotebook model =
 
         newEvalState =
             updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState
-
-        indices =
-            List.range 0 (List.length model.currentBook.cells)
-
-        commands =
-            List.indexedMap (\k index -> createDelayedCommand2 k (Types.ExecuteCell index)) indices
-
-        errorReportDelay =
-            1 + List.length indices
-
-        delayedCollateErrorReportsCmd =
-            createDelayedCommand2 errorReportDelay Types.UpdateErrorReports
     in
     ( { model
         | currentBook = newBook |> Notebook.Book.clearValues
@@ -85,8 +72,6 @@ executeNotebook model =
         , evalState = newEvalState
         , errorReports = []
       }
-      --, Cmd.batch (delayedCollateErrorReportsCmd :: commands)
-      --, Cmd.batch (delayedCollateErrorReportsCmd :: commands)
     , compileCellsCmd newEvalState newBook.cells
     )
 
