@@ -9,6 +9,7 @@ import List.Extra
 import Message
 import Notebook.Book
 import Notebook.Cell exposing (CellValue(..))
+import Notebook.ErrorReporter
 import Notebook.Eval
 import Notebook.Types
 import Ports
@@ -81,6 +82,7 @@ handleReplyFromElmCompiler model cell result =
                 in
                 ( { model
                     | currentBook = newBook
+                    , errorReports = Notebook.ErrorReporter.collateErrorReports newBook.cells
                   }
                 , Cmd.none
                 )

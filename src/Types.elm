@@ -182,7 +182,6 @@ type FrontendMsg
     | GotPackagesFromCompiler (Result Http.Error (List Notebook.Types.SimplePackageInfo))
     | GotElmJsonDict (Result Http.Error Notebook.Types.ElmPackageSummary)
     | GotReplyFromCompiler Cell (Result Http.Error String)
-      -- | GotReplyFromCompiler2 Int (Result Http.Error String)
     | ReceivedFromJS String
     | ReceiveJSData String
       -- DATA
