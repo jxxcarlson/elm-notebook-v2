@@ -44,7 +44,7 @@ notebookWidth model =
 
 sidePanelWidth : { a | windowWidth : Int } -> Int
 sidePanelWidth model =
-    0.4 * toFloat (appWidth model) |> round
+    0.45 * toFloat (appWidth model) |> round
 
 
 headerHeight =

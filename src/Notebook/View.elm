@@ -198,35 +198,7 @@ viewValue viewData cell =
 
 viewFailure : ViewData -> Cell -> List Notebook.Types.MessageItem -> Element FrontendMsg
 viewFailure viewData cell report =
-    render viewData ( cell.index, report )
-
-
-render : ViewData -> Notebook.Types.ErrorReport -> Element FrontendMsg
-render viewData report =
-    let
-        ( k, messageList ) =
-            Notebook.ErrorReporter.renderReport report
-    in
-    E.column
-        [ E.paddingXY 8 8
-        , Font.color (E.rgb 0.9 0.9 0.9)
-        , Font.size 14
-        , E.width (E.px 700)
-        , E.height (E.px 25)
-        , E.paddingXY 8 4
-
-        --,    E.paddingEach { top = 24, bottom = 24, left = 24, right = 0 }
-        --, E.height (E.px 400)
-        --, E.scrollbarY
-        , Background.color (E.rgb 0 0 0)
-        ]
-        -- [ E.el [ Font.color (E.rgb 1 0.5 0) ] (E.text "Error") ]
-        -- (Notebook.ErrorReporter.prepareReport viewData.errorOffset report)
-        --[ E.text ("Cell: " ++ String.fromInt k)
-        --, E.column [] messageList
-        --]
-        -- messageList
-        [ E.el [ Font.color (E.rgb 1 0.5 0) ] (E.text "Error") ]
+    E.el [ Font.color (E.rgb 1 0.5 0), E.height (E.px 30), E.paddingXY 6 6, E.width (E.px 700), Background.color (E.rgb 0 0 0) ] (E.text "Error")
 
 
 viewSuccess : ViewData -> Cell -> Element FrontendMsg

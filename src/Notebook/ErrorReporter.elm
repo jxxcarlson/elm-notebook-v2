@@ -15,6 +15,8 @@ module Notebook.ErrorReporter exposing
 
 import Element exposing (..)
 import Element.Font as Font
+import Html exposing (Html)
+import Html.Attributes
 import Json.Decode as D
 import List.Extra
 import Notebook.Cell exposing (Cell)
@@ -108,7 +110,7 @@ collateErrorReports cells =
                 |> List.filterMap identity
                 |> List.map removeLineNumberAnnotations
                 |> List.map (\( k, r ) -> ( k, List.filter (messageItemFilter "Evergreen") r ))
-                |> List.map (\( k, r ) -> ( k, fixTrailingSpaces r ))
+                |> Debug.log "@@REPORTS"
                 -- Below: flag duplicates
                 |> List.foldl (\( index, report ) acc -> addOrReferenceBack ( index, report ) acc) []
 
@@ -146,8 +148,11 @@ fixTrailingSpaces : List MessageItem -> List MessageItem
 fixTrailingSpaces items =
     items
         |> pairUp
+        |> Debug.log "@@PAIRS"
         |> List.map moveTrailingSpace
+        |> Debug.log "@@MOVE_trailing_spaces"
         |> List.concat
+        |> Debug.log "@@CONCAT"
 
 
 moveTrailingSpace : ( MessageItem, MessageItem ) -> List MessageItem
@@ -195,71 +200,75 @@ errorKeys cells =
         |> List.filter (\item -> String.contains "|" item)
 
 
-renderMessageItemO : MessageItem -> Element msg
-renderMessageItemO messageItem =
+renderMessageItem : MessageItem -> Html msg
+renderMessageItem messageItem =
     case messageItem of
         Plain str ->
-            -- el [] (text (str |> String.replace "\n" ""))
-            el [] (text str)
+            if String.contains "declarations work in Elm." str then
+                Html.text (str ++ "\n\n")
+
+            else
+                Html.text str
 
         Styled styledString ->
             let
                 color =
                     if String.contains "^" styledString.string then
-                        Element.rgb 1.0 0 0
+                        "red"
 
                     else
                         case styledString.color of
                             Nothing ->
-                                Element.rgb 0.9 0 0.6
+                                "magenta"
 
                             Just "red" ->
-                                Element.rgb 1 0 0
+                                "red"
 
                             Just "green" ->
-                                Element.rgb 0 1 0
+                                "green"
 
                             Just "blue" ->
-                                Element.rgb 0 0 1
+                                "blue"
 
                             Just "yellow" ->
-                                Element.rgb 1 1 0
+                                "yellow"
 
                             Just "black" ->
-                                Element.rgb 0.9 0.4 0.1
+                                "black"
 
                             Just "white" ->
-                                Element.rgb 1 1 1
+                                "white"
 
                             _ ->
-                                Element.rgb 0 1 0
+                                "green"
 
                 style =
                     if styledString.bold then
-                        Font.bold
+                        "bold"
 
                     else if styledString.underline then
-                        Font.underline
+                        "underline"
 
                     else
-                        Font.unitalicized
-
-                padding_ =
-                    if String.contains "^" styledString.string then
-                        let
-                            n =
-                                Notebook.Parser.numberOfLeadingSpaces styledString.string
-                        in
-                        paddingXY (8 * n) 8
-
-                    else
-                        paddingXY 8 8
+                        "none"
             in
-            el [ padding_, Font.color color, style, View.Style.monospace ] (text styledString.string)
+            Html.span
+                [ Html.Attributes.style "color" color
+                , Html.Attributes.style "color" color
+                , Html.Attributes.style "font-weight" style
+                ]
+                [ Html.text
+                    (if String.contains "Hint" styledString.string then
+                        "\n\n" ++ styledString.string
+
+                     else
+                        styledString.string
+                    )
+                ]
 
 
-renderMessageItem : MessageItem -> Element msg
-renderMessageItem messageItem =
+renderMessageItem1 : MessageItem -> Element msg
+renderMessageItem1 messageItem =
     case messageItem of
         Plain str ->
             if isBlank str then
@@ -434,7 +443,12 @@ messageItemFilter key item =
 
 renderReport : ErrorReport -> RenderedErrorReport
 renderReport ( k, items ) =
-    ( k, List.map renderMessageItem items )
+    let
+        foo : Html msg
+        foo =
+            Html.pre [ Html.Attributes.style "width" "300px" ] (List.map renderMessageItem items)
+    in
+    ( k, [ foo |> Element.html ] )
 
 
 removeLineNumberAnnotation : MessageItem -> MessageItem
@@ -462,74 +476,76 @@ removeLineNumberAnnotation messageItem =
             messageItem
 
 
-renderReport1 : ErrorReport -> RenderedErrorReport
-renderReport1 ( k, items__ ) =
-    let
-        items_ =
-            List.map removeLineNumberAnnotation items__
-    in
-    case items_ of
-        first_ :: second_ :: rest ->
-            let
-                stringInFirstItem =
-                    case first_ of
-                        Notebook.Types.Plain str_ ->
-                            str_
 
-                        _ ->
-                            "NADA"
-
-                foo =
-                    case String.split "\n\n" stringInFirstItem of
-                        [ _, b ] ->
-                            b
-
-                        _ ->
-                            stringInFirstItem
-
-                mErrorItem =
-                    Notebook.Parser.getErrorItem stringInFirstItem
-
-                offset =
-                    case mErrorItem of
-                        Nothing ->
-                            0
-
-                        Just errorItem ->
-                            String.indices errorItem foo
-                                |> List.head
-                                |> Maybe.withDefault 0
-                                |> (\x -> max (x - 2) 0)
-
-                first =
-                    first_
-
-                second =
-                    case second_ of
-                        Plain _ ->
-                            second_
-
-                        Styled styledString ->
-                            Styled { styledString | string = String.repeat offset " " ++ styledString.string }
-
-                items =
-                    rest
-                        |> List.filter (messageItemFilter "Evergreen")
-
-                groups : List (List MessageItem)
-                groups =
-                    groupMessageItemsHelp (breakMessages (removeLineNumberAnnotation first :: second :: items))
-
-                bar : List (Element msg)
-                bar =
-                    groups
-                        |> List.map (List.map (\item -> renderMessageItem item))
-                        |> List.map (\group_ -> paragraph [] group_)
-            in
-            ( k, bar )
-
-        _ ->
-            ( k, [] )
+--
+--renderReport1 : ErrorReport -> RenderedErrorReport
+--renderReport1 ( k, items__ ) =
+--    let
+--        items_ =
+--            List.map removeLineNumberAnnotation items__
+--    in
+--    case items_ of
+--        first_ :: second_ :: rest ->
+--            let
+--                stringInFirstItem =
+--                    case first_ of
+--                        Notebook.Types.Plain str_ ->
+--                            str_
+--
+--                        _ ->
+--                            "NADA"
+--
+--                foo =
+--                    case String.split "\n\n" stringInFirstItem of
+--                        [ _, b ] ->
+--                            b
+--
+--                        _ ->
+--                            stringInFirstItem
+--
+--                mErrorItem =
+--                    Notebook.Parser.getErrorItem stringInFirstItem
+--
+--                offset =
+--                    case mErrorItem of
+--                        Nothing ->
+--                            0
+--
+--                        Just errorItem ->
+--                            String.indices errorItem foo
+--                                |> List.head
+--                                |> Maybe.withDefault 0
+--                                |> (\x -> max (x - 2) 0)
+--
+--                first =
+--                    first_
+--
+--                second =
+--                    case second_ of
+--                        Plain _ ->
+--                            second_
+--
+--                        Styled styledString ->
+--                            Styled { styledString | string = String.repeat offset " " ++ styledString.string }
+--
+--                items =
+--                    rest
+--                        |> List.filter (messageItemFilter "Evergreen")
+--
+--                groups : List (List MessageItem)
+--                groups =
+--                    groupMessageItemsHelp (breakMessages (removeLineNumberAnnotation first :: second :: items))
+--
+--                bar : List (Element msg)
+--                bar =
+--                    groups
+--                        |> List.map (List.map (\item -> renderMessageItem item))
+--                        |> List.map (\group_ -> paragraph [] group_)
+--            in
+--            ( k, bar )
+--
+--        _ ->
+--            ( k, [] )
 
 
 groupMessageItemsHelp : List MessageItem -> List (List MessageItem)

@@ -87,6 +87,7 @@ errorReporterStyle model =
         , Border.color (E.rgb255 73 78 89)
         , Background.color (E.rgb 0 0 0)
         , View.Style.monospace
+        , E.spacing 8
 
         --, E.paddingEach
         --    { top = 18, bottom = 36, left = 0, right = 0 }
@@ -97,7 +98,7 @@ errorDetails : FrontendModel -> List RenderedErrorReport -> List (Element Fronte
 errorDetails model listOfRenderedErrorReports =
     [ separator
     , detailHeading listOfRenderedErrorReports
-    , E.column
+    , E.paragraph
         [ E.height (E.px <| View.Geometry.loweRightSidePanelHeight model)
         , E.width (E.px <| View.Geometry.sidePanelWidth model)
         , E.scrollbarY
