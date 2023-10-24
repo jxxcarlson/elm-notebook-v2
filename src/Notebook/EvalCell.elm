@@ -7,6 +7,7 @@ module Notebook.EvalCell exposing
     )
 
 import Dict
+import Http
 import List.Extra
 import Message
 import Notebook.Book
@@ -18,7 +19,7 @@ import Notebook.Eval as Eval
 import Notebook.Parser
 import Notebook.Types exposing (EvalState)
 import Process
-import Task
+import Task exposing (Task)
 import Types exposing (FrontendMsg)
 import Util
 
@@ -83,65 +84,29 @@ executeNotebook model =
         , evalState = newEvalState
         , errorReports = []
       }
-    , Cmd.batch (delayedCollateErrorReportsCmd :: commands)
+      --, Cmd.batch (delayedCollateErrorReportsCmd :: commands)
+      --, Cmd.batch (delayedCollateErrorReportsCmd :: commands)
+    , compileCellsCmd newEvalState newBook.cells
     )
 
 
-executeNotebookWithTasks : Model -> ( Model, Cmd FrontendMsg )
-executeNotebookWithTasks model =
+compileCellsCmd : EvalState -> List Cell -> Cmd FrontendMsg
+compileCellsCmd evalState cells =
+    Task.attempt Types.ExecuteCells (compileJsForCells evalState cells)
+
+
+compileJsForCells : EvalState -> List Cell -> Task Http.Error (List ( Int, String ))
+compileJsForCells evalState cells =
     let
-        currentBook =
-            model.currentBook
-
-        -- Close all cells and set report and replData to Nothing
-        newBook =
-            { currentBook
-                | cells =
-                    List.map
-                        (\cell ->
-                            { cell
-                                | value = CVNone
-                                , report = ( cell.index, Nothing )
-                                , replData = Nothing
-                                , cellState = CSView
-                            }
-                        )
-                        currentBook.cells
-            }
-
-        newEvalState =
-            updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState
-
-        indices =
-            List.range 0 (List.length model.currentBook.cells)
-
         tasks =
-            List.indexedMap (\k index -> createDelayedCommand2 k (Types.ExecuteCell index)) indices
-
-        -- requestEvaluationAsTask evalState expr
-        errorReportDelay =
-            1 + List.length indices
-
-        delayedCollateErrorReportsCmd =
-            createDelayedCommand2 errorReportDelay Types.UpdateErrorReports
+            List.map (compileJs evalState) cells
     in
-    ( { model
-        | currentBook = newBook |> Notebook.Book.clearValues
-        , books =
-            List.map
-                (\book ->
-                    if book.id == currentBook.id then
-                        newBook
+    Task.sequence tasks
 
-                    else
-                        book
-                )
-                model.books
-        , evalState = newEvalState
-        , errorReports = []
-      }
-    , Cmd.none
-    )
+
+compileJs : EvalState -> Cell -> Task Http.Error ( Int, String )
+compileJs evalState cell =
+    Task.andThen (\js -> Task.succeed ( cell.index, js )) (Eval.requestEvaluationAsTask evalState cell.text)
 
 
 createDelayedCommand2 : Int -> FrontendMsg -> Cmd FrontendMsg

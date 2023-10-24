@@ -1,7 +1,7 @@
 module Frontend.ElmCompilerInterop exposing
     ( handleReplyFromElmCompiler
-    , handleReplyFromElmCompiler2
     , receiveReplDataFromJS
+    , updateCell
     )
 
 import Codec
@@ -45,6 +45,7 @@ receiveReplDataFromJS model str =
             Message.postMessage "Error evaluating Elm code" Types.MSRed model
 
 
+handleReplyFromElmCompiler : Model -> Notebook.Cell.Cell -> Result error String -> ( Model, Cmd Types.FrontendMsg )
 handleReplyFromElmCompiler model cell result =
     case result of
         Ok str ->
@@ -81,42 +82,37 @@ handleReplyFromElmCompiler model cell result =
             )
 
 
-handleReplyFromElmCompiler2 model k result =
-    case result of
-        Ok str ->
-            case List.Extra.getAt k model.currentBook.cells of
-                Nothing ->
-                    ( model, Cmd.none )
+updateCell : Model -> Int -> String -> List Notebook.Cell.Cell -> ( Model -> Model, Cmd Types.FrontendMsg )
+updateCell model index str cells =
+    let
+        mCell =
+            List.Extra.getAt index cells
+    in
+    case mCell of
+        Nothing ->
+            ( identity, Cmd.none )
 
-                Just oldCell ->
-                    if Notebook.Eval.hasReplError str then
-                        let
-                            newCell =
-                                { oldCell | report = ( oldCell.index, Just <| Notebook.Eval.reportError str ) }
+        Just cell ->
+            if Notebook.Eval.hasReplError str then
+                let
+                    newCell =
+                        { cell | report = ( cell.index, Just <| Notebook.Eval.reportError str ) }
 
-                            newBook =
-                                Notebook.Book.replaceCell newCell model.currentBook
-                        in
-                        ( { model
-                            | currentBook = newBook
-                          }
-                        , Cmd.none
-                        )
+                    newBook =
+                        Notebook.Book.replaceCell newCell model.currentBook
+                in
+                ( \model_ ->
+                    { model
+                        | currentBook = newBook
+                    }
+                , Cmd.none
+                )
 
-                    else
-                        ( { model
-                            | currentCell = Just oldCell
-                            , currentBook = Notebook.Book.replaceCell { oldCell | replData = Nothing } model.currentBook
-                          }
-                        , Ports.sendDataToJS str
-                        )
-
-        Err _ ->
-            ( { model
-                | currentBook =
-                    Notebook.Book.setReplDataAt model.currentCellIndex
-                        Nothing
-                        model.currentBook
-              }
-            , Cmd.none
-            )
+            else
+                ( \model_ ->
+                    { model
+                        | currentCell = Just cell
+                        , currentBook = Notebook.Book.replaceCell { cell | replData = Nothing } model.currentBook
+                    }
+                , Ports.sendDataToJS str
+                )

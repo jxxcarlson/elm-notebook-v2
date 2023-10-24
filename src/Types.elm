@@ -181,7 +181,7 @@ type FrontendMsg
     | GotPackagesFromCompiler (Result Http.Error (List Notebook.Types.SimplePackageInfo))
     | GotElmJsonDict (Result Http.Error Notebook.Types.ElmPackageSummary)
     | GotReplyFromCompiler Cell (Result Http.Error String)
-    | GotReplyFromCompiler2 Int (Result Http.Error String)
+      -- | GotReplyFromCompiler2 Int (Result Http.Error String)
     | ReceivedFromJS String
       -- DATA
     | AskToListDataSets DataSetDescription
@@ -197,6 +197,7 @@ type FrontendMsg
     | ExecuteNotebook
     | UpdateDeclarationsDictionary
     | ExecuteCell Int
+    | ExecuteCells (Result Http.Error (List ( Int, String )))
     | UpdateErrorReports
     | FetchDependencies String
     | ToggleCellLock Cell

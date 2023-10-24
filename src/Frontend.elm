@@ -12,7 +12,7 @@ import File.Download
 import File.Select
 import Frontend.Authentication
 import Frontend.Data
-import Frontend.ElmCompilerInterop
+import Frontend.ElmCompilerInterop as ElmCompilerInterop
 import Frontend.Message
 import Frontend.Notebook
 import Frontend.UIHelper
@@ -204,11 +204,47 @@ update msg model =
             -- Notebook.EvalCell.executeCell k model
             ( model, Notebook.EvalCell.executeCellCommand k model )
 
+        ExecuteCells result ->
+            let
+                _ =
+                    Debug.log "@@Here is ExecuteCells!!" True
+            in
+            case result of
+                Err httpError ->
+                    Message.postMessage "Error executing cells" Types.MSRed model
+
+                Ok compilerOutput ->
+                    let
+                        oldBook =
+                            model.currentBook
+
+                        oldCells =
+                            oldBook.cells
+
+                        foo : List ( Model -> Model, Cmd FrontendMsg )
+                        foo =
+                            List.map
+                                (\( index, output ) ->
+                                    ElmCompilerInterop.updateCell model index output oldCells
+                                )
+                                compilerOutput
+
+                        cmds =
+                            List.map Tuple.second foo
+
+                        modelTransformers =
+                            List.map Tuple.first foo
+
+                        newModel =
+                            List.foldl (\f acc -> f acc) model modelTransformers
+                    in
+                    ( model, Cmd.batch cmds )
+
         UpdateErrorReports ->
             ( { model | errorReports = Notebook.ErrorReporter.collateErrorReports model.currentBook.cells }, Cmd.none )
 
         ReceivedFromJS str ->
-            Frontend.ElmCompilerInterop.receiveReplDataFromJS model str
+            ElmCompilerInterop.receiveReplDataFromJS model str
 
         FetchDependencies packageName ->
             ( model, Notebook.Package.fetchElmJson packageName )
@@ -217,10 +253,7 @@ update msg model =
             Notebook.Package.gotElmJsonDict model result
 
         GotReplyFromCompiler cell result ->
-            Frontend.ElmCompilerInterop.handleReplyFromElmCompiler model cell result
-
-        GotReplyFromCompiler2 k result ->
-            Frontend.ElmCompilerInterop.handleReplyFromElmCompiler2 model k result
+            ElmCompilerInterop.handleReplyFromElmCompiler model cell result
 
         KeyboardMsg keyMsg ->
             Frontend.UIHelper.handleKeyPresses model keyMsg
