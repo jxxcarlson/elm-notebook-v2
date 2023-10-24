@@ -2,7 +2,6 @@ module Frontend.ElmCompilerInterop exposing
     ( handleReplyFromElmCompiler
     , receiveDataFromJS
     , receiveReplDataFromJS
-    , updateCell
     )
 
 import Codec
@@ -105,17 +104,10 @@ handleReplyFromElmCompiler model cell result =
             )
 
 
-updateCell : Model -> Int -> String -> List Notebook.Cell.Cell -> ( Model -> Model, Cmd Types.FrontendMsg )
-updateCell model index str cells =
-    let
-        mCell =
-            List.Extra.getAt index cells
-    in
-    case mCell of
-        Nothing ->
-            ( identity, Cmd.none )
-
-        Just cell ->
+handleReplyFromElmCompilerForTask : Model -> Notebook.Cell.Cell -> Result error String -> ( Model, Cmd Types.FrontendMsg )
+handleReplyFromElmCompilerForTask model cell result =
+    case result of
+        Ok str ->
             if Notebook.Eval.hasReplError str then
                 let
                     newCell =
@@ -124,18 +116,26 @@ updateCell model index str cells =
                     newBook =
                         Notebook.Book.replaceCell newCell model.currentBook
                 in
-                ( \model_ ->
-                    { model
-                        | currentBook = newBook
-                    }
+                ( { model
+                    | currentBook = newBook
+                  }
                 , Cmd.none
                 )
 
             else
-                ( \model_ ->
-                    { model
-                        | currentCell = Just cell
-                        , currentBook = Notebook.Book.replaceCell { cell | replData = Nothing } model.currentBook
-                    }
+                ( { model
+                    | currentCell = Just cell
+                    , currentBook = Notebook.Book.replaceCell { cell | replData = Nothing } model.currentBook
+                  }
                 , Ports.sendDataToJS str
                 )
+
+        Err _ ->
+            ( { model
+                | currentBook =
+                    Notebook.Book.setReplDataAt model.currentCellIndex
+                        Nothing
+                        model.currentBook
+              }
+            , Cmd.none
+            )

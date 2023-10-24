@@ -26,7 +26,7 @@ import Navigation
 import Notebook.Action
 import Notebook.Book exposing (Book)
 import Notebook.CLI
-import Notebook.Cell exposing (CellState(..), CellType(..), CellValue(..))
+import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
 import Notebook.Codec
 import Notebook.Compile
 import Notebook.DataSet
@@ -212,12 +212,49 @@ update msg model =
 
                 Ok compilerOutput ->
                     let
+                        errorFreeOutput =
+                            List.filter (\( _, str ) -> not (Notebook.Eval.hasReplError str)) compilerOutput
+
+                        errorData : List ( Int, List MessageItem )
+                        errorData =
+                            List.filter (\( _, str ) -> Notebook.Eval.hasReplError str) compilerOutput
+                                |> Debug.log "@@ErrorData"
+                                |> List.map (\( idx, str ) -> ( idx, Notebook.Eval.reportError str ))
+
+                        updateCellsWithReport : ( Int, List MessageItem ) -> List Cell -> List Cell
+                        updateCellsWithReport ( k, messages ) cells =
+                            case List.Extra.getAt k cells of
+                                Nothing ->
+                                    cells
+
+                                Just cell ->
+                                    List.Extra.setAt k { cell | report = ( cell.index, Just messages ) } cells
+
+                        updateCellsWithReports : List ( Int, List MessageItem ) -> List Cell -> List Cell
+                        updateCellsWithReports errorData_ cells =
+                            List.foldl updateCellsWithReport cells errorData_
+
+                        oldBook =
+                            model.currentBook
+
+                        newCells =
+                            updateCellsWithReports errorData model.currentBook.cells
+
+                        newBook =
+                            { oldBook | cells = newCells }
+
+                        errorReports =
+                            Notebook.ErrorReporter.collateErrorReports newCells
+
+                        _ =
+                            Debug.log "@@N_errorReports" (List.length errorReports)
+
                         commands : List (Cmd msg)
                         commands =
-                            List.map (\( idx, str ) -> Ports.encodeIndexAndSourcePair ( idx, str ) |> Ports.sendJSData) compilerOutput
+                            List.map (\( idx, str ) -> Ports.encodeIndexAndSourcePair ( idx, str ) |> Ports.sendJSData) errorFreeOutput
                     in
                     --( model, Notebook.EvalCell.compileCellsCmd model.evalState model.currentBook.cells )
-                    ( model, Cmd.batch commands )
+                    ( { model | currentBook = newBook, errorReports = errorReports }, Cmd.batch commands )
 
         UpdateErrorReports ->
             ( { model | errorReports = Notebook.ErrorReporter.collateErrorReports model.currentBook.cells }, Cmd.none )
