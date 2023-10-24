@@ -195,6 +195,69 @@ errorKeys cells =
         |> List.filter (\item -> String.contains "|" item)
 
 
+renderMessageItemO : MessageItem -> Element msg
+renderMessageItemO messageItem =
+    case messageItem of
+        Plain str ->
+            -- el [] (text (str |> String.replace "\n" ""))
+            el [] (text str)
+
+        Styled styledString ->
+            let
+                color =
+                    if String.contains "^" styledString.string then
+                        Element.rgb 1.0 0 0
+
+                    else
+                        case styledString.color of
+                            Nothing ->
+                                Element.rgb 0.9 0 0.6
+
+                            Just "red" ->
+                                Element.rgb 1 0 0
+
+                            Just "green" ->
+                                Element.rgb 0 1 0
+
+                            Just "blue" ->
+                                Element.rgb 0 0 1
+
+                            Just "yellow" ->
+                                Element.rgb 1 1 0
+
+                            Just "black" ->
+                                Element.rgb 0.9 0.4 0.1
+
+                            Just "white" ->
+                                Element.rgb 1 1 1
+
+                            _ ->
+                                Element.rgb 0 1 0
+
+                style =
+                    if styledString.bold then
+                        Font.bold
+
+                    else if styledString.underline then
+                        Font.underline
+
+                    else
+                        Font.unitalicized
+
+                padding_ =
+                    if String.contains "^" styledString.string then
+                        let
+                            n =
+                                Notebook.Parser.numberOfLeadingSpaces styledString.string
+                        in
+                        paddingXY (8 * n) 8
+
+                    else
+                        paddingXY 8 8
+            in
+            el [ padding_, Font.color color, style, View.Style.monospace ] (text styledString.string)
+
+
 renderMessageItem : MessageItem -> Element msg
 renderMessageItem messageItem =
     case messageItem of
