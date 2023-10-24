@@ -370,12 +370,8 @@ messageItemFilter key item =
 
 
 renderReport : ErrorReport -> RenderedErrorReport
-renderReport ( k, items__ ) =
-    let
-        items_ =
-            List.map removeLineNumberAnnotation items__
-    in
-    ( k, List.map renderMessageItem items_ )
+renderReport ( k, items ) =
+    ( k, List.map renderMessageItem items )
 
 
 removeLineNumberAnnotation : MessageItem -> MessageItem
