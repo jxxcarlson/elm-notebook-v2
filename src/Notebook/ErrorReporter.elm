@@ -5,6 +5,7 @@ module Notebook.ErrorReporter exposing
     , errorKeys
     , errorKeysFromCells
     , errorsToString
+    , getTrailingSpaces_
     , pairUp
     , renderReport
     , stringToMessageItem
@@ -111,8 +112,9 @@ collateErrorReports cells =
                 |> List.map removeLineNumberAnnotations
                 |> List.map (\( k, r ) -> ( k, List.filter (messageItemFilter "Evergreen") r ))
                 --|> List.map (\( c, r ) -> ( c, modifyFirstMessageItem r ))
+                |> Debug.log "@@BEFORE"
                 |> List.map (\( c, r ) -> ( c, fixMessageItems r ))
-                |> Debug.log "@@REPORTS"
+                |> Debug.log "@@AFTER"
                 -- Below: flag duplicates
                 |> List.foldl (\( index, report ) acc -> addOrReferenceBack ( index, report ) acc) []
 
@@ -151,19 +153,42 @@ fixPair ( first, second ) =
     case ( first, second ) of
         ( Plain str, Styled styledString ) ->
             if String.contains "^" styledString.string then
-                case Notebook.Parser.getTrailingSpaces str of
+                case getTrailingSpaces_ str of
                     Nothing ->
                         ( first, second )
 
                     Just trailingSpaces ->
-                        --( Plain str, Styled { styledString | string = trailingSpaces ++ String.dropLeft 1 styledString.string } )
-                        ( Plain (str |> String.replace trailingSpaces "" |> fixItem), Styled { styledString | string = "\n@" ++ String.replace "\n" "" (trailingSpaces ++ "@" ++ styledString.string) } )
+                        ( Plain (str |> String.replace trailingSpaces "" |> fixItem)
+                          --, Styled { styledString | string = "\n" ++ String.replace "\n" "" (trailingSpaces ++ " " ++ styledString.string) }
+                        , Styled { styledString | string = String.replace "\n" "" (trailingSpaces ++ " " ++ styledString.string) }
+                        )
 
             else
                 ( first, second )
 
         _ ->
             ( first, second )
+
+
+getTrailingSpaces_ : String -> Maybe String
+getTrailingSpaces_ str =
+    let
+        parts =
+            String.split "\n" str
+
+        last =
+            List.head (List.reverse parts)
+    in
+    case last of
+        Nothing ->
+            Nothing
+
+        Just str_ ->
+            if String.trim str_ == "" then
+                Just str_
+
+            else
+                Nothing
 
 
 fixMessageItems : List MessageItem -> List MessageItem

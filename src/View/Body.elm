@@ -40,10 +40,6 @@ view model user =
 
 declarationsOrErrorReport : FrontendModel -> Element FrontendMsg
 declarationsOrErrorReport model =
-    let
-        _ =
-            Debug.log "@@@errorReports" model.errorReports
-    in
     if model.errorReports /= [] && model.errorReports /= [ ( 0, [ Plain "end" ] ) ] && model.showErrorPanel then
         reportErrors
             model
