@@ -110,6 +110,8 @@ collateErrorReports cells =
                 |> List.filterMap identity
                 |> List.map removeLineNumberAnnotations
                 |> List.map (\( k, r ) -> ( k, List.filter (messageItemFilter "Evergreen") r ))
+                --|> List.map (\( c, r ) -> ( c, modifyFirstMessageItem r ))
+                |> List.map (\( c, r ) -> ( c, fixMessageItems r ))
                 |> Debug.log "@@REPORTS"
                 -- Below: flag duplicates
                 |> List.foldl (\( index, report ) acc -> addOrReferenceBack ( index, report ) acc) []
@@ -142,6 +144,35 @@ pairUp items =
 
         _ ->
             []
+
+
+fixPair : ( MessageItem, MessageItem ) -> ( MessageItem, MessageItem )
+fixPair ( first, second ) =
+    case ( first, second ) of
+        ( Plain str, Styled styledString ) ->
+            if String.contains "^" styledString.string then
+                case Notebook.Parser.getTrailingSpaces str of
+                    Nothing ->
+                        ( first, second )
+
+                    Just trailingSpaces ->
+                        --( Plain str, Styled { styledString | string = trailingSpaces ++ String.dropLeft 1 styledString.string } )
+                        ( Plain (str |> String.replace trailingSpaces "" |> fixItem), Styled { styledString | string = "\n@" ++ String.replace "\n" "" (trailingSpaces ++ "@" ++ styledString.string) } )
+
+            else
+                ( first, second )
+
+        _ ->
+            ( first, second )
+
+
+fixMessageItems : List MessageItem -> List MessageItem
+fixMessageItems items =
+    items
+        |> pairUp
+        |> List.map fixPair
+        |> List.map (\( first, second ) -> [ first, second ])
+        |> List.concat
 
 
 fixTrailingSpaces : List MessageItem -> List MessageItem
@@ -198,6 +229,47 @@ errorKeys cells =
     errorsToStringListList cells
         |> List.concat
         |> List.filter (\item -> String.contains "|" item)
+
+
+fixItem : String -> String
+fixItem str =
+    case String.split ":" str of
+        first :: rest ->
+            first ++ "\n   " ++ String.join ":" rest
+
+        _ ->
+            str
+
+
+
+--fixItem : String -> String
+--fixItem str =
+--    String.replace ":" "\n   " str
+
+
+modifyFirstMessageItem : List MessageItem -> List MessageItem
+modifyFirstMessageItem items =
+    case items of
+        first :: rest ->
+            case first of
+                Plain str ->
+                    Plain (fixItem str |> Debug.log "@@FIRST") :: rest
+
+                Styled styledString ->
+                    Styled styledString :: rest
+
+        _ ->
+            items
+
+
+modifyMessageItem : MessageItem -> MessageItem
+modifyMessageItem messageItem =
+    case messageItem of
+        Plain str ->
+            Plain (fixItem str)
+
+        Styled styledString ->
+            Styled styledString
 
 
 renderMessageItem : MessageItem -> Html msg
