@@ -20,7 +20,6 @@ import Dict exposing (Dict)
 import Element as E exposing (Element)
 import Element.Font as Font
 import Env exposing (Mode(..))
-import Html.Attributes
 import Http
 import Json.Encode as Encode
 import Notebook.Cell exposing (Cell)
@@ -182,17 +181,8 @@ displayDictionary declarationDict =
 
 displayValue : ( String, String ) -> Element msg
 displayValue ( k, v ) =
-    E.column [ E.width E.fill, Html.Attributes.style "line-height" "2.5" |> E.htmlAttribute ]
-        --[ E.text v ]
+    E.column [ E.width E.fill, E.spacing 8 ]
         (List.map E.text (String.lines v))
-
-
-displayItem : ( String, String ) -> Element msg
-displayItem ( k, v ) =
-    E.row []
-        [ E.el [ E.width (E.px 100) ] (E.text k)
-        , E.el [ E.width (E.px 400) ] (E.text v)
-        ]
 
 
 initEmptyEvalState : EvalState
@@ -201,14 +191,6 @@ initEmptyEvalState =
     , types = Dict.empty
     , imports = Dict.empty
     }
-
-
-treeImport =
-    Dict.fromList [ ( "Tree", "import Tree\n" ) ]
-
-
-typeDict =
-    Dict.fromList [ ( "type alias Point", "type alias Point = { x : Float , y : Float }\n" ) ]
 
 
 encodeExpr : EvalState -> String -> Encode.Value
