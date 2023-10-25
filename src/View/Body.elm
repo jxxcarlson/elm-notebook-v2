@@ -96,7 +96,7 @@ errorDetails model listOfRenderedErrorReports =
     , detailHeading listOfRenderedErrorReports
     , E.paragraph [ E.paddingEach { left = 0, right = 0, bottom = 12, top = 0 } ]
         [ E.el [ Font.color (E.rgb 1 0.3 0), Font.underline, E.paddingEach { left = 24, right = 0, top = 0, bottom = 0 } ] (E.text "Below:")
-        , E.el [ Font.color (E.rgb 1 0.3 0) ] (E.text " the positioning of the '^^^' is off.  We are working on it ...")
+        , E.el [ Font.color (E.rgb 1 0.3 0) ] (E.text " the positioning of the '^^^' is off a bit.  We are working on it ...")
         ]
     , E.paragraph
         [ E.height (E.px <| View.Geometry.loweRightSidePanelHeight model)
