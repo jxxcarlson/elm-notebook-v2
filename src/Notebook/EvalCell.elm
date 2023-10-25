@@ -177,7 +177,7 @@ executeCell cellIndex model =
                                     ( { model
                                         | currentCell = Just cleanCell
                                         , currentBook = cleanBook
-                                        , evalState = newEvalState |> Debug.log "@@EvalState"
+                                        , evalState = newEvalState
                                       }
                                     , Eval.requestEvaluation newEvalState cell sourceText
                                     )

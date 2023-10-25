@@ -20,6 +20,7 @@ import Dict exposing (Dict)
 import Element as E exposing (Element)
 import Element.Font as Font
 import Env exposing (Mode(..))
+import Html.Attributes
 import Http
 import Json.Encode as Encode
 import Notebook.Cell exposing (Cell)
@@ -61,10 +62,6 @@ updateEvalStateWithPackages packageSummary evalState =
 
 requestEvaluation : EvalState -> Cell -> String -> Cmd FrontendMsg
 requestEvaluation evalState cell expr =
-    let
-        _ =
-            Debug.log "@@requestEvaluation" expr
-    in
     Http.post
         { url =
             case Env.mode of
@@ -176,7 +173,7 @@ insertTypeDeclaration name value evalState =
 
 displayDictionary : Dict String String -> Element msg
 displayDictionary declarationDict =
-    E.column [ E.spacing 12, Font.size 14, E.paddingEach { left = 18, right = 0, top = 0, bottom = 0 } ]
+    E.column [ E.spacing 24, Font.size 14, E.paddingEach { left = 18, right = 0, top = 0, bottom = 0 } ]
         (List.map
             (\( k, v ) -> displayValue ( k, v ))
             (Dict.toList declarationDict)
@@ -185,12 +182,14 @@ displayDictionary declarationDict =
 
 displayValue : ( String, String ) -> Element msg
 displayValue ( k, v ) =
-    E.el [ E.width E.fill ] (E.text v)
+    E.column [ E.width E.fill, Html.Attributes.style "line-height" "2.5" |> E.htmlAttribute ]
+        --[ E.text v ]
+        (List.map E.text (String.lines v))
 
 
 displayItem : ( String, String ) -> Element msg
 displayItem ( k, v ) =
-    E.row [ E.spacing 12 ]
+    E.row []
         [ E.el [ E.width (E.px 100) ] (E.text k)
         , E.el [ E.width (E.px 400) ] (E.text v)
         ]

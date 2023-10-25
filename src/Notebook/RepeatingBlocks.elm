@@ -77,10 +77,6 @@ removeOneRepeatingBlock eq items =
 
 removeOneRepeatingBlockHelper : (a -> a -> Bool) -> { removed : Bool, index : Int, items : List a } -> { removed : Bool, index : Int, items : List a }
 removeOneRepeatingBlockHelper eq { removed, index, items } =
-    let
-        _ =
-            Debug.log "START" index
-    in
     if removed then
         { removed = removed, index = index, items = items }
 
@@ -90,17 +86,13 @@ removeOneRepeatingBlockHelper eq { removed, index, items } =
                 removeRepeatingBlockAt eq index items
         in
         if List.length smaller < List.length items then
-            let
-                _ =
-                    Debug.log ("SMALLER (" ++ String.fromInt index ++ ")") smaller
-            in
-            { removed = True, index = index, items = smaller } |> Debug.log "@#SMALLER"
+            { removed = True, index = index, items = smaller }
 
         else if index < List.length items - 1 then
-            removeOneRepeatingBlockHelper eq { removed = False, index = index + 1, items = items } |> Debug.log "@#NEXT"
+            removeOneRepeatingBlockHelper eq { removed = False, index = index + 1, items = items }
 
         else
-            { removed = False, index = index, items = items } |> Debug.log "@#DONE"
+            { removed = False, index = index, items = items }
 
 
 removeRepeatingBlockAt : (a -> a -> Bool) -> Int -> List a -> List a

@@ -74,7 +74,6 @@ errorKeysFromCells cells =
         |> List.Extra.unique
         |> List.map (\s -> ( Notebook.Cell.locate s cells, s ))
         |> List.sortBy (\( loc, _ ) -> loc)
-        |> Debug.log "@@@@errorKeysFromCells"
 
 
 errorSummary : List Cell -> List ( Int, Element Types.FrontendMsg )
@@ -84,7 +83,7 @@ errorSummary cells =
             []
 
         errors ->
-            List.map (renderReport >> (\( k, xx ) -> ( k, Element.column [] xx ))) errors |> Debug.log "@@@@errorSummary"
+            List.map (renderReport >> (\( k, xx ) -> ( k, Element.column [] xx ))) errors
 
 
 removeLineNumberAnnotations : ErrorReport -> ErrorReport
@@ -111,10 +110,7 @@ collateErrorReports cells =
                 |> List.filterMap identity
                 |> List.map removeLineNumberAnnotations
                 |> List.map (\( k, r ) -> ( k, List.filter (messageItemFilter "Evergreen") r ))
-                --|> List.map (\( c, r ) -> ( c, modifyFirstMessageItem r ))
-                |> Debug.log "@@BEFORE"
                 |> List.map (\( c, r ) -> ( c, fixMessageItems r ))
-                |> Debug.log "@@AFTER"
                 -- Below: flag duplicates
                 |> List.foldl (\( index, report ) acc -> addOrReferenceBack ( index, report ) acc) []
 
@@ -204,11 +200,8 @@ fixTrailingSpaces : List MessageItem -> List MessageItem
 fixTrailingSpaces items =
     items
         |> pairUp
-        |> Debug.log "@@PAIRS"
         |> List.map moveTrailingSpace
-        |> Debug.log "@@MOVE_trailing_spaces"
         |> List.concat
-        |> Debug.log "@@CONCAT"
 
 
 moveTrailingSpace : ( MessageItem, MessageItem ) -> List MessageItem
@@ -278,7 +271,7 @@ modifyFirstMessageItem items =
         first :: rest ->
             case first of
                 Plain str ->
-                    Plain (fixItem str |> Debug.log "@@FIRST") :: rest
+                    Plain (fixItem str) :: rest
 
                 Styled styledString ->
                     Styled styledString :: rest
@@ -372,7 +365,7 @@ renderMessageItem1 messageItem =
                 Element.none
 
             else
-                el [ View.Style.monospace ] (View.Utility.preformattedElement [] (Debug.log "@@Str" str))
+                el [ View.Style.monospace ] (View.Utility.preformattedElement [] str)
 
         Styled styledString ->
             let
@@ -416,7 +409,7 @@ renderMessageItem1 messageItem =
                     else
                         Font.unitalicized
             in
-            el [ Font.color color, style, View.Style.monospace ] (View.Utility.preformattedElement [] (Debug.log "@@STStr" styledString.string))
+            el [ Font.color color, style, View.Style.monospace ] (View.Utility.preformattedElement [] styledString.string)
 
 
 isBlank : String -> Bool
