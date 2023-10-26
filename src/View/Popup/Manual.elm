@@ -4,6 +4,7 @@ import Element
 import Element.Background as Background
 import Element.Font as Font
 import Types exposing (PopupState(..))
+import View.Button
 import View.Geometry
 import View.MarkdownThemed as MarkdownThemed
 import View.Utility
@@ -20,7 +21,8 @@ view model theme =
             , Element.alignRight
             , Element.clipX
             ]
-            [ MarkdownThemed.renderFull (scale 0.42 (View.Geometry.appWidth model)) (View.Geometry.bodyHeight model) content
+            [ Element.el [ Element.alignRight ] View.Button.dismissPopupTransparent
+            , MarkdownThemed.renderFull (scale 0.42 (View.Geometry.appWidth model)) (View.Geometry.bodyHeight model) content
             ]
 
 

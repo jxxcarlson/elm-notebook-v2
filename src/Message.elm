@@ -2,6 +2,7 @@ module Message exposing (postMessage, removeMessageAfterDelay, view)
 
 import Element as E exposing (Element)
 import Element.Font as Font
+import List.Extra
 import Notebook.Config
 import Process
 import Task
@@ -48,7 +49,7 @@ view width height model =
             , Font.size 12
             , E.scrollbarX
             ]
-            (actualMessages |> List.map handleMessageInFooter |> List.intersperse (E.el [ Font.size 12, Font.color (E.rgb 0.4 0.4 1.0) ] (E.text ", ")))
+            (actualMessages |> List.Extra.uniqueBy (\m -> m.txt) |> List.map handleMessageInFooter |> List.intersperse (E.el [ Font.size 12, Font.color (E.rgb 0.4 0.4 1.0) ] (E.text ", ")))
 
 
 

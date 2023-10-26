@@ -9,6 +9,7 @@ module View.Button exposing
     , deleteNotebook
     , dismissPopup
     , dismissPopupSmall
+    , dismissPopupTransparent
     , editDataSet
     , editTitle
     , executeNotebook
@@ -411,7 +412,7 @@ setUpUser =
 
 submitPackageList : Element FrontendMsg
 submitPackageList =
-    buttonTemplate [] SubmitPackageList "Install"
+    buttonTemplate [ Background.color Color.darkerSteelGray ] SubmitPackageList "Install"
 
 
 toggleShowErrorPanel : FrontendModel -> Element FrontendMsg

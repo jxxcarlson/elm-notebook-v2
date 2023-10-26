@@ -34,50 +34,71 @@ view model =
     case model.popupState of
         Types.PackageListPopup ->
             E.column
-                [ E.spacing 18
-                , View.Style.bgGray 0.4
-                , E.padding 24
-                , E.centerX
-                , Element.Border.width 1
-                , Element.Border.color (ThemedColor.themedPopupDividerColor viewData.theme)
-                , Background.color (ThemedColor.themedPopupBackgroundColor viewData.theme)
-                , Font.color (ThemedColor.themedValueTextColor viewData.theme)
-                , E.moveUp (View.Geometry.appHeight model - 130 |> toFloat)
-                ]
-                [ E.row [ E.spacing 12 ]
-                    [ E.el [ Font.bold, Font.size 14, Font.color (E.rgb 0.9 0.9 0.9) ] (E.text "Packages for this notebook")
-                    , E.el [ Font.italic, Font.size 14, Font.color (E.rgb 0.9 0.9 0.9) ] (E.text "Add more packages below, one per line.")
-                    ]
-                , View.Input.submitPackageList model
-                    [ Background.color (ThemedColor.themedCodeCellBackgroundColor viewData.theme)
-                    , Font.color (ThemedColor.themedCodeCellTextColor viewData.theme)
-                    , Element.Border.color (ThemedColor.themedPopupDividerColor viewData.theme)
-                    ]
-                    [ Font.color (E.rgb 0.9 0.9 0.9) ]
-                , E.column
-                    [ E.height (E.px 150)
-                    , E.width (E.px 500)
-                    , E.scrollbarY
-                    , Font.color (ThemedColor.themedTextColor viewData.theme)
-                    , Background.color (ThemedColor.themedCodeCellBackgroundColor viewData.theme)
-                    , Element.Border.width 1
-                    , Element.Border.color (ThemedColor.themedPopupDividerColor viewData.theme)
-                    , E.spacing 12
-                    , E.padding 24
-                    ]
-                    --(viewPackage model.packageDict)
-                    (E.el [ Font.size 12, Font.bold ] (E.text "Installed packages (Elm compiler)")
-                        :: List.map viewCompilerPackage model.packagesFromCompiler
-                    )
-                , E.row [ E.spacing 18 ]
-                    [ View.Button.submitPackageList
-                    , View.Button.dismissPopup
-                    ]
-                , E.el [ E.width E.fill, E.paddingXY 8 8, View.Style.bgGray 0 ] (Message.view 500 90 model)
+                (panelStyle model viewData)
+                [ panelHeader
+                , submitPackageRequest model viewData
+                , displayInstalledPackages model viewData
+                , E.el [ E.width E.fill, E.paddingXY 8 8, View.Style.bgGray 0 ] (Message.view 500 45 model)
+                , panelFooter
                 ]
 
         _ ->
             E.none
+
+
+panelStyle model viewData =
+    [ E.spacing 24
+    , View.Style.bgGray 0.4
+    , E.padding 24
+    , E.centerX
+    , Element.Border.width 1
+    , Element.Border.color (ThemedColor.themedPopupDividerColor viewData.theme)
+    , Background.color (ThemedColor.themedPopupBackgroundColor viewData.theme)
+    , Font.color (ThemedColor.themedValueTextColor viewData.theme)
+    , E.moveUp (View.Geometry.appHeight model - 130 |> toFloat)
+    ]
+
+
+panelHeader =
+    E.row [ E.spacing 12 ]
+        [ E.el [ Font.bold, Font.size 14, Font.color (E.rgb 0.9 0.9 0.9) ] (E.text "Packages for this notebook")
+        , E.el [ Font.italic, Font.size 14, Font.color (E.rgb 0.9 0.9 0.9) ] (E.text "Add more packages below, one per line.")
+        ]
+
+
+submitPackageRequest model viewData =
+    View.Input.submitPackageList model
+        [ Background.color (ThemedColor.themedCodeCellBackgroundColor viewData.theme)
+        , Font.color (ThemedColor.themedCodeCellTextColor viewData.theme)
+        , Element.Border.color (ThemedColor.themedPopupDividerColor viewData.theme)
+        ]
+        [ Font.color (E.rgb 0.9 0.9 0.9) ]
+
+
+displayInstalledPackages model viewData =
+    E.column []
+        [ E.el [ Font.size 12, Font.bold, E.paddingEach { left = 0, right = 0, top = 0, bottom = 6 } ] (E.text "Installed packages (Elm compiler)")
+        , E.column
+            [ E.height (E.px 150)
+            , E.width (E.px 500)
+            , E.scrollbarY
+            , Font.color (ThemedColor.themedTextColor viewData.theme)
+            , Background.color (ThemedColor.themedCodeCellBackgroundColor viewData.theme)
+            , Element.Border.width 1
+            , Element.Border.color (ThemedColor.themedPopupDividerColor viewData.theme)
+            , E.spacing 12
+            , E.padding 12
+            ]
+            --(viewPackage model.packageDict)
+            (List.map viewCompilerPackage model.packagesFromCompiler)
+        ]
+
+
+panelFooter =
+    E.row [ E.spacing 18 ]
+        [ View.Button.submitPackageList
+        , View.Button.dismissPopup
+        ]
 
 
 viewCompilerPackage : { name : String, version : String } -> Element Types.FrontendMsg
