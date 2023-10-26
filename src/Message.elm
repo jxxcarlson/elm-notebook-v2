@@ -49,7 +49,7 @@ view width height model =
             , Font.size 12
             , E.scrollbarX
             ]
-            (actualMessages |> List.Extra.uniqueBy (\m -> m.txt) |> List.map handleMessageInFooter |> List.intersperse (E.el [ Font.size 12, Font.color (E.rgb 0.4 0.4 1.0) ] (E.text ", ")))
+            (actualMessages |> List.Extra.uniqueBy (\m -> m.txt) |> List.sortBy (\m -> m.txt) |> List.map handleMessageInFooter |> List.intersperse (E.el [ Font.size 12, Font.color (E.rgb 0.4 0.4 1.0) ] (E.text ", ")))
 
 
 
