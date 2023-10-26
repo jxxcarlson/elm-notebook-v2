@@ -57,14 +57,11 @@ view model =
 
                 --, View.Utility.showIfIsAdmin model Button.runTask
                 , Button.packagesPopup model
-                , Button.cliPopup model
                 , errorIndicator model
 
                 --, E.el [ Font.color (E.rgb 1 1 1) ] (E.text <| String.left 4 model.currentBook.id)
                 --, View.Utility.showIfIsAdmin model Button.sendProgramToBeCompiled
                 , displayMessages model
-                , View.Utility.showIf (Predicate.regularUser model) Button.importNotebook
-                , View.Utility.showIf (Predicate.regularUser model) Button.exportNotebook
 
                 --  , Button.getPackagesFromCompiler
                 --, View.Utility.showIf (Predicate.regularUser model) Button.newDataSet

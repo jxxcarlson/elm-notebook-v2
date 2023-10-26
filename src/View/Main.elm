@@ -12,6 +12,7 @@ import View.Color
 import View.Footer
 import View.Geometry
 import View.Header
+import View.LHSidebar
 import View.Style
 import View.Utility
 
@@ -29,6 +30,11 @@ view model =
 
 mainColumn : Model -> Element FrontendMsg
 mainColumn model =
+    E.row []
+        [ View.LHSidebar.view model, main_ model ]
+
+
+main_ model =
     E.column (mainColumnStyle model)
         [ View.Header.view model
         , case model.currentUser of

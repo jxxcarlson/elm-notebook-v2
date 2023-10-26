@@ -307,6 +307,11 @@ importNotebook =
     Button.smallPrimary { msg = ImportRequested, status = Button.Active, label = Button.Text "Import", tooltipText = Nothing }
 
 
+cliPopup : FrontendModel -> Element FrontendMsg
+cliPopup model =
+    Button.smallPrimary { msg = ChangePopup CLIPopup, status = Button.Active, label = Button.Text "CLI", tooltipText = Just "Command-line interface" }
+
+
 stateEditor : Element FrontendMsg
 stateEditor =
     Button.smallPrimary { msg = ChangePopup StateEditorPopup, status = Button.Active, label = Button.Text "Edit", tooltipText = Nothing }
@@ -450,11 +455,6 @@ adminPopup model =
 packagesPopup : FrontendModel -> Element FrontendMsg
 packagesPopup model =
     buttonTemplate [] (ChangePopup PackageListPopup) "Install Packages"
-
-
-cliPopup : FrontendModel -> Element FrontendMsg
-cliPopup model =
-    buttonTemplate [] (ChangePopup CLIPopup) "CLI"
 
 
 runTask : Element FrontendMsg
