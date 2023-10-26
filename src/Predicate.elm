@@ -25,6 +25,7 @@ canClone model =
             model.currentBook.author
                 /= user.username
                 && (not <| String.contains user.username (Maybe.withDefault "---" model.currentBook.origin))
+                && (not <| user.username == "guest")
 
         Nothing ->
             False
