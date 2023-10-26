@@ -79,10 +79,9 @@ When you click on a cell, the app will display a row of controls:
  - *Above/Below*, *New Code*, *New Text*.  Use these to create new cells.
  The *Above/Below* toggles the placement of the newly created cell.
 
- - *Close* (for Markdown cells) or *Run* and *Run!* (for code cells).
- The *Run* button evaluates the code in the cell but does not close it.
- The *Run!* button evaluates the code and closes the cell.
- The result of evaluating code is shown below the code itself.
+ - *Close* (for Markdown cells) or *Run* (for code cells).
+ The *Run* button evaluates the code in the cell, the
+result of which is shown below the code itself.
 
 - *Up*, *Down*: move cells up or down.
 
@@ -94,10 +93,11 @@ When you click on a cell, the app will display a row of controls:
 ## Packages
 
 The *Packages* button opens a window that lets you add packages to your notebook.
-This window has two parts. In the upper part you list the names of the
+This window has two parts   In the upper part you list the names of the
 packages your notebook needs, e.g. `elm-community/list-extra`.
 The app remembers what you put there, so if you open it again, you can add, edit, or delete
-package names.
+package names. The lower part lists the packages that are currently installed in
+the Elm compiler.
 
 ## Public versus private notebooks
 
@@ -107,11 +107,12 @@ To change the status of a notebook, click on the *Private* button in the noteboo
 You can work with a pubic notebook that does not belong to you: edit and evaluate
 cells, delete cells and make new ones. However, these changes will not be saved.
 If you want to save changes to a public notebook, clone it (see below)  Cloning a notebook
-creates a copy of the notebook that belongs to you.
+creates a copy of the notebook that belongs to you.  To clone a notebook you need
+an Elm Notebook account, and you need to be signed in to it.
 
-Note the two buttons *Mine* and *Public* at the top of the notebook list (right-hand column).
-Click on the *Mine*
-button to show your documents. Click on *Public* to show public documents that do not
+Note the two buttons *My docs* and *Public docs* at the top of the notebook list (right-hand column).
+Click on the *My docs*
+button to show your documents. Click on *Public docs* to show public documents that do not
 belong to you.
 
 ## Opening a public document without signing in
@@ -135,13 +136,15 @@ Abbreviated versions of the address also work:
 ## Cloning a notebook
 
 Public documents can be cloned by clicking on the *Clone* button in the footer.  This button
-is only visible if the *Public*, not the *Mine* button is selected, and if there are
+is only visible if the *Public docs*, not the *My docs* button is selected, and if there are
 public notebooks visible.
 
 You can also update a notebook that has been cloned: click on the *Update* button in the footer.
 Updating a notebook brings in new material from the original source.
 However this operation will overwrite any changes you have made to the clone.
 
+As with any notebook, you can rename one that has been cloned. To do this, click on the title field
+in the header, left-hand side.
 
 
 """
