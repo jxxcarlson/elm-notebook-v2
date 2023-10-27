@@ -23,7 +23,6 @@ view model =
                 , Background.color UILibrary.Color.stillDarkerSteelGray
                 , E.padding 24
                 , E.spacing 24
-                , Font.color UILibrary.Color.white
                 ]
                 [ E.el
                     [ Font.color UILibrary.Color.white
@@ -33,7 +32,7 @@ view model =
                     (E.text "CLI")
                 , View.Input.command model
                 , E.row [ E.spacing 24 ] [ View.Button.runCommand, View.Button.dismissPopup ]
-                , E.el [] (E.text "Instructions coming soon ...")
+                , E.el [ Font.color (E.rgb 0.6 0.6 0.6) ] (E.text "Try 'removeCells 2 10' -- you can't undo this!")
                 ]
 
         _ ->

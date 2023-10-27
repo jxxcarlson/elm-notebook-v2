@@ -315,7 +315,7 @@ duplicateNotebook =
 
 cliPopup : FrontendModel -> Element FrontendMsg
 cliPopup model =
-    Button.smallPrimary { msg = ChangePopup CLIPopup, status = Button.Active, label = Button.Text "CLI", tooltipText = Just "Command-line interface" }
+    Button.smallPrimary { msg = ChangePopup CLIPopup, status = Button.Active, label = Button.Text "Commands", tooltipText = Just "Command-line interface" }
 
 
 stateEditor : Element FrontendMsg
