@@ -1,12 +1,16 @@
 module Notebook.EvalCell exposing
-    ( compileCellsCmd
+    ( booksToInclude
+    , compileCellsCmd
     , executeCellCommand
     , executeNotebook
+    , getCellsToInclude
+    , isTypeDefOrDeclaration
     , processCell
     , updateEvalStateWithCells
     )
 
 import Http
+import Lamdera
 import List.Extra
 import Message
 import Notebook.Book
@@ -26,6 +30,16 @@ type alias Model =
 
 
 -- EXECUTE NOTEBOOK
+
+
+booksToInclude book =
+    List.filter (\cell -> String.left 8 cell.text == "@include") book.cells
+        |> List.map (.text >> String.dropLeft 8 >> String.trim)
+
+
+getCellsToInclude : List String -> Cmd FrontendMsg
+getCellsToInclude bookNames =
+    Lamdera.sendToBackend (Types.GetCellsToInclude bookNames)
 
 
 executeNotebook : Model -> ( Model, Cmd FrontendMsg )
@@ -203,6 +217,35 @@ updateEvalStateWithCell cell evalState =
 
                         Notebook.Parser.Import name expr ->
                             Eval.insertImport name ("import " ++ name ++ " " ++ expr ++ "\n") evalState
+
+
+isTypeDefOrDeclaration : Cell -> Bool
+isTypeDefOrDeclaration cell =
+    case cell.tipe of
+        Cell.CTMarkdown ->
+            False
+
+        Cell.CTCode ->
+            case Notebook.Parser.classify (compress cell.text) of
+                Err _ ->
+                    False
+
+                Ok classif ->
+                    case classif of
+                        Notebook.Parser.Expr _ ->
+                            False
+
+                        Notebook.Parser.Decl _ _ ->
+                            True
+
+                        Notebook.Parser.ElmType _ _ ->
+                            True
+
+                        Notebook.Parser.TypeAlias _ _ ->
+                            True
+
+                        Notebook.Parser.Import _ _ ->
+                            False
 
 
 fixLet str =

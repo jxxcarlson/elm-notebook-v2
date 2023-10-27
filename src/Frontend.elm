@@ -80,6 +80,7 @@ init url key =
       , messageId = 0
 
       -- NOTEBOOK (NEW)
+      , includedCells = []
       , errorReports = []
       , showErrorPanel = True
       , theme = Notebook.Book.DarkTheme
@@ -678,6 +679,9 @@ updateFromBackend msg model =
             ( model, File.Download.string (String.replace "." "-" dataSet.identifier ++ ".csv") "text/csv" dataSet.data )
 
         -- NOTEBOOKS
+        GotCellsToInclude cells ->
+            ( { model | includedCells = cells |> Debug.log "@@INCLUDED_CELLS" }, Cmd.none )
+
         GotPackageDict packageDict ->
             ( { model | packageDict = packageDict }, Cmd.none )
 
@@ -754,6 +758,9 @@ updateFromBackend msg model =
 
                         Just book ->
                             let
+                                _ =
+                                    Notebook.EvalCell.booksToInclude book |> Debug.log "@@booksToInclude"
+
                                 newModel =
                                     { model
                                         | evalState = Notebook.EvalCell.updateEvalStateWithCells book.cells Notebook.Types.emptyEvalState

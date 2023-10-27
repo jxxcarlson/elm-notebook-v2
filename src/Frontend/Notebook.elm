@@ -62,6 +62,13 @@ setCurrentNotebook model book =
 
         Just user_ ->
             let
+                bookSlugs =
+                    Notebook.EvalCell.booksToInclude book
+                        |> Debug.log "@@booksToInclude"
+
+                getCellsToIncludeCmd =
+                    Notebook.EvalCell.getCellsToInclude bookSlugs
+
                 previousBook =
                     model.currentBook
 
@@ -82,6 +89,7 @@ setCurrentNotebook model book =
                     { model
                         | evalState = Notebook.EvalCell.updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState
                         , books = newBooks
+                        , includedCells = []
                         , currentBook = currentBook
                     }
             in
@@ -94,6 +102,7 @@ setCurrentNotebook model book =
                 [ sendToBackend (UpdateUserWith user)
                 , sendToBackend (SaveNotebook previousBook)
                 , Notebook.Package.installNewPackages currentBook.packageNames
+                , getCellsToIncludeCmd
                 ]
             )
 

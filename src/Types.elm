@@ -55,6 +55,7 @@ type alias FrontendModel =
     , privateDataSetMetaDataList : List Notebook.DataSet.DataSetMetaData
 
     -- NOTEBOOKS
+    , includedCells : List Cell
     , errorReports : List Notebook.Types.ErrorReport
     , showErrorPanel : Bool
     , theme : Notebook.Book.Theme
@@ -304,6 +305,7 @@ type ToBackend
       -- String1 is the DataSet identifier, String2 is the variable in which to store it.
     | GetDataSetForDownload String -- Int is the index of the requesting cell,
       -- NOTEBOOK
+    | GetCellsToInclude (List String)
     | SaveElmJsonDependenciesBE String PackageDict
     | CreateNotebook String String -- authorname title
     | ImportNewBook String Book
@@ -340,6 +342,7 @@ type ToFrontend
     | GotData Int String Notebook.DataSet.DataSet
     | GotDataForDownload Notebook.DataSet.DataSet
       -- NOTEBOOK
+    | GotCellsToInclude (List Cell)
     | GotPackageDict PackageDict
     | GotNotebook Book
     | GotPublicNotebook Book

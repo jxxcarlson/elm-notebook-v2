@@ -12,6 +12,7 @@ import Hex
 import Lamdera exposing (ClientId, SessionId, sendToFrontend)
 import Notebook.Book
 import Notebook.DataSet
+import Notebook.EvalCell
 import Notebook.Utility
 import NotebookDict
 import Random
@@ -153,6 +154,34 @@ updateFromFrontend sessionId clientId msg model =
             Backend.Data.createDataSet model clientId dataSet_
 
         -- NOTEBOOKS
+        Types.GetCellsToInclude bookNames ->
+            let
+                notebookRecords =
+                    List.map (\slug -> Dict.get slug model.slugDict) bookNames
+                        |> Debug.log "@@Books_to_include (1)"
+                        |> List.filterMap identity
+                        --|> List.filter (\item -> item.public)
+                        |> Debug.log "@@Books_to_include (2)"
+
+                lookup notebookRecord =
+                    NotebookDict.lookup notebookRecord.author notebookRecord.id model.userToNoteBookDict
+                        |> Result.toMaybe
+
+                addNotebook record acc =
+                    case lookup record of
+                        Nothing ->
+                            acc
+
+                        Just book ->
+                            book.cells ++ acc
+
+                cellsToInclude =
+                    List.foldl (\record acc -> addNotebook record acc) [] notebookRecords
+                        |> List.filter (\cell -> Notebook.EvalCell.isTypeDefOrDeclaration cell)
+                        |> Debug.log "@@Cells_to_include"
+            in
+            ( model, sendToFrontend clientId (GotCellsToInclude cellsToInclude) )
+
         Types.SaveElmJsonDependenciesBE username elmJsonDependenciesFromUser ->
             ( { model
                 | usernameToPackageDictDict =
