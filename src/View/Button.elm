@@ -10,6 +10,7 @@ module View.Button exposing
     , dismissPopup
     , dismissPopupSmall
     , dismissPopupTransparent
+    , duplicateNotebook
     , editDataSet
     , editTitle
     , executeNotebook
@@ -305,6 +306,11 @@ exportNotebook =
 importNotebook : Element FrontendMsg
 importNotebook =
     Button.smallPrimary { msg = ImportRequested, status = Button.Active, label = Button.Text "Import", tooltipText = Nothing }
+
+
+duplicateNotebook : Element FrontendMsg
+duplicateNotebook =
+    Button.smallPrimary { msg = DuplicateNotebook, status = Button.Active, label = Button.Text "Duplicate", tooltipText = Nothing }
 
 
 cliPopup : FrontendModel -> Element FrontendMsg

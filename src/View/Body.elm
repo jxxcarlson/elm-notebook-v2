@@ -312,6 +312,23 @@ viewMyNotebookList model user =
         :: List.map (viewNotebookEntry model.currentBook) (List.sortBy bookSorter model.books)
 
 
+viewMyNotebookList2 : FrontendModel -> User.User -> Element FrontendMsg
+viewMyNotebookList2 model user =
+    E.column [ Font.color Color.white, E.paddingEach { left = 0, right = 0, bottom = 8, top = 0 } ]
+        (header model
+            :: List.map (viewNotebookEntry model.currentBook) (List.sortBy bookSorter model.books)
+        )
+
+
+header : FrontendModel -> Element FrontendMsg
+header model =
+    E.row []
+        [ E.el [ Font.color Color.white, E.paddingEach { left = 0, right = 0, bottom = 8, top = 0 } ]
+            (E.text <| "Notebooks: " ++ String.fromInt (List.length model.books))
+        , controls model.showNotebooks
+        ]
+
+
 bookSorter : Book -> ( Int, String )
 bookSorter book =
     if book.title == "Welcome" then

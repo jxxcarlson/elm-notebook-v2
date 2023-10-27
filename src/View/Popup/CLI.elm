@@ -16,13 +16,14 @@ view model =
     case model.popupState of
         Types.CLIPopup ->
             E.column
-                [ E.height (E.px 200)
+                [ E.height (E.px 240)
                 , E.width (E.px 580)
                 , E.moveUp (toFloat <| View.Geometry.bodyHeight model)
                 , E.moveRight 400
                 , Background.color UILibrary.Color.stillDarkerSteelGray
                 , E.padding 24
                 , E.spacing 24
+                , Font.color UILibrary.Color.white
                 ]
                 [ E.el
                     [ Font.color UILibrary.Color.white
@@ -32,6 +33,7 @@ view model =
                     (E.text "CLI")
                 , View.Input.command model
                 , E.row [ E.spacing 24 ] [ View.Button.runCommand, View.Button.dismissPopup ]
+                , E.el [] (E.text "Instructions coming soon ...")
                 ]
 
         _ ->

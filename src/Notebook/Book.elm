@@ -4,6 +4,7 @@ module Notebook.Book exposing
     , Theme(..)
     , ViewData
     , clearValues
+    , copy
     , initializeCellState
     , moveCellUpDown
     , new
@@ -36,6 +37,25 @@ type alias Book =
     , packageNames : List String
     , tags : List String
     , options : Dict String String
+    }
+
+
+copy : Book -> Book
+copy book =
+    { id = book.id ++ "C"
+    , dirty = False
+    , slug = book.slug ++ "C"
+    , origin = book.origin
+    , author = book.author
+    , createdAt = book.createdAt
+    , updatedAt = book.createdAt
+    , public = book.public
+    , title = book.title ++ " (Copy)"
+    , cells = book.cells
+    , currentIndex = 0
+    , packageNames = book.packageNames
+    , tags = book.tags
+    , options = book.options
     }
 
 

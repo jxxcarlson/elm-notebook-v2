@@ -1,5 +1,6 @@
 module Frontend.Notebook exposing
     ( clone
+    , duplicate
     , importLoaded
     , pull
     , setCurrentNotebook
@@ -147,6 +148,21 @@ pull model =
                     model.currentBook.id
                 )
             )
+
+
+duplicate : Model -> ( Model, Cmd FrontendMsg )
+duplicate model =
+    let
+        book =
+            Notebook.Book.copy model.currentBook
+
+        currentBook =
+            book
+
+        books =
+            book :: model.books
+    in
+    ( { model | currentBook = currentBook, books = books }, Lamdera.sendToBackend (SaveNotebook book) )
 
 
 setShowNotebookState model state =

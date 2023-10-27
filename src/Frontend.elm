@@ -457,6 +457,9 @@ update msg model =
         PullNotebook ->
             Frontend.Notebook.pull model
 
+        DuplicateNotebook ->
+            Frontend.Notebook.duplicate model
+
         ExportNotebook ->
             ( model, File.Download.string (BackendHelper.compress model.currentBook.title ++ ".json") "text/json" (Notebook.Codec.exportBook model.currentBook) )
 

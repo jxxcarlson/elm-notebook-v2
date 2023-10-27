@@ -225,6 +225,7 @@ type FrontendMsg
     | PullNotebook
     | ExportNotebook
     | SetShowNotebooksState ShowNotebooks
+    | DuplicateNotebook
     | ImportRequested
     | ImportSelected File
     | ImportLoaded String

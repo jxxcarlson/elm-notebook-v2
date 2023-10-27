@@ -32,6 +32,8 @@ view model =
         , Background.color (E.rgb 0.5 0.5 0.6)
         , E.paddingXY 8 12
         , E.spacing 12
+        , Border.widthEach { left = 1, right = 2, top = 2, bottom = 2 }
+        , Border.color (E.rgb255 73 78 89)
         , E.width (E.px View.Config.lhSidebarWidth)
         , E.width E.fill
         , Background.color View.Color.rhSidebarColor
@@ -39,6 +41,7 @@ view model =
         ]
         [ Button.importNotebook
         , Button.exportNotebook
+        , Button.duplicateNotebook
         , Button.cliPopup model
         ]
         |> View.Utility.showIf (Predicate.regularUser model)
