@@ -749,6 +749,7 @@ updateFromBackend msg model =
                 , showErrorPanel = True
                 , showNotebooks = ShowPublicNotebooks
                 , books = addOrReplaceBook book model.books
+                , includedCells = []
               }
             , Cmd.batch
                 [ sendToBackend (GetPublicNotebooks (Just book) currentUser.username)
@@ -766,6 +767,13 @@ updateFromBackend msg model =
 
                         Just book ->
                             let
+                                bookSlugs =
+                                    Notebook.EvalCell.booksToInclude book
+                                        |> Debug.log "@@booksToInclude"
+
+                                getCellsToIncludeCmd =
+                                    Notebook.EvalCell.getCellsToInclude bookSlugs
+
                                 _ =
                                     Notebook.EvalCell.booksToInclude book |> Debug.log "@@booksToInclude"
 
@@ -778,11 +786,24 @@ updateFromBackend msg model =
                             in
                             Message.postMessage "OK.1" Types.MSBlue newModel
                                 |> (\( model_, cmd ) ->
-                                        ( model_, Cmd.batch [ cmd, Notebook.Package.installNewPackages book.packageNames ] )
+                                        ( model_
+                                        , Cmd.batch
+                                            [ cmd
+                                            , getCellsToIncludeCmd
+                                            , Notebook.Package.installNewPackages book.packageNames
+                                            ]
+                                        )
                                    )
 
                 Just currentBook ->
                     let
+                        bookSlugs =
+                            Notebook.EvalCell.booksToInclude currentBook
+                                |> Debug.log "@@booksToInclude"
+
+                        getCellsToIncludeCmd =
+                            Notebook.EvalCell.getCellsToInclude bookSlugs
+
                         newModel =
                             { model
                                 | showErrorPanel = True
@@ -790,7 +811,16 @@ updateFromBackend msg model =
                                 , currentBook = currentBook |> Notebook.Book.clearValues
                             }
                     in
-                    ( { newModel | books = books, currentBook = currentBook }, Cmd.batch [ Notebook.Package.installNewPackages currentBook.packageNames ] )
+                    ( { newModel
+                        | books = books
+                        , includedCells = []
+                        , currentBook = currentBook
+                      }
+                    , Cmd.batch
+                        [ getCellsToIncludeCmd
+                        , Notebook.Package.installNewPackages currentBook.packageNames
+                        ]
+                    )
 
 
 view : Model -> { title : String, body : List (Html.Html FrontendMsg) }
