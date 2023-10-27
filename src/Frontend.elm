@@ -706,7 +706,7 @@ updateFromBackend msg model =
                         xbook :: books
 
                 newModel =
-                    { model | evalState = Notebook.EvalCell.updateEvalStateWithCells model.includedCells book.cells Notebook.Types.emptyEvalState, currentBook = book }
+                    { model | evalState = Notebook.EvalCell.updateEvalStateWithCells [] book.cells Notebook.Types.emptyEvalState, currentBook = book }
             in
             ( { newModel
                 | currentBook = book |> Notebook.Book.clearValues
@@ -733,7 +733,7 @@ updateFromBackend msg model =
 
                 newModel =
                     { model
-                        | evalState = Notebook.EvalCell.updateEvalStateWithCells model.includedCells book.cells Notebook.Types.emptyEvalState
+                        | evalState = Notebook.EvalCell.updateEvalStateWithCells [] book.cells Notebook.Types.emptyEvalState
                         , currentBook = book |> Notebook.Book.clearValues
                     }
 
