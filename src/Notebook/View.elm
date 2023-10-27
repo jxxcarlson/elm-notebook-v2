@@ -125,13 +125,16 @@ controls viewData cell =
                     [ E.spacing 2
                     , E.alignLeft
                     , E.height (E.px 32)
-                    , E.spacing 24
+                    , E.spacing 12
                     , E.paddingEach { top = 2, bottom = 2, left = 8, right = 4 }
                     ]
                     [ E.row [ E.spacing 6 ]
-                        [ newCellAboveOrBelow viewData.cellDirection
-                        , newCodeCellAt cell.cellState cell.index
-                        , newMarkdownCellAt cell.cellState cell.index
+                        [ E.row [ E.spacing 0 ]
+                            [ newCellAboveOrBelow viewData.cellDirection
+                            , E.el [ E.paddingEach { left = 12, right = 7, top = 0, bottom = 0 }, Font.color (themedMutedTextColor viewData.theme) ] (E.text "New:")
+                            , newCodeCellAt cell.cellState cell.index
+                            , newMarkdownCellAt cell.cellState cell.index
+                            ]
                         ]
                     , E.row [ E.spacing 6 ]
                         [ runCell CSEdit cell.tipe cell.index
@@ -140,7 +143,7 @@ controls viewData cell =
                         ]
                     ]
                 , E.row
-                    [ E.spacing 6
+                    [ E.spacing 0
                     , E.alignRight
                     , E.height (E.px 32)
                     , E.paddingEach { top = 2, bottom = 2, left = 8, right = 18 }
@@ -154,9 +157,11 @@ controls viewData cell =
                     , E.height (E.px 32)
                     , E.paddingEach { top = 2, bottom = 2, left = 8, right = 4 }
                     ]
-                    [ deleteCellAt cell.cellState cell.index
-                    , clearCellAt cell.cellState cell.index
-                    , View.Button.lockCell cell
+                    [ E.row []
+                        [ deleteCellAt cell.cellState cell.index
+                        , clearCellAt cell.cellState cell.index
+                        , View.Button.lockCell cell
+                        ]
                     , viewIndex viewData.theme cell
                     ]
                 ]
@@ -436,20 +441,20 @@ newCodeCellAt : CellState -> Int -> Element FrontendMsg
 newCodeCellAt cellState index =
     case cellState of
         CSView ->
-            Button.smallPrimary { msg = NewCodeCell CSEdit index, status = Button.Active, label = Button.Text "New Code", tooltipText = Just "Insert  new cell" }
+            Button.smallPrimary { msg = NewCodeCell CSEdit index, status = Button.ActiveTransparent, label = Button.Text "Code", tooltipText = Just "Insert  new cell" }
 
         CSEdit ->
-            Button.smallPrimary { msg = NewCodeCell CSEdit index, status = Button.Active, label = Button.Text "New Code", tooltipText = Just "Insert  new cell" }
+            Button.smallPrimary { msg = NewCodeCell CSEdit index, status = Button.ActiveTransparent, label = Button.Text "Code", tooltipText = Just "Insert  new cell" }
 
 
 newMarkdownCellAt : CellState -> Int -> Element FrontendMsg
 newMarkdownCellAt cellState index =
     case cellState of
         CSView ->
-            Button.smallPrimary { msg = NewMarkdownCell CSEdit index, status = Button.Active, label = Button.Text "New Text", tooltipText = Just "Insert  new cell" }
+            Button.smallPrimary { msg = NewMarkdownCell CSEdit index, status = Button.ActiveTransparent, label = Button.Text "Text", tooltipText = Just "Insert  new cell" }
 
         CSEdit ->
-            Button.smallPrimary { msg = NewMarkdownCell CSEdit index, status = Button.Active, label = Button.Text "New Text", tooltipText = Just "Insert  new cell" }
+            Button.smallPrimary { msg = NewMarkdownCell CSEdit index, status = Button.ActiveTransparent, label = Button.Text "Text", tooltipText = Just "Insert  new cell" }
 
 
 newCodeCellBangAt : CellState -> Int -> Element FrontendMsg
@@ -462,31 +467,31 @@ newCodeCellBangAt cellState index =
             Button.smallPrimary { msg = NewCodeCell CSView index, status = Button.Active, label = Button.Text "New Code", tooltipText = Just "Insert  new cell" }
 
 
-newMarkdownCellBangAt : CellState -> Int -> Element FrontendMsg
-newMarkdownCellBangAt cellState index =
-    case cellState of
-        CSView ->
-            Button.smallPrimary { msg = NewMarkdownCell CSView index, status = Button.Active, label = Button.Text "New Text", tooltipText = Just "Insert  new cell" }
-
-        CSEdit ->
-            Button.smallPrimary { msg = NewMarkdownCell CSView index, status = Button.Active, label = Button.Text "New Text", tooltipText = Just "Insert  new cell" }
-
-
 deleteCellAt : CellState -> Int -> Element FrontendMsg
 deleteCellAt cellState index =
     --case cellState of
     --    CSView ->
-    Button.smallPrimary { msg = DeleteCell index, status = Button.Active, label = Button.Text "Delete", tooltipText = Just "Delete cell" }
+    Button.smallPrimary { msg = DeleteCell index, status = Button.ActiveTransparent, label = Button.Text "Delete", tooltipText = Just "Delete cell" }
 
 
 moveCell : CellState -> Int -> Notebook.Book.DirectionToMove -> Element FrontendMsg
 moveCell cellstate index direction =
     case direction of
         Notebook.Book.Down ->
-            Button.smallPrimary { msg = MoveCell index direction, status = Button.Active, label = Button.Text "Down", tooltipText = Just "Move cell down" }
+            Button.smallPrimary { msg = MoveCell index direction, status = Button.ActiveTransparent, label = Button.Text "Down", tooltipText = Just "Move cell down" }
 
         Notebook.Book.Up ->
-            Button.smallPrimary { msg = MoveCell index direction, status = Button.Active, label = Button.Text "Up", tooltipText = Just "Move cell up" }
+            Button.smallPrimary { msg = MoveCell index direction, status = Button.ActiveTransparent, label = Button.Text "Up", tooltipText = Just "Move cell up" }
+
+
+commentCell : CellState -> Int -> Notebook.Book.DirectionToMove -> Element FrontendMsg
+commentCell cellstate index direction =
+    case direction of
+        Notebook.Book.Down ->
+            Button.smallPrimary { msg = MoveCell index direction, status = Button.ActiveTransparent, label = Button.Text "Down", tooltipText = Just "Move cell down" }
+
+        Notebook.Book.Up ->
+            Button.smallPrimary { msg = MoveCell index direction, status = Button.ActiveTransparent, label = Button.Text "Up", tooltipText = Just "Move cell up" }
 
 
 
@@ -496,4 +501,4 @@ moveCell cellstate index direction =
 
 clearCellAt : CellState -> Int -> Element FrontendMsg
 clearCellAt cellState index =
-    Button.smallPrimary { msg = ClearCell index, status = Button.Active, label = Button.Text "Clear", tooltipText = Just "Edit cell" }
+    Button.smallPrimary { msg = ClearCell index, status = Button.ActiveTransparent, label = Button.Text "Clear", tooltipText = Just "Edit cell" }

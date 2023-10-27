@@ -9,6 +9,7 @@ type alias Cell =
     , tipe : CellType
     , value : CellValue
     , cellState : CellState
+    , commented : Bool
     , locked : Bool
     , report : ( Int, Maybe (List Notebook.Types.MessageItem) )
     , replData : Maybe Notebook.Types.ReplData

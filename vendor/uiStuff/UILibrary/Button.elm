@@ -196,7 +196,7 @@ fgListColor : Status -> Element.Color
 fgListColor status =
     case status of
         Active ->
-            UILibrary.Color.darkBlue
+            UILibrary.Color.stillDarkerSteelGray
 
         Inactive ->
             UILibrary.Color.mediumGray

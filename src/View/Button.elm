@@ -152,7 +152,7 @@ runCell cellState cellType index =
                         CSEdit ->
                             "Run"
             in
-            Button.smallPrimary { msg = EvalCell cellState index, status = Button.Active, label = Button.Text label, tooltipText = Just "ctrl-Enter" }
+            Button.smallPrimary { msg = EvalCell cellState index, status = Button.ActiveTransparent, label = Button.Text label, tooltipText = Just "ctrl-Enter" }
 
         Notebook.Cell.CTMarkdown ->
             case cellState of
@@ -160,17 +160,17 @@ runCell cellState cellType index =
                     E.none
 
                 CSEdit ->
-                    Button.smallPrimary { msg = EvalCell CSView index, status = Button.Active, label = Button.Text "Close", tooltipText = Just "ctrl-Enter" }
+                    Button.smallPrimary { msg = EvalCell CSView index, status = Button.ActiveTransparent, label = Button.Text "Close", tooltipText = Just "ctrl-Enter" }
 
 
 dismissPopup : Element FrontendMsg
 dismissPopup =
-    Button.largePrimary { msg = ChangePopup NoPopup, status = Button.Active, label = Button.Text "x", tooltipText = Nothing }
+    Button.largePrimary { msg = ChangePopup NoPopup, status = Button.ActiveTransparent, label = Button.Text "x", tooltipText = Nothing }
 
 
 sendProgramToBeCompiled : Element FrontendMsg
 sendProgramToBeCompiled =
-    Button.largePrimary { msg = SendProgramToBeCompiled, status = Button.Active, label = Button.Text "Compile Test Program", tooltipText = Nothing }
+    Button.largePrimary { msg = SendProgramToBeCompiled, status = Button.ActiveTransparent, label = Button.Text "Compile Test Program", tooltipText = Nothing }
 
 
 editTitle : Types.AppMode -> Element FrontendMsg

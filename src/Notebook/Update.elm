@@ -150,6 +150,7 @@ makeNewCell model cellState cellType index =
             , value = CVNone
             , tipe = cellType
             , cellState = cellState
+            , commented = False
             , locked = False
             , report = ( 0, Nothing )
             , replData = Nothing
