@@ -1,6 +1,5 @@
 module Notebook.EvalCell exposing
     ( compileCellsCmd
-    , executeCell
     , executeCellCommand
     , executeNotebook
     , processCell
@@ -140,53 +139,6 @@ compileJsForCells evalState cells =
 compileJs : EvalState -> Cell -> Task Http.Error ( Int, String )
 compileJs evalState cell =
     Task.andThen (\js -> Task.succeed ( cell.index, js )) (Eval.requestEvaluationAsTask evalState cell.text)
-
-
-createDelayedCommand2 : Int -> FrontendMsg -> Cmd FrontendMsg
-createDelayedCommand2 delay msg =
-    Process.sleep (toFloat (delay * Notebook.Config.delay))
-        |> Task.perform (\_ -> msg)
-
-
-executeCell : Int -> Model -> ( Model, Cmd FrontendMsg )
-executeCell cellIndex model =
-    case List.Extra.getAt cellIndex model.currentBook.cells of
-        Nothing ->
-            ( model, Cmd.none )
-
-        Just cell ->
-            case cell.tipe of
-                Cell.CTCode ->
-                    case Notebook.Parser.classify cell.text of
-                        Err _ ->
-                            Message.postMessage "Error decoding imported file (1)" Types.MSRed model
-
-                        Ok classif ->
-                            case classif of
-                                Notebook.Parser.Expr sourceText ->
-                                    let
-                                        cleanCell =
-                                            { cell | report = ( cell.index, Nothing ), replData = Nothing, value = CVNone }
-
-                                        cleanBook =
-                                            Notebook.CellHelper.updateBookWithCell cleanCell model.currentBook
-
-                                        newEvalState =
-                                            updateEvalStateWithCells cleanBook.cells Notebook.Types.emptyEvalState
-                                    in
-                                    ( { model
-                                        | currentCell = Just cleanCell
-                                        , currentBook = cleanBook
-                                        , evalState = newEvalState
-                                      }
-                                    , Eval.requestEvaluation newEvalState cell sourceText
-                                    )
-
-                                _ ->
-                                    ( model, Cmd.none )
-
-                Cell.CTMarkdown ->
-                    ( model, Cmd.none )
 
 
 executeCellCommand : Int -> Model -> Cmd FrontendMsg
