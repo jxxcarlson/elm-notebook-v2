@@ -428,7 +428,7 @@ update msg model =
             Notebook.EvalCell.executeNotebook model
 
         UpdateDeclarationsDictionary ->
-            ( { model | evalState = Notebook.EvalCell.updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState }, Cmd.none )
+            ( { model | evalState = Notebook.EvalCell.updateEvalStateWithCells model.includedCells model.currentBook.cells Notebook.Types.emptyEvalState }, Cmd.none )
 
         ToggleCellLock cell ->
             ( Notebook.Update.toggleCellLock cell model, Cmd.none )
@@ -699,7 +699,7 @@ updateFromBackend msg model =
                         xbook :: books
 
                 newModel =
-                    { model | evalState = Notebook.EvalCell.updateEvalStateWithCells book.cells Notebook.Types.emptyEvalState, currentBook = book }
+                    { model | evalState = Notebook.EvalCell.updateEvalStateWithCells model.includedCells book.cells Notebook.Types.emptyEvalState, currentBook = book }
             in
             ( { newModel
                 | currentBook = book |> Notebook.Book.clearValues
@@ -725,7 +725,7 @@ updateFromBackend msg model =
 
                 newModel =
                     { model
-                        | evalState = Notebook.EvalCell.updateEvalStateWithCells book.cells Notebook.Types.emptyEvalState
+                        | evalState = Notebook.EvalCell.updateEvalStateWithCells model.includedCells book.cells Notebook.Types.emptyEvalState
                         , currentBook = book |> Notebook.Book.clearValues
                     }
 
@@ -763,7 +763,7 @@ updateFromBackend msg model =
 
                                 newModel =
                                     { model
-                                        | evalState = Notebook.EvalCell.updateEvalStateWithCells book.cells Notebook.Types.emptyEvalState
+                                        | evalState = Notebook.EvalCell.updateEvalStateWithCells model.includedCells book.cells Notebook.Types.emptyEvalState
                                         , currentBook = book
                                         , books = books
                                     }
@@ -778,7 +778,7 @@ updateFromBackend msg model =
                         newModel =
                             { model
                                 | showErrorPanel = True
-                                , evalState = Notebook.EvalCell.updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState
+                                , evalState = Notebook.EvalCell.updateEvalStateWithCells model.includedCells currentBook.cells Notebook.Types.emptyEvalState
                                 , currentBook = currentBook |> Notebook.Book.clearValues
                             }
                     in

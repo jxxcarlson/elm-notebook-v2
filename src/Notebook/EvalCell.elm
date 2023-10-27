@@ -65,7 +65,7 @@ executeNotebook model =
             }
 
         newEvalState =
-            updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState
+            updateEvalStateWithCells model.includedCells currentBook.cells Notebook.Types.emptyEvalState
     in
     ( { model
         | currentBook = newBook |> Notebook.Book.clearValues
@@ -181,9 +181,9 @@ executeCellCommand cellIndex model =
 -- UPDATE DECLARATIONS DICTIONARY
 
 
-updateEvalStateWithCells : List Cell -> EvalState -> EvalState
-updateEvalStateWithCells cells evalState =
-    List.foldl updateEvalStateWithCell evalState cells
+updateEvalStateWithCells : List Cell -> List Cell -> EvalState -> EvalState
+updateEvalStateWithCells includedCells cells evalState =
+    List.foldl updateEvalStateWithCell evalState (includedCells ++ cells)
 
 
 updateEvalStateWithCell : Cell -> EvalState -> EvalState
@@ -327,7 +327,7 @@ processExpr : Model -> Cell -> String -> ( Model, Cmd FrontendMsg )
 processExpr model cell sourceText =
     let
         newEvalState =
-            updateEvalStateWithCells model.currentBook.cells Notebook.Types.emptyEvalState
+            updateEvalStateWithCells model.includedCells model.currentBook.cells Notebook.Types.emptyEvalState
     in
     ( model, Eval.requestEvaluation newEvalState cell sourceText )
 

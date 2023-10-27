@@ -87,7 +87,7 @@ setCurrentNotebook model book =
 
                 newModel =
                     { model
-                        | evalState = Notebook.EvalCell.updateEvalStateWithCells currentBook.cells Notebook.Types.emptyEvalState
+                        | evalState = Notebook.EvalCell.updateEvalStateWithCells [] currentBook.cells Notebook.Types.emptyEvalState
                         , books = newBooks
                         , includedCells = []
                         , currentBook = currentBook
