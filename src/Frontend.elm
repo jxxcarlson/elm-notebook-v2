@@ -688,6 +688,13 @@ updateFromBackend msg model =
         GotNotebook book_ ->
             -- @NOTE: Init Book
             let
+                bookSlugs =
+                    Notebook.EvalCell.booksToInclude book
+                        |> Debug.log "@@booksToInclude"
+
+                getCellsToIncludeCmd =
+                    Notebook.EvalCell.getCellsToInclude bookSlugs
+
                 book =
                     Notebook.Book.initializeCellState book_
 
@@ -705,8 +712,9 @@ updateFromBackend msg model =
                 | currentBook = book |> Notebook.Book.clearValues
                 , books = addOrReplaceBook book model.books
                 , showErrorPanel = True
+                , includedCells = []
               }
-            , Notebook.Package.installNewPackages book.packageNames
+            , Cmd.batch [ getCellsToIncludeCmd, Notebook.Package.installNewPackages book.packageNames ]
             )
 
         GotPublicNotebook book_ ->
