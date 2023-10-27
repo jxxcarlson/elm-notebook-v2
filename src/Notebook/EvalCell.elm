@@ -6,18 +6,15 @@ module Notebook.EvalCell exposing
     , updateEvalStateWithCells
     )
 
-import Dict
 import Http
 import List.Extra
 import Message
 import Notebook.Book
 import Notebook.Cell as Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
 import Notebook.CellHelper
-import Notebook.Config
 import Notebook.Eval as Eval
 import Notebook.Parser
 import Notebook.Types exposing (EvalState)
-import Process
 import Task exposing (Task)
 import Types exposing (FrontendMsg)
 import Util
@@ -226,7 +223,6 @@ compress str =
 
 processCell : CellState -> Int -> Model -> ( Model, Cmd FrontendMsg )
 processCell cellState cellIndex model_ =
-    -- TODO
     let
         model =
             case cellState of
