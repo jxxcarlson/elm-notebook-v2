@@ -7,14 +7,22 @@ module View.Geometry exposing
     , headerHeight
     , loweRightSidePanelHeight
     , mainColumnHeight
+    , mainWidth
     , notebookWidth
     , sidePanelWidth
     )
 
+import View.Config
+
 
 appWidth : { a | windowWidth : Int } -> Int
 appWidth model =
-    min 1300 model.windowWidth
+    min 1400 model.windowWidth
+
+
+mainWidth : { a | windowWidth : Int } -> Int
+mainWidth model =
+    appWidth model - View.Config.lhSidebarWidth
 
 
 appHeight : { a | windowHeight : number } -> number
@@ -39,12 +47,12 @@ bodyHeight model =
 
 notebookWidth : { a | windowWidth : Int } -> Int
 notebookWidth model =
-    appWidth model - sidePanelWidth model
+    0.55 * toFloat (mainWidth model) |> round
 
 
 sidePanelWidth : { a | windowWidth : Int } -> Int
 sidePanelWidth model =
-    0.45 * toFloat (appWidth model) |> round
+    0.45 * toFloat (mainWidth model) |> round
 
 
 headerHeight =

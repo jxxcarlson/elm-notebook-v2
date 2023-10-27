@@ -29,7 +29,7 @@ import View.Utility
 view model =
     E.row
         [ E.height (E.px View.Geometry.footerHeight)
-        , E.width (E.px (View.Geometry.appWidth model))
+        , E.width (E.px <| View.Geometry.mainWidth model)
         , Font.size 14
         , E.paddingEach { left = 18, right = 0, top = 0, bottom = 0 }
         , E.alignBottom

@@ -16,6 +16,7 @@ import UILibrary.Color as Color
 import User
 import Util
 import View.Button
+import View.Color
 import View.Geometry
 import View.Style
 
@@ -23,18 +24,23 @@ import View.Style
 view : FrontendModel -> User.User -> Element FrontendMsg
 view model user =
     E.row
-        [ E.width (E.px (View.Geometry.appWidth model))
+        [ E.width (E.px (View.Geometry.mainWidth model))
         , E.height (E.px (View.Geometry.bodyHeight model))
         ]
         [ viewNotebook model
-        , E.column
-            [ E.height (E.px (View.Geometry.bodyHeight model))
-            , Font.color (E.rgb 0.9 0.9 0.9)
-            , E.width E.fill
-            ]
-            [ viewNotebookList model user
-            , declarationsOrErrorReport model
-            ]
+        , rhSidepanel model user
+        ]
+
+
+rhSidepanel model user =
+    E.column
+        [ E.height (E.px (View.Geometry.bodyHeight model))
+        , E.width (E.px (View.Geometry.sidePanelWidth model))
+        , Font.color (E.rgb 0.9 0.9 0.9)
+        , E.width E.fill
+        ]
+        [ viewNotebookList model user
+        , declarationsOrErrorReport model
         ]
 
 
@@ -219,8 +225,9 @@ declarations model =
         [ Font.size 14
         , E.spacing 18
         , E.width (E.px <| View.Geometry.sidePanelWidth model)
-        , Border.widthEach { left = 2, right = 0, top = 0, bottom = 0 }
-        , Border.color (E.rgb255 73 78 89)
+        , Background.color View.Color.rhSidebarColor
+        , Border.widthEach { left = 1, right = 0, top = 0, bottom = 1 }
+        , Border.color (E.rgb 0.4 0.4 0.5)
         , View.Style.monospace
         , E.paddingEach
             { top = 18, bottom = 36, left = 0, right = 0 }
@@ -270,10 +277,10 @@ viewNotebookList model user =
         [ E.spacing 1
         , E.alignTop
         , Font.size 14
-        , E.width (E.px (View.Geometry.sidePanelWidth model - 24))
+        , E.width (E.px (View.Geometry.sidePanelWidth model))
         , Border.widthEach { left = 1, right = 0, top = 0, bottom = 1 }
         , Border.color (E.rgb 0.4 0.4 0.5)
-        , Background.color (E.rgb255 73 78 89)
+        , Background.color View.Color.rhSidebarColor
         , E.height (E.px (View.Geometry.bodyHeight model - View.Geometry.loweRightSidePanelHeight model))
         , E.scrollbarY
         , E.paddingXY 18 12
@@ -382,19 +389,15 @@ viewNotebook model =
             }
     in
     E.column
-        [ E.paddingEach { left = 24, right = 0, top = 0, bottom = 0 }
+        [ View.Style.fgGray 0.6
+        , Font.size 14
+        , Background.color (E.rgb255 70 70 100)
+        , E.height (E.px (View.Geometry.bodyHeight model))
+        , E.width (E.px (View.Geometry.notebookWidth model))
+        , E.scrollbarY
+        , E.clipX
         ]
-        [ E.column
-            [ View.Style.fgGray 0.6
-            , Font.size 14
-            , Background.color (E.rgb255 70 70 100)
-            , E.height (E.px (View.Geometry.bodyHeight model))
-            , E.width (E.px (View.Geometry.notebookWidth model - 20))
-            , E.scrollbarY
-            , E.clipX
-            ]
-            (List.map
-                (Notebook.View.view viewData model.cellContent)
-                model.currentBook.cells
-            )
-        ]
+        (List.map
+            (Notebook.View.view viewData model.cellContent)
+            model.currentBook.cells
+        )

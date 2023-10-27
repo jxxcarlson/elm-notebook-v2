@@ -9,6 +9,7 @@ import UILibrary.Color as Color
 import View.Body
 import View.BodyNotSignedIn
 import View.Color
+import View.Config
 import View.Footer
 import View.Geometry
 import View.Header
@@ -50,16 +51,14 @@ main_ model =
 mainColumnStyle model =
     [ E.centerX
     , E.centerY
-
-    --, Background.color Color.paleWarm
     , case model.currentUser of
         Nothing ->
             Background.color (E.rgb255 73 78 89)
 
         Just _ ->
             Background.color (E.rgb255 99 106 122)
-    , E.width (E.px <| View.Geometry.appWidth model)
-    , E.height (E.px (View.Geometry.appHeight model))
+    , E.width (E.px <| View.Geometry.appWidth model - View.Config.lhSidebarWidth)
+    , E.height (E.px <| View.Geometry.appHeight model)
     ]
 
 

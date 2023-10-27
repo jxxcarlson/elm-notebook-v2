@@ -17,6 +17,8 @@ import UILibrary.Color as Color
 import User
 import Util
 import View.Button as Button
+import View.Color
+import View.Config
 import View.Geometry
 import View.Style
 import View.Utility
@@ -30,7 +32,9 @@ view model =
         , Background.color (E.rgb 0.5 0.5 0.6)
         , E.paddingXY 8 12
         , E.spacing 12
-        , E.width (E.px 80)
+        , E.width (E.px View.Config.lhSidebarWidth)
+        , E.width E.fill
+        , Background.color View.Color.rhSidebarColor
         , Font.size 12
         ]
         [ Button.importNotebook

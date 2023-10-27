@@ -2,11 +2,17 @@ module View.Color exposing
     ( darkRed
     , medGray
     , red
+    , rhSidebarColor
     , white
     , yellow
     )
 
 import Element as E
+
+
+rhSidebarColor : E.Color
+rhSidebarColor =
+    E.rgb255 60 60 80
 
 
 yellow : E.Color
