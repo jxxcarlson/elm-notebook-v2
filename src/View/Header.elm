@@ -89,7 +89,7 @@ signedInHeader model user =
         , Button.toggleTheme model.theme
         , View.Utility.showIf (Predicate.regularUser model) (Button.deleteNotebook model.deleteNotebookState)
         , View.Utility.showIf (Predicate.regularUser model) (Button.cancelDeleteNotebook model.deleteNotebookState)
-        , welcomeLink
+        , View.Utility.showIf (Predicate.noUserSignedIn model) welcomeLink
         , Button.manual
         , E.el [ E.alignRight ] (Button.signOut user.username)
         ]
