@@ -44,9 +44,9 @@ notSignedInHeader model =
             [ View.Input.username model
             , View.Input.password model
             , Button.signIn
+            , welcomeLink
             , E.row [ E.width E.fill, E.paddingXY 8 8, View.Style.bgGray 0 ] [ Message.view 350 30 model ]
             ]
-        , welcomeLink
         , Button.manualLarge
         , E.el [ E.alignRight ] Button.signUp
         ]
@@ -55,7 +55,7 @@ notSignedInHeader model =
 welcomeLink =
     E.newTabLink []
         { url = "https://elm-notebook2.lamdera.app/open/jxxcarlson-welcome"
-        , label = E.el [ Font.underline, Font.color (E.rgb 0.65 0.65 1), Font.size 16 ] (E.text "Sign in as Guest")
+        , label = E.el [ Font.underline, Font.color (E.rgb 0.65 0.65 1), Font.size 14 ] (E.text "Sign in as Guest")
         }
 
 
