@@ -53,13 +53,13 @@ view model =
                 ]
 
             Just _ ->
-                [ View.Utility.showIfIsAdmin model (Button.adminPopup model)
+                [ E.el [ Font.color (E.rgb 1 1 1) ] (E.text <| String.left 4 model.currentBook.id)
+                , View.Utility.showIfIsAdmin model (Button.adminPopup model)
 
                 --, View.Utility.showIfIsAdmin model Button.runTask
                 , Button.packagesPopup model
                 , errorIndicator model
 
-                --, E.el [ Font.color (E.rgb 1 1 1) ] (E.text <| String.left 4 model.currentBook.id)
                 --, View.Utility.showIfIsAdmin model Button.sendProgramToBeCompiled
                 , displayMessages model
 

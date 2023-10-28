@@ -313,7 +313,7 @@ type ToBackend
     | SaveNotebook Book
     | DeleteNotebook Book
     | GetPublicNotebook String
-    | GetClonedNotebook String String -- username slug
+    | GetClonedNotebook String String String -- (username of currentUser) (author of book to clone) (id of book to clone)
     | GetPulledNotebook String String String String -- username origin slug id
     | UpdateSlugDict Book
     | GetUsersNotebooks String -- username

@@ -208,8 +208,8 @@ updateFromFrontend sessionId clientId msg model =
         Types.UpdateSlugDict book ->
             ( Backend.Update.updateSlugDictWithBook book model, Cmd.none )
 
-        Types.GetClonedNotebook username slug ->
-            Backend.Update.getClonedNotebook model username slug clientId
+        Types.GetClonedNotebook currentUsername authorname slug ->
+            Backend.Update.getClonedNotebook model currentUsername authorname slug clientId
 
         Types.GetPulledNotebook username origin slug id ->
             Backend.Update.pullNotebook model clientId username origin id

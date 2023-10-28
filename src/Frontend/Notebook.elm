@@ -131,7 +131,7 @@ clone model =
                 ( model, Cmd.none )
 
             Just user ->
-                ( model, sendToBackend (GetClonedNotebook user.username model.currentBook.slug) )
+                ( model, sendToBackend (GetClonedNotebook user.username model.currentBook.author model.currentBook.id) )
 
 
 pull model =

@@ -18,39 +18,38 @@ type alias Model =
     BackendModel
 
 
-getClonedNotebook : Model -> String -> String -> String -> ( Model, Cmd BackendMsg )
-getClonedNotebook model username slug clientId =
-    case Dict.get slug model.slugDict of
-        Just notebookRecord ->
-            case NotebookDict.lookup notebookRecord.author notebookRecord.id model.userToNoteBookDict of
-                Ok book ->
-                    if book.public == False then
-                        ( model, Lamdera.sendToFrontend clientId (Types.SendMessage <| "Sorry, that notebook is private") )
+getClonedNotebook : Model -> String -> String -> String -> String -> ( Model, Cmd BackendMsg )
+getClonedNotebook model currentUsername author id clientId =
+    let
+        _ =
+            Debug.log "@@getClonedNotebook" ( author, id )
+    in
+    case NotebookDict.lookup author id model.userToNoteBookDict of
+        Ok book ->
+            if book.public == False then
+                ( model, Lamdera.sendToFrontend clientId (Types.SendMessage <| "Sorry, that notebook is private") )
 
-                    else
-                        let
-                            newModel =
-                                BackendHelper.getUUID model
-                        in
-                        ( newModel
-                        , Lamdera.sendToFrontend clientId
-                            (Types.GotNotebook
-                                { book
-                                    | author = username
-                                    , id = newModel.uuid
-                                    , slug = BackendHelper.compress (username ++ "-" ++ book.title)
-                                    , origin = Just slug
-                                    , public = False
-                                    , dirty = True
-                                }
-                            )
-                        )
+            else
+                let
+                    newModel =
+                        BackendHelper.getUUID model
+                in
+                ( newModel
+                , Lamdera.sendToFrontend clientId
+                    (Types.GotNotebook
+                        { book
+                            | author = currentUsername
+                            , id = newModel.uuid
+                            , slug = BackendHelper.compress (currentUsername ++ "-" ++ book.title)
+                            , origin = Just book.slug
+                            , public = False
+                            , dirty = True
+                        }
+                    )
+                )
 
-                Err _ ->
-                    ( model, Lamdera.sendToFrontend clientId (Types.SendMessage <| "Sorry, couldn't get that notebook (1)") )
-
-        Nothing ->
-            ( model, Lamdera.sendToFrontend clientId (Types.SendMessage <| "Sorry, couldn't get that notebook (2)") )
+        Err _ ->
+            ( model, Lamdera.sendToFrontend clientId (Types.SendMessage <| "Sorry, couldn't get that notebook (1)") )
 
 
 pullNotebook : Model -> String -> String -> String -> String -> ( Model, Cmd BackendMsg )
