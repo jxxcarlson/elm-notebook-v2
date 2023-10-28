@@ -136,10 +136,9 @@ controls viewData cell =
                             , newMarkdownCellAt cell.cellState cell.index
                             ]
                         ]
-                    , E.row [ E.spacing 6 ]
+                    , E.row [ E.spacing 0 ]
                         [ runCell CSEdit cell.tipe cell.index
-
-                        --, runCell CSView cell.tipe cell.index
+                        , commentCell cell.commented cell.index
                         ]
                     ]
                 , E.row
@@ -293,7 +292,7 @@ viewIndex theme cell =
                     Element.Events.onMouseDown (EditCell cell)
 
                 CSEdit ->
-                    Element.Events.onMouseDown (EvalCell cell.cellState cell.index)
+                    Element.Events.onMouseDown (EvalCell cell.cellState)
 
         padding =
             case cell.cellState of
@@ -340,7 +339,7 @@ renderCode pressedKeys theme cell width =
                     Element.Events.onMouseDown (EditCell cell)
 
                 CSEdit ->
-                    Element.Events.onMouseDown (EvalCell CSEdit cell.index)
+                    Element.Events.onMouseDown (EvalCell CSEdit)
 
           else
             Element.Events.onMouseDown NoOpFrontendMsg
@@ -484,19 +483,14 @@ moveCell cellstate index direction =
             Button.smallPrimary { msg = MoveCell index direction, status = Button.ActiveTransparent, label = Button.Text "Up", tooltipText = Just "Move cell up" }
 
 
-commentCell : CellState -> Int -> Notebook.Book.DirectionToMove -> Element FrontendMsg
-commentCell cellstate index direction =
-    case direction of
-        Notebook.Book.Down ->
-            Button.smallPrimary { msg = MoveCell index direction, status = Button.ActiveTransparent, label = Button.Text "Down", tooltipText = Just "Move cell down" }
+commentCell : Bool -> Int -> Element FrontendMsg
+commentCell commented index =
+    case commented of
+        True ->
+            Button.smallPrimary { msg = ToggleComment commented index, status = Button.ActiveTransparent, label = Button.Text "Uncomment", tooltipText = Just "Uncomment cell" }
 
-        Notebook.Book.Up ->
-            Button.smallPrimary { msg = MoveCell index direction, status = Button.ActiveTransparent, label = Button.Text "Up", tooltipText = Just "Move cell up" }
-
-
-
---CSEdit ->
---    E.none
+        False ->
+            Button.smallPrimary { msg = ToggleComment commented index, status = Button.ActiveTransparent, label = Button.Text "Comment", tooltipText = Just "Comment cell" }
 
 
 clearCellAt : CellState -> Int -> Element FrontendMsg

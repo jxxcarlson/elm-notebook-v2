@@ -40,3 +40,47 @@ locate text cells =
 hasErrors : List Cell -> Bool
 hasErrors cells =
     List.any (\cell -> Tuple.second cell.report /= Nothing) cells
+
+
+uncomment : Cell -> Cell
+uncomment cell =
+    { cell | commented = False, text = uncommentText cell.text }
+
+
+comment : Cell -> Cell
+comment cell =
+    { cell | commented = True, text = commentText cell.text }
+
+
+commentText : String -> String
+commentText text =
+    let
+        commentLine line =
+            "-- " ++ line
+
+        lines =
+            String.lines text
+
+        commentedLines =
+            List.map commentLine lines
+    in
+    String.join "\n" commentedLines
+
+
+uncommentText : String -> String
+uncommentText text =
+    let
+        uncommentLine line =
+            if String.startsWith "-- " line then
+                String.dropLeft 3 line
+
+            else
+                line
+
+        lines =
+            String.lines text
+
+        uncommentedLines =
+            List.map uncommentLine lines
+    in
+    String.join "\n" uncommentedLines

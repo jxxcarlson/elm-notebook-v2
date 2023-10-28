@@ -16,6 +16,7 @@ module Notebook.Book exposing
 
 import Dict exposing (Dict)
 import Keyboard
+import Lamdera
 import List.Extra
 import Notebook.Cell exposing (Cell, CellState(..), CellType(..), CellValue(..))
 import Notebook.Types

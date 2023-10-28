@@ -600,13 +600,16 @@ update msg model =
         MoveCell index direction ->
             Notebook.Book.moveCellUpDown model index direction
 
+        ToggleComment commented index ->
+            Notebook.Update.toggleComment model commented index
+
         EditCell cell ->
             Notebook.Update.editCell model cell
 
         ClearCell index ->
             Notebook.Update.clearCell model index
 
-        EvalCell cellState index ->
+        EvalCell cellState ->
             Notebook.EvalCell.processCell cellState model.currentCellIndex model
 
         RunCommand ->
@@ -680,7 +683,7 @@ updateFromBackend msg model =
 
         -- NOTEBOOKS
         GotCellsToInclude cells ->
-            ( { model | includedCells = cells |> Debug.log "@@INCLUDED_CELLS" }, Cmd.none )
+            ( { model | includedCells = cells }, Cmd.none )
 
         GotPackageDict packageDict ->
             ( { model | packageDict = packageDict }, Cmd.none )
@@ -690,7 +693,6 @@ updateFromBackend msg model =
             let
                 bookSlugs =
                     Notebook.EvalCell.booksToInclude book
-                        |> Debug.log "@@booksToInclude"
 
                 getCellsToIncludeCmd =
                     Notebook.EvalCell.getCellsToInclude bookSlugs
@@ -769,13 +771,9 @@ updateFromBackend msg model =
                             let
                                 bookSlugs =
                                     Notebook.EvalCell.booksToInclude book
-                                        |> Debug.log "@@booksToInclude"
 
                                 getCellsToIncludeCmd =
                                     Notebook.EvalCell.getCellsToInclude bookSlugs
-
-                                _ =
-                                    Notebook.EvalCell.booksToInclude book |> Debug.log "@@booksToInclude"
 
                                 newModel =
                                     { model
@@ -799,7 +797,6 @@ updateFromBackend msg model =
                     let
                         bookSlugs =
                             Notebook.EvalCell.booksToInclude currentBook
-                                |> Debug.log "@@booksToInclude"
 
                         getCellsToIncludeCmd =
                             Notebook.EvalCell.getCellsToInclude bookSlugs

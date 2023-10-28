@@ -158,11 +158,9 @@ updateFromFrontend sessionId clientId msg model =
             let
                 notebookRecords =
                     List.map (\slug -> Dict.get slug model.slugDict) bookNames
-                        |> Debug.log "@@Books_to_include (1)"
                         |> List.filterMap identity
-                        --|> List.filter (\item -> item.public)
-                        |> Debug.log "@@Books_to_include (2)"
 
+                --|> List.filter (\item -> item.public)
                 lookup notebookRecord =
                     NotebookDict.lookup notebookRecord.author notebookRecord.id model.userToNoteBookDict
                         |> Result.toMaybe
@@ -178,7 +176,6 @@ updateFromFrontend sessionId clientId msg model =
                 cellsToInclude =
                     List.foldl (\record acc -> addNotebook record acc) [] notebookRecords
                         |> List.filter (\cell -> Notebook.EvalCell.isTypeDefOrDeclaration cell)
-                        |> Debug.log "@@Cells_to_include"
             in
             ( model, sendToFrontend clientId (GotCellsToInclude cellsToInclude) )
 

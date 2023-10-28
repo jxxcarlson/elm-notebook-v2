@@ -209,9 +209,10 @@ type FrontendMsg
     | ToggleShowErrorPanel
     | DeleteCell Int
     | MoveCell Int DirectionToMove
+    | ToggleComment Bool Int
     | EditCell Cell
     | ClearCell Int
-    | EvalCell CellState Int
+    | EvalCell CellState
     | InputElmCode Int String
     | UpdateNotebookTitle
     | NewNotebook

@@ -152,7 +152,7 @@ runCell cellState cellType index =
                         CSEdit ->
                             "Run"
             in
-            Button.smallPrimary { msg = EvalCell cellState index, status = Button.ActiveTransparent, label = Button.Text label, tooltipText = Just "ctrl-Enter" }
+            Button.smallPrimary { msg = EvalCell cellState, status = Button.ActiveTransparent, label = Button.Text label, tooltipText = Just "ctrl-Enter" }
 
         Notebook.Cell.CTMarkdown ->
             case cellState of
@@ -160,7 +160,7 @@ runCell cellState cellType index =
                     E.none
 
                 CSEdit ->
-                    Button.smallPrimary { msg = EvalCell CSView index, status = Button.ActiveTransparent, label = Button.Text "Close", tooltipText = Just "ctrl-Enter" }
+                    Button.smallPrimary { msg = EvalCell CSView, status = Button.ActiveTransparent, label = Button.Text "Close", tooltipText = Just "ctrl-Enter" }
 
 
 dismissPopup : Element FrontendMsg
