@@ -81,10 +81,10 @@ updateSlugDictWithBook : Book -> Model -> Model
 updateSlugDictWithBook book model =
     let
         oldSlugDict =
-            model.slugDict
+            model.slugDict |> Debug.log "@@oldSlugDict"
 
         newSlugDict =
-            Dict.insert book.slug { id = book.id, author = book.author, public = book.public } oldSlugDict
+            Dict.insert book.slug { id = book.id, author = book.author, public = book.public } oldSlugDict |> Debug.log "@@newSlugDict"
     in
     { model | slugDict = newSlugDict }
 

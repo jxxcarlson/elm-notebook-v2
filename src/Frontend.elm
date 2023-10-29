@@ -490,7 +490,7 @@ update msg model =
                         { oldBook | public = not oldBook.public, dirty = False }
                 in
                 ( { model | currentBook = newBook, books = List.Extra.setIf (\b -> b.id == newBook.id) newBook model.books }
-                , sendToBackend (SaveNotebook newBook)
+                , Cmd.batch [ sendToBackend (UpdateSlugDict newBook), sendToBackend (SaveNotebook newBook) ]
                 )
 
         CancelDeleteNotebook ->
