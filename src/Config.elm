@@ -1,8 +1,15 @@
 module Config exposing (appUrl)
 
+import Env
+
 
 appUrl =
-    "https://imagelibrary.lamdera.app"
+    case Env.mode of
+        Env.Development ->
+            "http://localhost:8000"
+
+        Env.Production ->
+            "https://elm-notebook.org"
 
 
 administrator =

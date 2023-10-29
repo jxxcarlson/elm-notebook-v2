@@ -1,6 +1,7 @@
 module View.Header exposing (view)
 
 import Color
+import Config
 import Element as E exposing (Element)
 import Element.Background as Background
 import Element.Border
@@ -54,7 +55,7 @@ notSignedInHeader model =
 
 welcomeLink =
     E.newTabLink []
-        { url = "https://elm-notebook2.lamdera.app/open/jxxcarlson-welcome"
+        { url = Config.appUrl ++ "/ open/jxxcarlson-welcome"
         , label = E.el [ Font.color (E.rgb 0.9 0.9 0.9), Font.size 14 ] (E.text "Sign in as Guest")
         }
 
