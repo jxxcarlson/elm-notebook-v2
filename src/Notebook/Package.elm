@@ -19,7 +19,8 @@ import Util
 gotElmJsonDict model result =
     case result of
         Err _ ->
-            Message.postMessage "E.1" Types.MSYellow model
+            --Message.postMessage "E.1" Types.MSYellow model
+            ( model, Cmd.none )
 
         Ok data ->
             case model.currentUser of

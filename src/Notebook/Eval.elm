@@ -117,17 +117,6 @@ stringResolverToResult response =
             Ok body
 
 
-
---task :
---    { method : String
---    , headers : List Header
---    , url : String
---    , body : Body
---    , resolver : Resolver x a
---    , timeout : Maybe Float
---    }
-
-
 dictionaryLines : Dict String String -> Int
 dictionaryLines dict =
     dict |> Dict.values |> String.join "" |> String.split "\n" |> List.length
@@ -195,6 +184,16 @@ initEmptyEvalState =
 
 encodeExpr : EvalState -> String -> Encode.Value
 encodeExpr evalState expr =
+    let
+        _ =
+            Debug.log "@@imports" evalState.imports
+
+        _ =
+            Debug.log "@@types" evalState.types
+
+        _ =
+            Debug.log "@@decls" evalState.decls
+    in
     Encode.object
         [ ( "entry", Encode.string (expr |> removeComments |> String.replace "\n" " " |> Util.compressSpaces |> (\x -> x ++ "\n")) )
         , ( "imports", Encode.dict identity Encode.string evalState.imports )
