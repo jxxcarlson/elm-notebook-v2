@@ -69,7 +69,10 @@ view model =
 
                     Nothing ->
                         E.none
-                , E.el [ E.alignRight, Font.color Color.lightGray ] (E.text model.currentBook.slug)
+                , E.newTabLink [ E.alignRight, Font.underline, Font.color (E.rgb 0.4 0.4 1) ]
+                    { url = Config.appUrl ++ "/" ++ model.currentBook.slug
+                    , label = E.text model.currentBook.slug
+                    }
                 , View.Utility.showIf (Predicate.regularUser model) (Button.public model.currentBook)
                 , case model.currentBook.origin of
                     Just _ ->
