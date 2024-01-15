@@ -8,6 +8,7 @@ module View.Geometry exposing
     , loweRightSidePanelHeight
     , mainColumnHeight
     , mainWidth
+    , notebookIndexWidth
     , notebookWidth
     , sidePanelWidth
     )
@@ -53,6 +54,11 @@ notebookWidth model =
 sidePanelWidth : { a | windowWidth : Int } -> Int
 sidePanelWidth model =
     0.45 * toFloat (mainWidth model) |> round
+
+
+notebookIndexWidth : { a | windowWidth : Int } -> Int
+notebookIndexWidth model =
+    0.15 * toFloat (mainWidth model) |> round
 
 
 headerHeight =

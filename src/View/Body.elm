@@ -290,11 +290,11 @@ viewNotebookList model =
         [ E.spacing 1
         , E.alignTop
         , Font.size 14
-        , E.width (E.px (View.Geometry.sidePanelWidth model))
+        , E.width (E.px (View.Geometry.notebookIndexWidth model))
+        , E.height (E.px (View.Geometry.bodyHeight model))
         , Border.widthEach { left = 1, right = 0, top = 0, bottom = 1 }
         , Border.color (E.rgb 0.4 0.4 0.5)
         , Background.color View.Color.rhSidebarColor
-        , E.height (E.px (View.Geometry.bodyHeight model))
         , E.scrollbarY
         , E.paddingXY 18 12
         ]
