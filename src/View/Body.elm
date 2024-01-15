@@ -330,7 +330,7 @@ viewMyNotebookList : FrontendModel -> List (Element FrontendMsg)
 viewMyNotebookList model =
     E.el [ Font.color Color.white, E.paddingEach { left = 0, right = 0, bottom = 8, top = 0 } ]
         (E.text <| "Notebooks: " ++ String.fromInt (List.length model.books))
-        :: controls model.showNotebooks
+        :: controls model model.showNotebooks
         :: List.map (viewNotebookEntry model.currentBook) (List.sortBy bookSorter model.books)
 
 
@@ -347,7 +347,7 @@ header model =
     E.row []
         [ E.el [ Font.color Color.white, E.paddingEach { left = 0, right = 0, bottom = 8, top = 0 } ]
             (E.text <| "Notebooks: " ++ String.fromInt (List.length model.books))
-        , controls model.showNotebooks
+        , controls model model.showNotebooks
         ]
 
 
@@ -387,10 +387,11 @@ viewNotebookEntry currentBook book =
         ]
 
 
+viewPublicNotebookList : Types.FrontendModel -> List (Element FrontendMsg)
 viewPublicNotebookList model =
     E.el [ Font.color Color.white, E.paddingEach { left = 0, right = 0, bottom = 8, top = 0 } ]
         (E.text <| "Notebooks: " ++ String.fromInt (List.length model.books))
-        :: controls model.showNotebooks
+        :: controls model model.showNotebooks
         :: List.map (viewPublicNotebookEntry model.currentBook)
             (List.sortBy publicBookSorter
                 (List.filter (\b -> b.public) model.books)
@@ -405,12 +406,17 @@ viewPublicNotebookEntry currentBook book =
         ]
 
 
-controls : Types.ShowNotebooks -> Element FrontendMsg
-controls showNotebooks =
-    E.row [ E.spacing 12 ]
-        [ View.Button.myNotebooks showNotebooks
-        , E.el [ E.paddingXY 0 8 ] (View.Button.publicNotebooks showNotebooks)
-        ]
+controls : Types.FrontendModel -> Types.ShowNotebooks -> Element FrontendMsg
+controls model showNotebooks =
+    case Maybe.map .username model.currentUser of
+        Nothing ->
+            E.none
+
+        Just _ ->
+            E.row [ E.spacing 12 ]
+                [ View.Button.myNotebooks showNotebooks
+                , E.el [ E.paddingXY 0 8 ] (View.Button.publicNotebooks showNotebooks)
+                ]
 
 
 viewNotebook : FrontendModel -> Element FrontendMsg
