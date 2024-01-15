@@ -1,5 +1,6 @@
 module View.Footer exposing (view)
 
+import Config
 import Element as E exposing (Element)
 import Element.Font as Font
 import Message
@@ -9,11 +10,9 @@ import Types exposing (FrontendModel, FrontendMsg)
 import UILibrary.Color as Color
 import View.Button as Button
 import View.Geometry
-import View.Input
 import View.MarkdownThemed
 import View.Popup.Admin
 import View.Popup.CLI
-import View.Popup.EditDataSet
 import View.Popup.Manual
 import View.Popup.NewDataSet
 import View.Popup.NewNotebook
@@ -55,18 +54,9 @@ view model =
             Just _ ->
                 [ E.el [ Font.color (E.rgb 1 1 1) ] (E.text <| String.left 4 model.currentBook.id)
                 , View.Utility.showIfIsAdmin model (Button.adminPopup model)
-
-                --, View.Utility.showIfIsAdmin model Button.runTask
                 , Button.packagesPopup model
                 , errorIndicator model
-
-                --, View.Utility.showIfIsAdmin model Button.sendProgramToBeCompiled
                 , displayMessages model
-
-                --  , Button.getPackagesFromCompiler
-                --, View.Utility.showIf (Predicate.regularUser model) Button.newDataSet
-                -- , Button.toggleViewPublicDataSets
-                --, View.Utility.showIf (Predicate.regularUser model) Button.toggleViewPrivateDataSets
                 , case model.currentBook.origin of
                     Just origin ->
                         E.el [ E.alignRight, Font.color Color.lightGray ] (E.text <| origin)
@@ -88,8 +78,6 @@ view model =
                     Nothing ->
                         E.none
                 , View.Utility.showIf (Predicate.canClone model) Button.cloneNotebook
-
-                --, View.Input.cloneReference model
                 ]
         )
 
