@@ -28,6 +28,7 @@ import Notebook.Types exposing (EvalState, MessageItem(..), ReplData)
 import Task exposing (Task)
 import Types exposing (FrontendMsg)
 import Util
+import View.Geometry
 
 
 replDataCodec : Codec ReplData
@@ -159,9 +160,14 @@ insertTypeDeclaration name value evalState =
     }
 
 
-displayDictionary : Dict String String -> Element msg
-displayDictionary declarationDict =
-    E.column [ E.spacing 24, Font.size 14, E.paddingEach { left = 18, right = 0, top = 0, bottom = 0 } ]
+displayDictionary : Types.FrontendModel -> Dict String String -> Element msg
+displayDictionary model declarationDict =
+    E.column
+        [ E.spacing 24
+        , Font.size 14
+        , E.height (E.px (View.Geometry.bodyHeight model))
+        , E.paddingEach { left = 18, right = 0, top = 0, bottom = 0 }
+        ]
         (List.map
             (\( k, v ) -> displayValue ( k, v ))
             (Dict.toList declarationDict)

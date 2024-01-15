@@ -1,4 +1,4 @@
-module View.Body exposing (view)
+module View.Body exposing (rhNotebookList, view)
 
 import Dict exposing (Dict)
 import Element as E exposing (Element)
@@ -32,6 +32,7 @@ view model user =
         ]
 
 
+rhSidepanel : FrontendModel -> User.User -> Element FrontendMsg
 rhSidepanel model user =
     E.column
         [ E.height (E.px (View.Geometry.bodyHeight model))
@@ -39,8 +40,19 @@ rhSidepanel model user =
         , Font.color (E.rgb 0.9 0.9 0.9)
         , E.width E.fill
         ]
-        [ viewNotebookList model user
-        , declarationsOrErrorReport model
+        [ declarationsOrErrorReport model
+        ]
+
+
+rhNotebookList : FrontendModel -> Element FrontendMsg
+rhNotebookList model =
+    E.column
+        [ E.height (E.px (View.Geometry.bodyHeight model))
+        , E.width (E.px (View.Geometry.sidePanelWidth model))
+        , Font.color (E.rgb 0.9 0.9 0.9)
+        , E.width E.fill
+        ]
+        [ viewNotebookList model
         ]
 
 
@@ -225,6 +237,7 @@ declarations model =
         [ Font.size 14
         , E.spacing 18
         , E.width (E.px <| View.Geometry.sidePanelWidth model)
+        , E.height (E.px (View.Geometry.bodyHeight model))
         , Background.color View.Color.rhSidebarColor
         , Border.widthEach { left = 1, right = 0, top = 0, bottom = 1 }
         , Border.color (E.rgb 0.4 0.4 0.5)
@@ -239,11 +252,11 @@ declarations model =
             , View.Button.toggleShowErrorPanel model
             ]
         , E.el
-            [ E.height (E.px <| View.Geometry.loweRightSidePanelHeight model)
+            [ E.height (E.px (View.Geometry.bodyHeight model))
             , E.width (E.px <| View.Geometry.sidePanelWidth model)
             , E.scrollbarY
             ]
-            (Notebook.Eval.displayDictionary (Util.mergeDictionaries model.evalState.types model.evalState.decls))
+            (Notebook.Eval.displayDictionary model (Util.mergeDictionaries model.evalState.types model.evalState.decls))
         ]
 
 
@@ -271,8 +284,8 @@ monitorHeight =
     360
 
 
-viewNotebookList : FrontendModel -> User.User -> Element FrontendMsg
-viewNotebookList model user =
+viewNotebookList : FrontendModel -> Element FrontendMsg
+viewNotebookList model =
     E.column
         [ E.spacing 1
         , E.alignTop
@@ -281,16 +294,16 @@ viewNotebookList model user =
         , Border.widthEach { left = 1, right = 0, top = 0, bottom = 1 }
         , Border.color (E.rgb 0.4 0.4 0.5)
         , Background.color View.Color.rhSidebarColor
-        , E.height (E.px (View.Geometry.bodyHeight model - View.Geometry.loweRightSidePanelHeight model))
+        , E.height (E.px (View.Geometry.bodyHeight model))
         , E.scrollbarY
         , E.paddingXY 18 12
         ]
         (case model.showNotebooks of
             Types.ShowUserNotebooks ->
-                viewMyNotebookList model user
+                viewMyNotebookList model
 
             Types.ShowPublicNotebooks ->
-                viewPublicNotebookList model user
+                viewPublicNotebookList model
         )
 
 
@@ -303,12 +316,11 @@ notebookControls model =
         ]
 
 
-viewMyNotebookList : FrontendModel -> User.User -> List (Element FrontendMsg)
-viewMyNotebookList model user =
+viewMyNotebookList : FrontendModel -> List (Element FrontendMsg)
+viewMyNotebookList model =
     E.el [ Font.color Color.white, E.paddingEach { left = 0, right = 0, bottom = 8, top = 0 } ]
         (E.text <| "Notebooks: " ++ String.fromInt (List.length model.books))
         :: controls model.showNotebooks
-        --:: List.map (viewNotebookEntry model.currentBook) (List.sortBy (\b -> b.title) model.books)
         :: List.map (viewNotebookEntry model.currentBook) (List.sortBy bookSorter model.books)
 
 
@@ -365,7 +377,7 @@ viewNotebookEntry currentBook book =
         ]
 
 
-viewPublicNotebookList model user =
+viewPublicNotebookList model =
     E.el [ Font.color Color.white, E.paddingEach { left = 0, right = 0, bottom = 8, top = 0 } ]
         (E.text <| "Notebooks: " ++ String.fromInt (List.length model.books))
         :: controls model.showNotebooks
