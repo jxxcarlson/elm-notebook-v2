@@ -300,12 +300,20 @@ viewNotebookList model =
         , E.scrollbarY
         , E.paddingXY 18 12
         ]
-        (case model.showNotebooks of
-            Types.ShowUserNotebooks ->
-                viewMyNotebookList model
-
-            Types.ShowPublicNotebooks ->
+        (case Maybe.map .username model.currentUser of
+            Just "guest" ->
                 viewPublicNotebookList model
+
+            Nothing ->
+                [ E.none ]
+
+            Just _ ->
+                case model.showNotebooks of
+                    Types.ShowUserNotebooks ->
+                        viewMyNotebookList model
+
+                    Types.ShowPublicNotebooks ->
+                        viewPublicNotebookList model
         )
 
 
