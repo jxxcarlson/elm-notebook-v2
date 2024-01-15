@@ -24,11 +24,13 @@ import View.Style
 view : FrontendModel -> User.User -> Element FrontendMsg
 view model user =
     E.row
-        [ E.width (E.px (View.Geometry.mainWidth model))
+        [ E.width (E.px (View.Geometry.appWidth model))
         , E.height (E.px (View.Geometry.bodyHeight model))
+        , Font.color (E.rgb 0.9 0.9 0.9)
         ]
         [ viewNotebook model
         , rhSidepanel model user
+        , rhNotebookList model
         ]
 
 

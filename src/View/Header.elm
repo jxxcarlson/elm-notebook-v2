@@ -33,11 +33,12 @@ notSignedInHeader model =
         [ E.spacing 24
         , Font.size 14
         , E.height (E.px View.Geometry.headerHeight)
-        , E.paddingXY View.Geometry.hPadding 0
+
+        --, E.paddingXY View.Geometry.hPadding 0
         , Background.color Color.darkerSteelGray
         , Element.Border.widthEach { left = 0, right = 0, top = 0, bottom = 1 }
         , Element.Border.color Color.stillDarkerSteelGray
-        , E.width (E.px (View.Geometry.mainWidth model))
+        , E.width E.fill
         ]
         [ E.row
             [ E.spacing 12
@@ -46,10 +47,9 @@ notSignedInHeader model =
             , View.Input.password model
             , Button.signIn
             , welcomeLink
-            , E.row [ E.width E.fill, E.paddingXY 8 8, View.Style.bgGray 0 ] [ Message.view 350 30 model ]
+            , Button.manualLarge
+            , E.el [] Button.signUp
             ]
-        , Button.manualLarge
-        , E.el [ E.alignRight ] Button.signUp
         ]
 
 
@@ -66,7 +66,7 @@ signedInHeader model user =
         , E.paddingXY View.Geometry.hPadding 0
         , E.spacing 24
         , E.height (E.px View.Geometry.headerHeight)
-        , E.width (E.px <| View.Geometry.mainWidth model)
+        , E.width E.fill
         , Background.color Color.darkSteelGray
         , Element.Border.widthEach { left = 0, right = 0, top = 0, bottom = 1 }
         , Element.Border.color Color.stillDarkerSteelGray
@@ -82,8 +82,6 @@ signedInHeader model user =
                     ]
                     (underlinedTitle model.currentBook.title)
             ]
-
-        --, View.Utility.showIf (Predicate.regularUser model) (Button.editTitle model.appMode)
         , Button.executeNotebook
         , Button.clearValues
         , View.Utility.showIf (Predicate.regularUser model) Button.newNotebook

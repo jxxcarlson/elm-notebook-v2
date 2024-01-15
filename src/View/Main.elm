@@ -25,28 +25,18 @@ type alias Model =
 view : Model -> Html FrontendMsg
 view model =
     E.layoutWith { options = [ E.focusStyle View.Utility.noFocus ] }
-        [ View.Style.bgGray 0.0, E.clipX, E.clipY ]
+        [ View.Style.bgGray 0.0, E.clipX, E.clipY, E.width (E.px <| model.windowWidth) ]
         (mainColumn model)
 
 
 mainColumn : Model -> Element FrontendMsg
 mainColumn model =
-    E.row []
-        [ View.LHSidebar.view model, main_ model ]
-
-
-main_ model =
-    E.column (mainColumnStyle model)
+    E.column [ E.centerX, E.width (E.px <| model.windowWidth) ]
         [ View.Header.view model
-        , mainRow model
+        , E.row [ E.centerX, E.width E.fill ]
+            [ View.LHSidebar.view model, body model ]
         , View.Footer.view model
         ]
-
-
-mainRow : Model -> Element FrontendMsg
-mainRow model =
-    E.row []
-        [ body model, View.Body.rhNotebookList model ]
 
 
 body : Model -> Element FrontendMsg
@@ -57,20 +47,6 @@ body model =
 
         Just user ->
             View.Body.view model user
-
-
-mainColumnStyle model =
-    [ E.centerX
-    , E.centerY
-    , case model.currentUser of
-        Nothing ->
-            Background.color (E.rgb255 73 78 89)
-
-        Just _ ->
-            Background.color (E.rgb255 99 106 122)
-    , E.width (E.px <| View.Geometry.appWidth model - View.Config.lhSidebarWidth)
-    , E.height (E.px <| View.Geometry.appHeight model)
-    ]
 
 
 title : String -> Element msg

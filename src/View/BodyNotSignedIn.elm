@@ -11,7 +11,7 @@ import View.Style
 
 view : FrontendModel -> Element msg
 view model =
-    E.column [ E.centerX, E.spacing 18 ]
+    E.column [ E.centerX, E.spacing 18, E.paddingXY 24 0 ]
         [ E.el
             [ Font.color (E.rgb 0.8 0.8 0.8)
             , Font.size 22
