@@ -391,7 +391,6 @@ viewPublicNotebookList : Types.FrontendModel -> List (Element FrontendMsg)
 viewPublicNotebookList model =
     E.el [ Font.color Color.white, E.paddingEach { left = 0, right = 0, bottom = 8, top = 0 } ]
         (E.text <| "Notebooks: " ++ String.fromInt (List.length model.books))
-        :: controls model model.showNotebooks
         :: List.map (viewPublicNotebookEntry model.currentBook)
             (List.sortBy publicBookSorter
                 (List.filter (\b -> b.public) model.books)
