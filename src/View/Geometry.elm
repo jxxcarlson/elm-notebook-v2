@@ -27,7 +27,7 @@ appHeight model =
 
 mainColumnHeight : { a | windowHeight : number } -> number
 mainColumnHeight model =
-    appHeight model - headerHeight - footerHeight - 35
+    appHeight model - headerHeight - footerHeight - 65
 
 
 loweRightSidePanelHeight : { a | windowHeight : Int } -> Int

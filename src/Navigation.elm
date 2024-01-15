@@ -19,10 +19,10 @@ urlAction path =
     else
         let
             prefix =
-                String.left 6 path
+                String.left 6 path |> Debug.log "@@ prefix"
 
             segment =
-                String.dropLeft 6 path
+                String.dropLeft 6 path |> Debug.log "@@ segment"
         in
         case prefix of
             "/open/" ->
