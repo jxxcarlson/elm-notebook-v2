@@ -43,6 +43,12 @@ main_ model =
         ]
 
 
+mainRow : Model -> Element FrontendMsg
+mainRow model =
+    E.row []
+        [ body model, View.Body.rhNotebookList model ]
+
+
 body : Model -> Element FrontendMsg
 body model =
     case model.currentUser of
@@ -51,12 +57,6 @@ body model =
 
         Just user ->
             View.Body.view model user
-
-
-mainRow : Model -> Element FrontendMsg
-mainRow model =
-    E.row []
-        [ body model, View.Body.rhNotebookList model ]
 
 
 mainColumnStyle model =
