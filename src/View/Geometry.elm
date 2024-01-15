@@ -48,12 +48,12 @@ bodyHeight model =
 
 notebookWidth : { a | windowWidth : Int } -> Int
 notebookWidth model =
-    0.55 * toFloat (mainWidth model) |> round
+    0.47 * toFloat (mainWidth model) |> round
 
 
 sidePanelWidth : { a | windowWidth : Int } -> Int
 sidePanelWidth model =
-    0.45 * toFloat (mainWidth model) |> round
+    0.38 * toFloat (mainWidth model) |> round
 
 
 notebookIndexWidth : { a | windowWidth : Int } -> Int
