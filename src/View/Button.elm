@@ -296,7 +296,7 @@ viewNotebookEntry currentBook book =
 
 cloneNotebook : Element FrontendMsg
 cloneNotebook =
-    Button.smallPrimary { msg = CloneNotebook, status = Button.Active, label = Button.Text "Clone", tooltipText = Nothing }
+    Button.smallPrimary { msg = CloneNotebook, status = Button.Active, label = Button.Text "Clone notebook", tooltipText = Nothing }
 
 
 pullNotebook : Element FrontendMsg

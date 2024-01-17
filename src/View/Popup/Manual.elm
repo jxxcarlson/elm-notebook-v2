@@ -62,7 +62,7 @@ Click on the **Manual** button to show or hide the manual.
 
 ## Quick start
 
-- Click on the box **Cell 1**, **Cell 2**, etc to reveal the controls for that cell.
+- Click on the box *Cell 1*, *Cell 2*, etc to reveal the controls for that cell.
 
 - Controls for a cell include *Run*, *Close*, *Up*, *Down*, *Delete*, *Clear*, *Locked* or *Unlocked*.
 
@@ -71,20 +71,30 @@ Click on the **Manual** button to show or hide the manual.
 
 ## Menu bar
 
-- **Document title** (underlined) is editable.  Click on it to change the title of the document,
-  then press **<Enter>** to save the change.
+- *Document title* (underlined) is editable.  Click on it to change the title of the document,
+  then press *<Enter>* to save the change.
 
-- **Run all cells** evaluates all the code cells in the notebook.
 
-- **Clear values** removes the results of evaluating all the code cells in the notebook.
 
-- **New Notebook** creates a new notebook.  The new notebook will be empty.
 
-- **Dark/Light** toggles between dark and light mode.
+- *Run all cells* evaluates all the code cells in the notebook.
 
-- **Delete Notebook** deletes the current notebook.  This operation cannot be undone.
+- *Clear values* removes the results of evaluating all the code cells in the notebook.
 
-- **Manual** shows or hides this manual.
+
+
+- *New Notebook* creates a new notebook.  The new notebook will be empty.
+
+- *Public/Private* toggles between public and private mode.  Public notebooks are visible to all users.
+  Private notebooks are visible only to you.
+
+
+
+- *Delete Notebook* deletes the current notebook.  This operation cannot be undone.
+
+- *Manual* shows or hides this manual.
+
+- *Dark/Light* toggles between dark and light mode.
 
 ## Cells
 
@@ -122,7 +132,7 @@ result of which is shown below the code itself.
 
 ## Packages
 
-The *Packages* button opens a window that lets you add packages to your notebook.
+The *Install Packages* button opens a window that lets you add packages to your notebook.
 This window has two parts   In the upper part you list the names of the
 packages your notebook needs, e.g. `elm-community/list-extra`.
 The app remembers what you put there, so if you open it again, you can add, edit, or delete
@@ -165,11 +175,11 @@ Abbreviated versions of the address also work:
 
 ## Cloning a notebook
 
-Public documents can be cloned by clicking on the *Clone* button in the footer.  This button
+Public documents can be cloned by clicking on the *Clone notebook* button in the footer.  This button
 is only visible if the *Public docs*, not the *My docs* button is selected, and if there are
 public notebooks visible.
 
-You can also update a notebook that has been cloned: click on the *Update* button in the footer.
+You can also update a notebook that has been cloned: click on the *Update cloned notebook* button in the footer.
 Updating a notebook brings in new material from the original source.
 However this operation will overwrite any changes you have made to the clone.
 
