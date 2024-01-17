@@ -65,13 +65,13 @@ view model =
                         E.none
                 , case model.currentBook.origin of
                     Just _ ->
-                        E.el [ Font.color Color.lightGray ] (E.text " ==> ")
+                        E.el [ Font.color Color.lightGray ] (E.text <| " ==> " ++ model.currentBook.slug)
 
                     Nothing ->
                         E.none
                 , let
                     url =
-                        Config.appUrl ++ "/open/" ++ model.currentBook.slug |> Debug.log "@@URL"
+                        Config.appUrl ++ "/open/" ++ model.currentBook.slug
                   in
                   Button.copyNotebookUrl url
                 , E.newTabLink [ E.alignRight, Font.underline, Font.color (E.rgb 0.4 0.4 1) ]
