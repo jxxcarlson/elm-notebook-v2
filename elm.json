@@ -7,6 +7,7 @@
     "elm-version": "0.19.1",
     "dependencies": {
         "direct": {
+            "Janiczek/elm-bidict": "3.0.0",
             "NoRedInk/elm-json-decode-pipeline": "1.0.1",
             "TSFoster/elm-uuid": "4.2.0",
             "adauguet/elm-pbkdf2": "1.0.0",
@@ -53,6 +54,8 @@
             "danfishgold/base64-bytes": "1.1.0",
             "elm/svg": "1.0.1",
             "elm/virtual-dom": "1.0.2",
+            "elm-community/dict-extra": "2.4.0",
+            "erlandsona/assoc-set": "1.1.2",
             "folkertdev/elm-deque": "3.0.1",
             "folkertdev/one-true-path-experiment": "4.0.3",
             "folkertdev/svg-path-lowlevel": "3.0.0",
@@ -64,8 +67,10 @@
             "justinmimbs/date": "4.0.1",
             "justinmimbs/time-extra": "1.1.1",
             "ktonon/elm-word": "2.1.2",
+            "pzp1997/assoc-list": "1.0.0",
             "robinheghan/murmur3": "1.0.0",
             "ryannhg/date-format": "2.3.0",
+            "skyqrose/assoc-list-extra": "1.0.0",
             "stil4m/structured-writer": "1.0.3",
             "zgohr/elm-csv": "1.0.1"
         }

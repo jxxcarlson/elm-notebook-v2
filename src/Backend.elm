@@ -6,6 +6,7 @@ import Backend.Data
 import Backend.Notebook
 import Backend.Update
 import BackendHelper
+import BiDict
 import Dict exposing (Dict)
 import Env exposing (Mode(..))
 import Hex
@@ -49,6 +50,8 @@ init =
       , slugDict = Dict.empty
 
       -- USER
+      , sessions = BiDict.empty
+      , sessionInfo = Dict.empty
       , authenticationDict = Dict.empty
 
       -- DOCUMENTS

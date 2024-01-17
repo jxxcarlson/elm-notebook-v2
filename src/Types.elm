@@ -1,6 +1,7 @@
 module Types exposing (..)
 
 import Authentication exposing (AuthenticationDict)
+import BiDict
 import Browser exposing (UrlRequest)
 import Browser.Dom
 import Browser.Navigation exposing (Key)
@@ -15,6 +16,7 @@ import Notebook.Cell exposing (Cell, CellState(..), CellValue(..))
 import Notebook.DataSet
 import Notebook.Types
 import Random
+import Session
 import Time
 import Url exposing (Url)
 import User exposing (User)
@@ -116,6 +118,8 @@ type alias BackendModel =
     , slugDict : Dict.Dict String NotebookRecord -- keys are slugs, values are notebook records
 
     -- USER
+    , sessions : BiDict.BiDict String String -- sessionId to username
+    , sessionInfo : Session.SessionInfo
     , authenticationDict : AuthenticationDict
 
     -- DOCUMENT
