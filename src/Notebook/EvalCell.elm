@@ -282,10 +282,15 @@ processCell cellState cellIndex model_ =
         Just cell ->
             case cell.tipe of
                 Cell.CTCode ->
-                    processCode model { cell | report = ( cell.index, Nothing ), replData = Nothing, cellState = CSView }
+                    processCode { model | currentCellIndex = model.currentCellIndex + 1 }
+                        { cell
+                            | report = ( cell.index, Nothing )
+                            , replData = Nothing
+                            , cellState = CSView
+                        }
 
                 Cell.CTMarkdown ->
-                    processMarkdown model { cell | cellState = CSView }
+                    processMarkdown { model | currentCellIndex = model.currentCellIndex + 1 } { cell | cellState = CSView }
 
 
 processMarkdown model cell =

@@ -442,6 +442,6 @@ viewNotebook model =
         , E.clipX
         ]
         (List.map
-            (Notebook.View.view viewData model.cellContent)
+            (Notebook.View.view model.currentCellIndex viewData model.cellContent)
             model.currentBook.cells
         )

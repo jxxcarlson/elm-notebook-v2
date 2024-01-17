@@ -24,11 +24,27 @@ import View.Style
 import View.Utility
 
 
-view : ViewData -> String -> Cell -> Element FrontendMsg
-view viewData cellContents cell =
+view : Int -> ViewData -> String -> Cell -> Element FrontendMsg
+view currentCellIndex viewData cellContents cell =
     E.column
         [ E.width (E.px viewData.width)
-        , Background.color (themedBackgroundColor viewData.theme) -- (E.rgb255 99 106 122)
+
+        --, case currentCellIndex == cell.index || currentCellIndex == cell.index + 1 of
+        --    True ->
+        --        Element.Border.width 1
+        --
+        --    False ->
+        --        Element.Border.width 0
+        , if currentCellIndex == cell.index then
+            Background.color (E.rgb 0.5 0.9 0.8)
+
+          else if currentCellIndex == cell.index + 1 then
+            Background.color (E.rgb 0.5 0.5 0.9)
+
+          else
+            Background.color (themedBackgroundColor viewData.theme)
+
+        -- (E.rgb255 99 106 122)
         ]
         [ E.row
             [ E.width (E.px viewData.width) ]
