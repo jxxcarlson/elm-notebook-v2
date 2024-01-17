@@ -45,6 +45,7 @@ view model =
         , E.inFront (View.Popup.CLI.view model)
         , View.Style.bgGray 0.0
         , E.spacing 12
+        , E.paddingXY 24 0
         ]
         (case model.currentUser of
             Nothing ->
