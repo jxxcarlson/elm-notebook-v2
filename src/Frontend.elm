@@ -18,6 +18,7 @@ import Frontend.Notebook
 import Frontend.UIHelper
 import Frontend.Update
 import Html exposing (Html)
+import Json.Encode
 import Keyboard
 import Lamdera exposing (sendToBackend)
 import List.Extra
@@ -161,6 +162,13 @@ update msg model =
     case msg of
         NoOpFrontendMsg ->
             ( model, Cmd.none )
+
+        CopyTextToClipboard text ->
+            let
+                _ =
+                    Debug.log "@@@URL in CopyTextToClipboard" text
+            in
+            ( model, Ports.supermario_copy_to_clipboard_to_js (Json.Encode.string text) )
 
         GetRandomProbabilities k ->
             getRandomProbabilities model k

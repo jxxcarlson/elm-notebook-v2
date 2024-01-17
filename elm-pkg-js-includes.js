@@ -7,5 +7,6 @@ exports.init = async function init(app) {
   // automatically generated in Local Development for every file in elm-pkg-js/
 
   evalJs.init(app)
+  copy_to_clipboard.init(app)
   testPorts.init(app)
 }

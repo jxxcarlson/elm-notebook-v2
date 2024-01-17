@@ -4,6 +4,7 @@ module View.Button exposing
     , clearValues
     , cliPopup
     , cloneNotebook
+    , copyNotebookUrl
     , createDataSet
     , deleteDataSet
     , deleteNotebook
@@ -106,6 +107,11 @@ linkStyle =
 
 -- CELL
 -- POPUP
+
+
+copyNotebookUrl : String -> Element FrontendMsg
+copyNotebookUrl url =
+    Button.smallPrimary { msg = Types.CopyTextToClipboard url, status = Button.Active, label = Button.Text "Copy Notebook Address", tooltipText = Nothing }
 
 
 dismissPopupTransparent : Element FrontendMsg

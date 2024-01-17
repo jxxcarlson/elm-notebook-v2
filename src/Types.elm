@@ -153,6 +153,7 @@ type FrontendMsg
     = UrlClicked UrlRequest
     | UrlChanged Url
     | NoOpFrontendMsg
+    | CopyTextToClipboard String
     | FETick Time.Posix
     | KeyboardMsg Keyboard.Msg
     | GetRandomProbabilities Int

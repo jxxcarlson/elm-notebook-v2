@@ -6,6 +6,7 @@ port module Ports exposing
     , sendData
     , sendDataToJS
     , sendJSData
+    , supermario_copy_to_clipboard_to_js
     )
 
 import Json.Decode as Decode
@@ -25,6 +26,9 @@ port receiveJSData : (String -> msg) -> Sub msg
 
 
 port sendData : String -> Cmd msg
+
+
+port supermario_copy_to_clipboard_to_js : Decode.Value -> Cmd msg
 
 
 encodeIndexAndSourcePair : ( Int, String ) -> Encode.Value

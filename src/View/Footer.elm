@@ -69,6 +69,11 @@ view model =
 
                     Nothing ->
                         E.none
+                , let
+                    url =
+                        Config.appUrl ++ "/open/" ++ model.currentBook.slug |> Debug.log "@@URL"
+                  in
+                  Button.copyNotebookUrl url
                 , E.newTabLink [ E.alignRight, Font.underline, Font.color (E.rgb 0.4 0.4 1) ]
                     { url = Config.appUrl ++ "/open/" ++ model.currentBook.slug
                     , label = E.text model.currentBook.slug
