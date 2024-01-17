@@ -62,9 +62,8 @@ welcomeLink =
 
 signedInHeader model user =
     E.row
-        [ E.spacing 24
+        [ E.spacing 36
         , E.paddingXY View.Geometry.hPadding 0
-        , E.spacing 24
         , E.height (E.px View.Geometry.headerHeight)
         , E.width E.fill
         , Background.color Color.darkSteelGray
@@ -82,14 +81,21 @@ signedInHeader model user =
                     ]
                     (underlinedTitle model.currentBook.title)
             ]
-        , Button.executeNotebook
-        , Button.clearValues
-        , View.Utility.showIf (Predicate.regularUser model) Button.newNotebook
-        , Button.toggleTheme model.theme
-        , View.Utility.showIf (Predicate.regularUser model) (Button.deleteNotebook model.deleteNotebookState)
-        , View.Utility.showIf (Predicate.regularUser model) (Button.cancelDeleteNotebook model.deleteNotebookState)
+        , E.row [ E.spacing 8 ]
+            [ Button.executeNotebook
+            , Button.clearValues
+            ]
+        , E.row [ E.spacing 8 ]
+            [ View.Utility.showIf (Predicate.regularUser model) Button.newNotebook
+            , View.Utility.showIf (Predicate.regularUser model) (Button.public model.currentBook)
+            , View.Utility.showIf (Predicate.regularUser model) (Button.deleteNotebook model.deleteNotebookState)
+            , View.Utility.showIf (Predicate.regularUser model) (Button.cancelDeleteNotebook model.deleteNotebookState)
+            ]
         , View.Utility.showIf (Predicate.noUserSignedIn model) welcomeLink
-        , Button.manual
+        , E.row [ E.spacing 8 ]
+            [ Button.manual
+            , Button.toggleTheme model.theme
+            ]
         , E.el [ E.alignRight ] (Button.signOut user.username)
         ]
 

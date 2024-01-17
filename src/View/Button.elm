@@ -259,10 +259,10 @@ deleteNotebook deleteNotebookState =
 public : Book -> Element FrontendMsg
 public book =
     if book.public then
-        Button.smallPrimary { msg = TogglePublic, status = Button.Active, label = Button.Text "Public", tooltipText = Nothing }
+        Button.smallPrimary { msg = TogglePublic, status = Button.Active, label = Button.Text "Public", tooltipText = Just "Toggle public/private" }
 
     else
-        Button.smallPrimary { msg = TogglePublic, status = Button.Active, label = Button.Text "Private", tooltipText = Nothing }
+        Button.smallPrimary { msg = TogglePublic, status = Button.Active, label = Button.Text "Private", tooltipText = Just "Toggle public/private" }
 
 
 viewNotebookEntry : Book -> Book -> Element FrontendMsg
@@ -301,7 +301,7 @@ cloneNotebook =
 
 pullNotebook : Element FrontendMsg
 pullNotebook =
-    Button.smallPrimary { msg = PullNotebook, status = Button.Active, label = Button.Text "Update", tooltipText = Nothing }
+    Button.smallPrimary { msg = PullNotebook, status = Button.Active, label = Button.Text "Update cloned notebook", tooltipText = Nothing }
 
 
 exportNotebook : Element FrontendMsg

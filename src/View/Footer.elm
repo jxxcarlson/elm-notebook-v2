@@ -78,7 +78,6 @@ view model =
                     { url = Config.appUrl ++ "/open/" ++ model.currentBook.slug
                     , label = E.text model.currentBook.slug
                     }
-                , View.Utility.showIf (Predicate.regularUser model) (Button.public model.currentBook)
                 , case model.currentBook.origin of
                     Just _ ->
                         E.el [ E.paddingEach { left = 24, right = 0, top = 0, bottom = 0 } ] Button.pullNotebook
