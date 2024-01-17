@@ -336,6 +336,7 @@ type ToBackend
 type BackendMsg
     = NoOpBackendMsg
     | Tick Time.Posix
+    | OnConnected String String
 
 
 type ToFrontend

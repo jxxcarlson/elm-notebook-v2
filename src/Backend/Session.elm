@@ -9,7 +9,10 @@ import Types exposing (BackendModel, BackendMsg, MessageStatus(..), ToFrontend(.
 import User exposing (User)
 
 
-sendUserData : BackendModel -> String -> { a | user : User } -> Lamdera.SessionId -> ClientId -> List (Cmd ToFrontend)
+
+--sendUserData : BackendModel -> String -> { a | user : User } -> Lamdera.SessionId -> ClientId -> List (Cmd ToFrontend)
+
+
 sendUserData model username userData sessionId clientId =
     let
         foo =
@@ -35,7 +38,10 @@ removeStaleSessions model =
     }
 
 
-reconnect : Types.BackendModel -> Lamdera.SessionId -> Lamdera.ClientId -> Cmd Types.ToFrontend
+
+--reconnect : Types.BackendModel -> Lamdera.SessionId -> Lamdera.ClientId -> Cmd Types.ToFrontend
+
+
 reconnect model sessionId clientId =
     let
         maybeUsername =

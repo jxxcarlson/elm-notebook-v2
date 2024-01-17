@@ -4,6 +4,7 @@ import Authentication
 import Backend.Authentication
 import Backend.Data
 import Backend.Notebook
+import Backend.Session
 import Backend.Update
 import BackendHelper
 import BiDict
@@ -68,6 +69,28 @@ update msg model =
 
         Types.Tick newTime ->
             ( { model | currentTime = newTime }, Cmd.none )
+
+        Types.OnConnected sessionId clientId ->
+            let
+                maybeUsername : Maybe String
+                maybeUsername =
+                    BiDict.get sessionId model.sessions
+
+                maybeUserData : Maybe Authentication.UserData
+                maybeUserData =
+                    Maybe.andThen (\username -> Dict.get username model.authenticationDict) maybeUsername
+            in
+            case ( maybeUsername, maybeUserData ) of
+                ( Just username, Just userData ) ->
+                    ( model
+                    , Cmd.batch
+                        (Backend.Session.reconnect model sessionId clientId
+                            :: Backend.Session.sendUserData model username userData sessionId clientId
+                        )
+                    )
+
+                ( _, _ ) ->
+                    ( model, Cmd.none )
 
 
 updateFromFrontend : SessionId -> ClientId -> Types.ToBackend -> Model -> ( Model, Cmd BackendMsg )
