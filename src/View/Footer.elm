@@ -63,12 +63,13 @@ view model =
 
                     Nothing ->
                         E.none
-                , case model.currentBook.origin of
-                    Just _ ->
-                        E.el [ Font.color Color.lightGray ] (E.text <| " ==> " ++ model.currentBook.slug)
 
-                    Nothing ->
-                        E.none
+                --, case model.currentBook.origin of
+                --    Just _ ->
+                --        E.el [ Font.color Color.lightGray ] (E.text <| " ==> " ++ model.currentBook.slug)
+                --
+                --    Nothing ->
+                --        E.none
                 , let
                     url =
                         Config.appUrl ++ "/open/" ++ model.currentBook.slug
