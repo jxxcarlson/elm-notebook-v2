@@ -5,10 +5,12 @@ module Notebook.Book exposing
     , ViewData
     , clearValues
     , copy
+    , decrementHighlightTime
     , initializeCellState
     , moveCellUpDown
     , new
     , replaceCell
+    , resetHighlightTime
     , scratchPad
     , setAllCellStates
     , setReplDataAt
@@ -210,6 +212,30 @@ newBook author title =
     , packageNames = []
     , tags = []
     , options = Dict.fromList []
+    }
+
+
+resetHighlightTime : Book -> Book
+resetHighlightTime book =
+    { book
+        | cells =
+            List.map
+                (\cell ->
+                    { cell | highlightTime = 0 }
+                )
+                book.cells
+    }
+
+
+decrementHighlightTime : Book -> Book
+decrementHighlightTime book =
+    { book
+        | cells =
+            List.map
+                (\cell ->
+                    { cell | highlightTime = max 0 (cell.highlightTime - 1) }
+                )
+                book.cells
     }
 
 
