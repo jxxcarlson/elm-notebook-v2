@@ -58,13 +58,13 @@ view model =
                 , Button.packagesPopup model
                 , errorIndicator model
                 , displayMessages model
-                , case model.currentBook.origin of
-                    Just origin ->
-                        E.el [ E.alignRight, Font.color Color.lightGray ] (E.text <| origin)
 
-                    Nothing ->
-                        E.none
-
+                --, case model.currentBook.origin of
+                --    Just origin ->
+                --        E.el [ E.alignRight, Font.color Color.lightGray ] (E.text <| origin)
+                --
+                --    Nothing ->
+                --        E.none
                 --, case model.currentBook.origin of
                 --    Just _ ->
                 --        E.el [ Font.color Color.lightGray ] (E.text <| " ==> " ++ model.currentBook.slug)
