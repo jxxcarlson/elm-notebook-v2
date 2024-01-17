@@ -302,8 +302,6 @@ par highlightTime theme width =
 
           else
             Background.color (themedValueBackgroundColor theme)
-
-        --  (E.rgb 0.75 0.75 0.95)
         ]
 
 

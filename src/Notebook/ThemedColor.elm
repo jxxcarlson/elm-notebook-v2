@@ -40,7 +40,7 @@ themedPopupDividerColor theme =
 themedValueBackgroundColor theme =
     case theme of
         Notebook.Book.LightTheme ->
-            Notebook.Config.lightThemeValueBackgroundColor
+            Notebook.Config.darkThemeValueBackgroundColor
 
         Notebook.Book.DarkTheme ->
             Notebook.Config.darkThemeValueBackgroundColor

@@ -75,7 +75,8 @@ lightThemeValueBackgroundColor =
 
 
 lightThemeValueTextColor =
-    E.rgb255 40 40 220
+    --E.rgb255 40 40 220
+    E.rgb 0.95 0.95 0.95
 
 
 lightThemeTextColor =
