@@ -54,10 +54,9 @@ content =
     """
 
 
-## This Manual
+# Elm Notebook Manual
 
 
-Click on the **Manual** button to show or hide the manual.
 
 
 ## Quick start
