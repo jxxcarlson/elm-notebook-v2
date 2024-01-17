@@ -11,6 +11,7 @@ module View.Input exposing
     , name
     , password
     , passwordAgain
+    , search
     , signupUsername
     , submitPackageList
     , title
@@ -80,6 +81,11 @@ initialStateValue model =
 
 name model =
     inputFieldTemplate (E.px 300) "Name" InputName model.inputName
+
+
+search model =
+    E.el [ E.paddingXY 2 1, E.width E.fill ]
+        (inputFieldTemplate E.fill "filter ... " InputSearch model.inputSearch)
 
 
 identifier model =

@@ -19,6 +19,7 @@ import Util
 import View.Button
 import View.Color
 import View.Geometry
+import View.Input
 import View.Style
 
 
@@ -55,7 +56,8 @@ rhNotebookList model =
         , Font.color (E.rgb 0.9 0.9 0.9)
         , E.width E.fill
         ]
-        [ viewNotebookList model
+        [ View.Input.search model
+        , viewNotebookList model
         ]
 
 
@@ -329,18 +331,23 @@ notebookControls model =
 
 viewMyNotebookList : FrontendModel -> List (Element FrontendMsg)
 viewMyNotebookList model =
+    let
+        books =
+            List.filter (\b -> String.contains (String.toLower model.inputSearch) (String.toLower <| b.title ++ " " ++ b.author)) model.books
+    in
     E.el [ Font.color Color.white, E.paddingEach { left = 0, right = 0, bottom = 8, top = 0 } ]
         (E.text <| "Notebooks: " ++ String.fromInt (List.length model.books))
         :: controls model model.showNotebooks
-        :: List.map (viewNotebookEntry model.currentBook) (List.sortBy bookSorter model.books)
+        :: List.map (viewNotebookEntry model.currentBook) (List.sortBy bookSorter books)
 
 
-viewMyNotebookList2 : FrontendModel -> User.User -> Element FrontendMsg
-viewMyNotebookList2 model user =
-    E.column [ Font.color Color.white, E.paddingEach { left = 0, right = 0, bottom = 8, top = 0 } ]
-        (header model
-            :: List.map (viewNotebookEntry model.currentBook) (List.sortBy bookSorter model.books)
-        )
+
+--viewMyNotebookList2 : FrontendModel -> User.User -> Element FrontendMsg
+--viewMyNotebookList2 model user =
+--    E.column [ Font.color Color.white, E.paddingEach { left = 0, right = 0, bottom = 8, top = 0 } ]
+--        (header model
+--            :: List.map (viewNotebookEntry model.currentBook) (List.sortBy bookSorter model.books)
+--        )
 
 
 header : FrontendModel -> Element FrontendMsg
@@ -390,8 +397,12 @@ viewNotebookEntry currentBook book =
 
 viewPublicNotebookList : Types.FrontendModel -> List (Element FrontendMsg)
 viewPublicNotebookList model =
+    let
+        books =
+            List.filter (\b -> String.contains (String.toLower model.inputSearch) (String.toLower <| b.title ++ " " ++ b.author)) model.books
+    in
     E.el [ Font.color Color.white, E.paddingEach { left = 0, right = 0, bottom = 8, top = 0 } ]
-        (E.text <| "Notebooks: " ++ String.fromInt (List.length model.books))
+        (E.text <| "Notebooks: " ++ String.fromInt (List.length books))
         :: ((if Predicate.regularUser model then
                 controls model model.showNotebooks
 
@@ -400,7 +411,7 @@ viewPublicNotebookList model =
             )
                 :: List.map (viewPublicNotebookEntry model.currentBook)
                     (List.sortBy publicBookSorter
-                        (List.filter (\b -> b.public) model.books)
+                        (List.filter (\b -> b.public) books)
                     )
            )
 

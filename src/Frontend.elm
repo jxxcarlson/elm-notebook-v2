@@ -105,6 +105,7 @@ init url key =
 
       --
       , inputName = ""
+      , inputSearch = ""
       , inputAuthor = ""
       , inputIdentifier = ""
       , inputDescription = ""
@@ -366,6 +367,9 @@ update msg model =
         -- INPUT FIELDS
         InputName str ->
             ( { model | inputName = str }, Cmd.none )
+
+        InputSearch str ->
+            ( { model | inputSearch = str }, Cmd.none )
 
         InputAuthor str ->
             ( { model | inputAuthor = str }, Cmd.none )

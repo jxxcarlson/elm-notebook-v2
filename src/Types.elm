@@ -41,6 +41,7 @@ type alias FrontendModel =
 
     -- INPUT FIELDS
     , inputName : String
+    , inputSearch : String
     , inputIdentifier : String
     , inputAuthor : String
     , inputDescription : String
@@ -164,6 +165,7 @@ type FrontendMsg
     | StringDataLoaded String Int String String
       -- INPUT FIELDS
     | InputName String
+    | InputSearch String
     | InputIdentifier String
     | InputDescription String
     | InputComments String
