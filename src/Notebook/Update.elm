@@ -46,8 +46,11 @@ import Types exposing (FrontendModel, FrontendMsg(..))
 
 
 clearNotebookValues : Book -> FrontendModel -> ( FrontendModel, Cmd FrontendMsg )
-clearNotebookValues book model =
+clearNotebookValues book1 model =
     let
+        book =
+            Notebook.Book.resetHighlightTime book1
+
         newBook =
             { book
                 | cells =
