@@ -66,7 +66,7 @@ app =
 subscriptions model =
     Sub.batch
         [ Browser.Events.onResize GotNewWindowDimensions
-        , Time.every 3000 FETick
+        , Time.every 1000 FETick
         , Sub.map KeyboardMsg Keyboard.subscriptions
         , Ports.receiveFromJS ReceivedFromJS
         , Ports.receiveJSData ReceiveJSData
@@ -284,7 +284,7 @@ update msg model =
             Frontend.UIHelper.handleKeyPresses model keyMsg
 
         FETick time ->
-            Frontend.Update.saveIfDirty model time
+            Frontend.Update.periodicAction model time
 
         -- NAV
         UrlClicked urlRequest ->

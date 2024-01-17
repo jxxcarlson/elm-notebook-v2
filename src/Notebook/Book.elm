@@ -91,6 +91,7 @@ scratchPad username =
           , locked = False
           , report = ( 0, Nothing )
           , replData = Nothing
+          , highlightTime = 0
           }
         , { index = 1
           , text = "1 + 1"
@@ -101,6 +102,7 @@ scratchPad username =
           , locked = False
           , report = ( 1, Nothing )
           , replData = Nothing
+          , highlightTime = 0
           }
         ]
     , currentIndex = 0
@@ -148,6 +150,7 @@ new author title =
           , locked = False
           , report = ( 0, Nothing )
           , replData = Nothing
+          , highlightTime = 0
           }
         , { index = 1
           , text = "1 + 1"
@@ -158,6 +161,7 @@ new author title =
           , locked = False
           , report = ( 0, Nothing )
           , replData = Nothing
+          , highlightTime = 0
           }
         ]
     , currentIndex = 0
@@ -188,6 +192,7 @@ newBook author title =
           , locked = False
           , report = ( 0, Nothing )
           , replData = Nothing
+          , highlightTime = 0
           }
         , { index = 1
           , text = "1 + 1"
@@ -198,6 +203,7 @@ newBook author title =
           , locked = False
           , report = ( 1, Nothing )
           , replData = Nothing
+          , highlightTime = 0
           }
         ]
     , currentIndex = 0

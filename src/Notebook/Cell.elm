@@ -13,6 +13,7 @@ type alias Cell =
     , locked : Bool
     , report : ( Int, Maybe (List Notebook.Types.MessageItem) )
     , replData : Maybe Notebook.Types.ReplData
+    , highlightTime : Int
     }
 
 

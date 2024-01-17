@@ -155,6 +155,7 @@ makeNewCell model cellState cellType index =
             , locked = False
             , report = ( 0, Nothing )
             , replData = Nothing
+            , highlightTime = 0
             }
 
         newBook =

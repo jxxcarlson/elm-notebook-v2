@@ -22,6 +22,7 @@ import Notebook.Types exposing (EvalState)
 import Task exposing (Task)
 import Types exposing (FrontendMsg)
 import Util
+import View.Config
 
 
 type alias Model =
@@ -287,6 +288,7 @@ processCell cellState cellIndex model_ =
                             | report = ( cell.index, Nothing )
                             , replData = Nothing
                             , cellState = CSView
+                            , highlightTime = View.Config.highlightTime
                         }
 
                 Cell.CTMarkdown ->

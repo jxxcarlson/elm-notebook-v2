@@ -1,4 +1,4 @@
-module Frontend.Update exposing (saveIfDirty, signOut)
+module Frontend.Update exposing (periodicAction, signOut)
 
 import Browser.Navigation as Nav
 import Lamdera
@@ -42,17 +42,27 @@ signOut model =
     )
 
 
-saveIfDirty : Model -> Time.Posix -> ( Model, Cmd Msg )
-saveIfDirty model time =
-    if Predicate.canSave model && model.currentBook.dirty then
-        let
-            oldBook =
-                model.currentBook
+periodicAction : Model -> Time.Posix -> ( Model, Cmd Msg )
+periodicAction model time =
+    let
+        oldBook =
+            model.currentBook
 
-            book =
-                { oldBook | dirty = False }
-        in
+        decrementHighlightTime cell =
+            { cell
+                | highlightTime =
+                    if cell.highlightTime <= 0 then
+                        0
+
+                    else
+                        cell.highlightTime - 1
+            }
+
+        book =
+            { oldBook | dirty = False, cells = List.map decrementHighlightTime oldBook.cells }
+    in
+    if Predicate.canSave model && model.currentBook.dirty then
         ( { model | currentTime = time, currentBook = book }, Lamdera.sendToBackend (SaveNotebook book) )
 
     else
-        ( model, Cmd.none )
+        ( { model | currentBook = book }, Cmd.none )

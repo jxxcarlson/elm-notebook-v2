@@ -28,13 +28,6 @@ view : Int -> ViewData -> String -> Cell -> Element FrontendMsg
 view currentCellIndex viewData cellContents cell =
     E.column
         [ E.width (E.px viewData.width)
-
-        --, case currentCellIndex == cell.index || currentCellIndex == cell.index + 1 of
-        --    True ->
-        --        Element.Border.width 1
-        --
-        --    False ->
-        --        Element.Border.width 0
         , if currentCellIndex == cell.index then
             Background.color (E.rgb 0.5 0.9 0.8)
 
@@ -43,8 +36,6 @@ view currentCellIndex viewData cellContents cell =
 
           else
             Background.color (themedBackgroundColor viewData.theme)
-
-        -- (E.rgb255 99 106 122)
         ]
         [ E.row
             [ E.width (E.px viewData.width) ]
@@ -95,14 +86,28 @@ viewSourceAndValue originalviewData cellContents cell =
             { originalviewData | width = originalviewData.width - 24 }
     in
     E.column
-        ([ Background.color (themedCodeCellBackgroundColor viewData.theme)
+        ([ if cell.highlightTime > 0 then
+            Background.color (E.rgba 1 0 0 1.0)
+
+           else
+            Background.color (themedCodeCellBackgroundColor viewData.theme)
          , Font.color (themedCodeCellTextColor viewData.theme) -- (Utility.cellColor cell.tipe)
          ]
             ++ style
         )
-        [ E.el [ E.alignRight, Background.color (Utility.cellColor cell.tipe) ] (controls viewData cell)
+        [ E.el
+            [ E.alignRight
+            , if cell.highlightTime > 0 then
+                Background.color (E.rgba 1 0 0 1.0)
+
+              else
+                Background.color (Utility.cellColor cell.tipe)
+            ]
+            (controls viewData cell)
         , viewSource viewData (viewData.width - controlWidth) cell cellContents
-        , E.el [] (viewValue viewData cell)
+        , E.el
+            []
+            (viewValue viewData cell)
         ]
 
 
@@ -241,7 +246,8 @@ viewSuccess viewData cell =
                                 [ Element.Events.onMouseDown (ExecuteCell cell.index)
                                 , View.Style.monospace
                                 ]
-                                (par viewData.theme
+                                (par cell.highlightTime
+                                    viewData.theme
                                     realWidth
                                     [ E.text "No value" ]
                                 )
@@ -263,7 +269,8 @@ viewSuccess viewData cell =
                             E.el
                                 [ View.Style.monospace
                                 ]
-                                (par viewData.theme
+                                (par cell.highlightTime
+                                    viewData.theme
                                     realWidth
                                     -- [ View.CellThemed.renderFull viewData.theme cell.tipe (scale 1.0 realWidth) str ]
                                     [ E.text str ]
@@ -277,19 +284,26 @@ viewSuccess viewData cell =
                             E.none
 
         CVMarkdown str ->
-            par viewData.theme
+            par cell.highlightTime
+                viewData.theme
                 realWidth
                 -- TODO: fix this outrageous hack
                 [ E.none ]
 
 
-par theme width =
+par highlightTime theme width =
     E.paragraph
         [ E.spacing 8
         , Font.color (themedValueTextColor theme)
         , E.width (E.px width)
         , E.paddingXY 12 12
-        , Background.color (themedValueBackgroundColor theme) --  (E.rgb 0.75 0.75 0.95)
+        , if highlightTime > 0 then
+            Background.color (themedHighlightColor theme)
+
+          else
+            Background.color (themedValueBackgroundColor theme)
+
+        --  (E.rgb 0.75 0.75 0.95)
         ]
 
 
