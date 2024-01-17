@@ -76,6 +76,9 @@ Markdown cells are used to write text. Code cells are used to write Elm code:
 **Working with Cells**
 
 Click on a cell to edit it or to evaluate the code in it.
+To evaluate a cell, type `Ctrl-Enter`, or click on the *Run* button
+in the cell controls (see below).
+
 When you click on a cell, the app will display a row of controls:
 
  - *Above/Below*, *New Code*, *New Text*.  Use these to create new cells.

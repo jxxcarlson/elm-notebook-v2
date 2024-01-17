@@ -70,7 +70,7 @@ view model =
                     Nothing ->
                         E.none
                 , E.newTabLink [ E.alignRight, Font.underline, Font.color (E.rgb 0.4 0.4 1) ]
-                    { url = Config.appUrl ++ "/" ++ model.currentBook.slug
+                    { url = Config.appUrl ++ "/open/" ++ model.currentBook.slug
                     , label = E.text model.currentBook.slug
                     }
                 , View.Utility.showIf (Predicate.regularUser model) (Button.public model.currentBook)
