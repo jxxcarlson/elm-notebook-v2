@@ -79,7 +79,8 @@ Click on the **Manual** button to show or hide the manual.
 
 - *Run all cells* evaluates all the code cells in the notebook.
 
-- *Clear values* removes the results of evaluating all the code cells in the notebook.
+- *Clear values* removes the results of evaluating all the code cells in the notebook
+   and clears the error history.
 
 
 
@@ -96,6 +97,16 @@ Click on the **Manual** button to show or hide the manual.
 
 - *Dark/Light* toggles between dark and light mode.
 
+## Notebooks
+
+There is a `filter` field at the of the notebook list on the right-hand side.  Type a search term
+(or part one one) to filter the list.  For example, the filter term "bin" will show all notebooks
+in which the phrase "binary trees" appears.
+
+If you write "-" in front of your seach term, the filter will show all notebooks in which the
+search term does *not* appear.  For example, the filter term "-bin" will exclude all notebooks
+in which the word "binary" appears.
+
 ## Cells
 
 **Kinds of Cells**
@@ -107,6 +118,10 @@ Markdown cells are used to write text. Code cells are used to write Elm code:
   - declarations, like `a = 2` or `b = [1,2,3]`
   - type definitions, like `type alias Point = { x : Float, y : Float }`
   - import statements, like `import List.Extra`, `import List.Extra as LE`, or `import List.Extra exposing (..)`
+
+
+
+The filter is case-insensitive.
 
 **Working with Cells**
 
