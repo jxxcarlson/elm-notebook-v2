@@ -59,6 +59,33 @@ content =
 
 Click on the **Manual** button to show or hide the manual.
 
+
+## Quick start
+
+- Click on the box **Cell 1**, **Cell 2**, etc to reveal the controls for that cell.
+
+- Controls for a cell include *Run*, *Close*, *Up*, *Down*, *Delete*, *Clear*, *Locked* or *Unlocked*.
+
+- Instead of clicking on *Run*, you can type `Ctrl-Enter` to evaluate a cell.
+
+
+## Menu bar
+
+- **Document title** (underlined) is editable.  Click on it to change the title of the document,
+  then press **<Enter>** to save the change.
+
+- **Run all cells** evaluates all the code cells in the notebook.
+
+- **Clear values** removes the results of evaluating all the code cells in the notebook.
+
+- **New Notebook** creates a new notebook.  The new notebook will be empty.
+
+- **Dark/Light** toggles between dark and light mode.
+
+- **Delete Notebook** deletes the current notebook.  This operation cannot be undone.
+
+- **Manual** shows or hides this manual.
+
 ## Cells
 
 **Kinds of Cells**
@@ -70,8 +97,6 @@ Markdown cells are used to write text. Code cells are used to write Elm code:
   - declarations, like `a = 2` or `b = [1,2,3]`
   - type definitions, like `type alias Point = { x : Float, y : Float }`
   - import statements, like `import List.Extra`, `import List.Extra as LE`, or `import List.Extra exposing (..)`
-
-
 
 **Working with Cells**
 
