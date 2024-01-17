@@ -126,13 +126,13 @@ You can open a public document if you know its "address" on the internet.
 For example, there is a public document called **Collatz Conjecture.**
 You you can open by pointing your browser at
 
-- [elm-notebook2.lamdera.app/open/jxxcarlson-collatz-conjecture](https://elm-notebook2.lamdera.app/open/jxxcarlson-collatz-conjecture).
+- [elm-notebook.org/open/jxxcarlson-collatz-conjecture](https://elm-notebook.org/open/jxxcarlson-collatz-conjecture).
 
 Abbreviated versions of the address also work:
 
- - [elm-notebook2.lamdera.app/open/jxxcarlson-collatz](https://elm-notebook2.lamdera.app/open/jxxcarlson-collatz)
+ - [elm-notebook.org/open/jxxcarlson-collatz](https://elm-notebook.org/open/jxxcarlson-collatz)
 
- - [elm-notebook2.lamdera.app/open/collatz](https://elm-notebook2.lamdera.app/open/collatz)
+ - [elm-notebook.org/open/collatz](https://elm-notebook.org/open/collatz)
 
  Documents that you open this way are opened in guest mode.  You can edit them, run code, etc. However,
  your changes will not be saved. This feature can be useful for classes.  Just put these links on your
