@@ -11,6 +11,7 @@ import Notebook.ErrorReporter exposing (RenderedErrorReport)
 import Notebook.Eval
 import Notebook.Types exposing (ErrorReport, MessageItem(..))
 import Notebook.View
+import Predicate
 import Types exposing (FrontendModel, FrontendMsg)
 import UILibrary.Color as Color
 import User
@@ -391,10 +392,17 @@ viewPublicNotebookList : Types.FrontendModel -> List (Element FrontendMsg)
 viewPublicNotebookList model =
     E.el [ Font.color Color.white, E.paddingEach { left = 0, right = 0, bottom = 8, top = 0 } ]
         (E.text <| "Notebooks: " ++ String.fromInt (List.length model.books))
-        :: List.map (viewPublicNotebookEntry model.currentBook)
-            (List.sortBy publicBookSorter
-                (List.filter (\b -> b.public) model.books)
+        :: ((if Predicate.regularUser model then
+                controls model model.showNotebooks
+
+             else
+                E.none
             )
+                :: List.map (viewPublicNotebookEntry model.currentBook)
+                    (List.sortBy publicBookSorter
+                        (List.filter (\b -> b.public) model.books)
+                    )
+           )
 
 
 viewPublicNotebookEntry : Book -> Book -> Element FrontendMsg
