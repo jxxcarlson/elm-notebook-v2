@@ -622,7 +622,7 @@ update msg model =
             Notebook.Update.clearCell model index
 
         EvalCell cellState ->
-            Notebook.EvalCell.processCell cellState model.currentCellIndex model
+            Notebook.EvalCell.processCell cellState model.currentCellIndex { model | errorReports = [] }
 
         RunCommand ->
             Notebook.CLI.executeCommand model

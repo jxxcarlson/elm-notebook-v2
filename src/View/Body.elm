@@ -63,7 +63,7 @@ rhNotebookList model =
 
 declarationsOrErrorReport : FrontendModel -> Element FrontendMsg
 declarationsOrErrorReport model =
-    if model.errorReports /= [] && model.errorReports /= [ ( 0, [ Plain "end" ] ) ] && model.showErrorPanel then
+    if model.errorReports /= [] then
         reportErrors
             model
             model.currentBook.cells

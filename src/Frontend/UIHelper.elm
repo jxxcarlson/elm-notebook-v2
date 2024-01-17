@@ -30,7 +30,9 @@ handleKeyPresses model keyMsg =
 
         ( newModel, cmd ) =
             if List.member Keyboard.Control pressedKeys && List.member Keyboard.Enter pressedKeys then
-                Notebook.EvalCell.processCell Notebook.Cell.CSEdit model.currentCellIndex { model | pressedKeys = pressedKeys }
+                Notebook.EvalCell.processCell Notebook.Cell.CSEdit
+                    model.currentCellIndex
+                    { model | pressedKeys = pressedKeys, errorReports = [] }
 
             else
                 ( { model | pressedKeys = pressedKeys }, Cmd.none )
