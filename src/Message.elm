@@ -26,8 +26,8 @@ removeMessageAfterDelay id =
     Process.sleep (Notebook.Config.delay * 1000) |> Task.perform (always (Types.ExecuteDelayedMessageRemoval id))
 
 
-view : Int -> Int -> Types.FrontendModel -> Element Types.FrontendMsg
-view width height model =
+view : Int -> Types.FrontendModel -> Element Types.FrontendMsg
+view height model =
     let
         actualMessages =
             model.messages |> List.filter (\m -> List.member m.status messageTypes)
@@ -40,7 +40,7 @@ view width height model =
 
     else
         E.paragraph
-            [ E.width (E.px width)
+            [ E.width E.fill
             , E.height (E.px height)
             , E.paddingXY 4 12
             , View.Style.bgGray 0.0

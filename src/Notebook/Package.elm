@@ -61,7 +61,7 @@ submitPackageListFromUserInput model =
                 )
                 model.books
     in
-    ( { model | currentBook = newBook, books = books }
+    ( { model | currentBook = newBook, books = books, popupState = Types.NoPopup }
     , Cmd.batch
         [ Lamdera.sendToBackend (Types.SaveNotebook newBook)
         , installNewPackages (makePackageList model)

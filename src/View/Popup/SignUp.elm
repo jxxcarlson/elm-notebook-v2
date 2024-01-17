@@ -29,7 +29,7 @@ view model =
                     [ View.Button.setUpUser
                     , View.Button.dismissPopup
                     ]
-                , Element.paragraph [ Element.width Element.fill, Element.paddingXY 8 8, View.Style.bgGray 0 ] [ Message.view 250 40 model ]
+                , Element.paragraph [ Element.width Element.fill, Element.paddingXY 8 8, View.Style.bgGray 0 ] [ Message.view 40 model ]
                 ]
 
         _ ->

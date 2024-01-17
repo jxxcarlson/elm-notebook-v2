@@ -38,7 +38,7 @@ view model =
                 [ panelHeader
                 , submitPackageRequest model viewData
                 , displayInstalledPackages model viewData
-                , E.el [ E.width E.fill, E.paddingXY 8 8, View.Style.bgGray 0 ] (Message.view 500 45 model)
+                , E.el [ E.width E.fill, E.paddingXY 8 8, View.Style.bgGray 0 ] (Message.view 45 model)
                 , panelFooter
                 ]
 
