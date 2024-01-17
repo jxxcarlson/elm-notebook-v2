@@ -157,3 +157,12 @@ themedValueTextColor theme =
 
         Notebook.Book.DarkTheme ->
             Notebook.Config.darkThemeValueTextColor
+
+
+themedValueHighlightedTextColor theme =
+    case theme of
+        Notebook.Book.LightTheme ->
+            Notebook.Config.lightThemeValueHighlightedTextColor
+
+        Notebook.Book.DarkTheme ->
+            Notebook.Config.darkThemeValueHighlightedTextColor

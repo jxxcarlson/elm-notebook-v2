@@ -28,6 +28,14 @@ darkThemeValueTextColor =
     E.rgb255 220 220 255
 
 
+lightThemeValueHighlightedTextColor =
+    E.rgb255 10 10 10
+
+
+darkThemeValueHighlightedTextColor =
+    E.rgb255 255 255 255
+
+
 darkThemeCodeColor =
     E.rgb255 100 100 250
 

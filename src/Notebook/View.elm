@@ -294,7 +294,11 @@ viewSuccess viewData cell =
 par highlightTime theme width =
     E.paragraph
         [ E.spacing 8
-        , Font.color (themedValueTextColor theme)
+        , if highlightTime > 0 then
+            Font.color (themedValueHighlightedTextColor theme)
+
+          else
+            Font.color (themedValueTextColor theme)
         , E.width (E.px width)
         , E.paddingXY 12 12
         , if highlightTime > 0 then
