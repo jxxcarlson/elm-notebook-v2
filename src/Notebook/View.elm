@@ -104,7 +104,10 @@ viewSourceAndValue originalviewData cellContents cell =
                 Background.color (Utility.cellColor cell.tipe)
             ]
             (controls viewData cell)
-        , viewSource viewData (viewData.width - controlWidth) cell cellContents
+        , E.row []
+            [ viewSource viewData (viewData.width - controlWidth) cell cellContents
+            , E.column [] [ newCodeCellAt cell.cellState cell.index, View.Button.runCellSmall cell.cellState cell.tipe cell.index ]
+            ]
         , E.el
             []
             (viewValue viewData cell)
@@ -149,27 +152,34 @@ controls viewData cell =
                     , E.spacing 12
                     , E.paddingEach { top = 2, bottom = 2, left = 8, right = 4 }
                     ]
-                    [ E.row [ E.spacing 6 ]
-                        [ E.row [ E.spacing 0 ]
-                            [ newCellAboveOrBelow viewData.cellDirection
-                            , E.el [ E.paddingEach { left = 12, right = 7, top = 0, bottom = 0 }, Font.color (themedMutedTextColor viewData.theme) ] (E.text "New:")
-                            , newCodeCellAt cell.cellState cell.index
-                            , newMarkdownCellAt cell.cellState cell.index
-                            ]
+                    [ --E.row [ E.spacing 6 ]
+                      --    [ E.row [ E.spacing 0 ]
+                      --        [ newCellAboveOrBelow viewData.cellDirection
+                      --        , E.el [ E.paddingEach { left = 12, right = 7, top = 0, bottom = 0 }, Font.color (themedMutedTextColor viewData.theme) ] (E.text "New:")
+                      --
+                      --        -- , newCodeCellAt cell.cellState cell.index
+                      --        , newMarkdownCellAt cell.cellState cell.index
+                      --        ]
+                      --    ]
+                      E.row []
+                        [ deleteCellAt cell.cellState cell.index
+                        , clearCellAt cell.cellState cell.index
+                        ]
+                    , E.row
+                        [ E.spacing 0
+                        , E.alignRight
+                        , E.height (E.px 32)
+                        , E.paddingEach { top = 0, bottom = 2, left = 8, right = 18 }
+                        ]
+                        [ moveCell cell.cellState cell.index Notebook.Book.Up
+                        , moveCell cell.cellState cell.index Notebook.Book.Down
                         ]
                     , E.row [ E.spacing 0 ]
-                        [ runCell CSEdit cell.tipe cell.index
+                        [ toggleCellType cell
                         , commentCell cell.commented cell.index
                         ]
-                    ]
-                , E.row
-                    [ E.spacing 0
-                    , E.alignRight
-                    , E.height (E.px 32)
-                    , E.paddingEach { top = 2, bottom = 2, left = 8, right = 18 }
-                    ]
-                    [ moveCell cell.cellState cell.index Notebook.Book.Up
-                    , moveCell cell.cellState cell.index Notebook.Book.Down
+
+                    --, View.Button.lockCell cell
                     ]
                 , E.row
                     [ E.spacing 6
@@ -177,12 +187,7 @@ controls viewData cell =
                     , E.height (E.px 32)
                     , E.paddingEach { top = 2, bottom = 2, left = 8, right = 4 }
                     ]
-                    [ E.row []
-                        [ deleteCellAt cell.cellState cell.index
-                        , clearCellAt cell.cellState cell.index
-                        , View.Button.lockCell cell
-                        ]
-                    , viewIndex viewData.theme cell
+                    [ viewIndex viewData.theme cell
                     ]
                 ]
 

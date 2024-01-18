@@ -31,6 +31,7 @@ module View.Button exposing
     , pullNotebook
     , resetClock
     , runCell
+    , runCellSmall
     , runCommand
     , runTask
     , saveDataSetAsPrivate
@@ -158,7 +159,7 @@ runCell cellState cellType index =
                         CSEdit ->
                             "Run"
             in
-            Button.smallPrimary { msg = EvalCell cellState, status = Button.ActiveTransparent, label = Button.Text label, tooltipText = Just "ctrl-Enter" }
+            Button.smallPrimary { msg = EvalCell cellState index, status = Button.ActiveTransparent, label = Button.Text label, tooltipText = Just "ctrl-Enter" }
 
         Notebook.Cell.CTMarkdown ->
             case cellState of
@@ -166,7 +167,32 @@ runCell cellState cellType index =
                     E.none
 
                 CSEdit ->
-                    Button.smallPrimary { msg = EvalCell CSView, status = Button.ActiveTransparent, label = Button.Text "Close", tooltipText = Just "ctrl-Enter" }
+                    Button.smallPrimary { msg = EvalCell CSView index, status = Button.ActiveTransparent, label = Button.Text "Close", tooltipText = Just "ctrl-Enter" }
+
+
+runCellSmall : CellState -> CellType -> Int -> Element FrontendMsg
+runCellSmall cellState cellType index =
+    -- TODO
+    case cellType of
+        Notebook.Cell.CTCode ->
+            let
+                label =
+                    case cellState of
+                        CSView ->
+                            "R"
+
+                        CSEdit ->
+                            "R"
+            in
+            Button.smallPrimary { msg = EvalCell cellState index, status = Button.ActiveTransparent, label = Button.Text label, tooltipText = Just "Evaluate cell (ctrl-Enter)" }
+
+        Notebook.Cell.CTMarkdown ->
+            case cellState of
+                CSView ->
+                    E.none
+
+                CSEdit ->
+                    Button.smallPrimary { msg = EvalCell CSView index, status = Button.ActiveTransparent, label = Button.Text "C", tooltipText = Just "Save cell (ctrl-Enter)" }
 
 
 dismissPopup : Element FrontendMsg

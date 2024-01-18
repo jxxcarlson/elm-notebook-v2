@@ -219,7 +219,7 @@ type FrontendMsg
     | ToggleComment Bool Int
     | EditCell Cell
     | ClearCell Int
-    | EvalCell CellState
+    | EvalCell CellState Int
     | MakeCellCurrent Int
     | InputElmCode Int String
     | UpdateNotebookTitle
