@@ -621,8 +621,8 @@ update msg model =
         ClearCell index ->
             Notebook.Update.clearCell model index
 
-        EvalCell cellState ->
-            Notebook.EvalCell.processCell cellState model.currentCellIndex { model | errorReports = [] }
+        EvalCell cellState cellIndex ->
+            Notebook.EvalCell.processCell cellState cellIndex { model | errorReports = [] }
 
         MakeCellCurrent index ->
             ( { model | currentCellIndex = index }, Cmd.none )
