@@ -316,10 +316,6 @@ processCode model cell =
             Message.postMessage "Parse error in processCode" Types.MSRed model
 
         Ok classif ->
-            let
-                _ =
-                    Debug.log "@@CLASSIF" classif
-            in
             case classif of
                 Notebook.Parser.Expr sourceText ->
                     processExpr model cell sourceText

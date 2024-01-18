@@ -257,4 +257,13 @@ replItemParser =
 
 classify : String -> Result (List Parser.DeadEnd) Classification
 classify str =
-    run replItemParser str
+    run replItemParser (commentFilter str)
+
+
+commentFilter : String -> String
+commentFilter str =
+    str
+        |> String.lines
+        |> List.filter (\line -> not (String.left 2 line == "--"))
+        |> String.join "\n"
+        |> String.trim
