@@ -16,6 +16,14 @@ delay =
 -- DARK THEME
 
 
+lightThemeGutterColor =
+    E.rgb255 20 20 100
+
+
+darkThemeGutterColor =
+    E.rgb255 10 10 60
+
+
 darkThemeBackgroundColor =
     E.rgb255 43 40 60
 

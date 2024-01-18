@@ -28,11 +28,13 @@ view : Int -> ViewData -> String -> Cell -> Element FrontendMsg
 view currentCellIndex viewData cellContents cell =
     E.column
         [ E.width (E.px viewData.width)
+        , Background.color (themedGutterColor viewData.theme)
+        , Element.Border.widthEach { left = 0, right = 8, top = 0, bottom = 0 }
         , if currentCellIndex == cell.index then
-            Background.color (E.rgb 0.5 0.9 0.8)
+            Element.Border.color (E.rgb 0.5 0.9 0.8)
 
           else
-            Background.color (themedBackgroundColor viewData.theme)
+            Element.Border.color (themedBackgroundColor viewData.theme)
         ]
         [ E.row
             [ E.width (E.px viewData.width) ]
@@ -44,79 +46,74 @@ view currentCellIndex viewData cellContents cell =
 viewSourceAndValue : ViewData -> String -> Cell -> Element FrontendMsg
 viewSourceAndValue originalviewData cellContents cell =
     let
-        style =
-            case ( cell.cellState, cell.tipe ) of
-                ( CSEdit, _ ) ->
-                    [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0.75 0.75 0.75)
-
-                    --, editBGColor
-                    , Element.Border.widthEach
-                        { bottom = 1
-                        , left = 0
-                        , right = 0
-                        , top = 1
-                        }
-                    ]
-
-                ( CSEditCompact, _ ) ->
-                    [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0.75 0.75 0.75)
-
-                    --, editBGColor
-                    , Element.Border.widthEach
-                        { bottom = 1
-                        , left = 0
-                        , right = 0
-                        , top = 1
-                        }
-                    ]
-
-                ( CSView, CTCode ) ->
-                    [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0 0 1.0)
-                    , Element.Border.widthEach
-                        { bottom = 0 -- 1
-                        , left = 0
-                        , right = 0
-                        , top = 1
-                        }
-                    ]
-
-                ( CSView, CTMarkdown ) ->
-                    [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0.75 0.75 0.75)
-                    , Element.Border.widthEach
-                        { bottom = 0
-                        , left = 0
-                        , right = 0
-                        , top = 1
-                        }
-                    , Background.color (themedBackgroundColor viewData.theme)
-                    ]
-
         viewData =
-            { originalviewData | width = originalviewData.width - 24 }
+            { originalviewData | width = originalviewData.width }
     in
     E.column
-        ([ if cell.highlightTime > 0 then
-            Background.color (E.rgba 1 0 0 1.0)
-
-           else
-            Background.color (themedCodeCellBackgroundColor viewData.theme)
-         , Font.color (themedCodeCellTextColor viewData.theme)
+        ([ Font.color (themedCodeCellTextColor viewData.theme)
          ]
-            ++ style
+         --  ++ style cell originalviewData viewData
         )
         [ controls viewData cell
-        , E.row []
+        , E.row [ E.paddingEach { left = 0, right = 8, top = 0, bottom = 0 } ]
             [ viewSource viewData (viewData.width - toolBarWidth) cell cellContents
-            , E.column [ E.width (E.px toolBarWidth) ]
-                [ viewIndex viewData.theme cell
-                , newCodeCellAt cell.cellState cell.index
-                , View.Button.runCellSmall cell.cellState cell.tipe cell.index
+            , E.column [ E.width (E.px toolBarWidth), E.alignTop ]
+                [ E.el [] (viewIndex viewData.theme cell)
+                , E.el [ E.centerX ] (newCodeCellAt cell.cellState cell.index)
+
+                --, E.el [ E.centerX ] (View.Button.runCellSmall cell.cellState cell.tipe cell.index )
                 ]
             ]
-        , E.el
-            []
-            (viewValue viewData cell)
+        , viewValue viewData cell
         ]
+
+
+style cell originalviewData viewData =
+    case ( cell.cellState, cell.tipe ) of
+        ( CSEdit, _ ) ->
+            [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0.75 0.75 0.75)
+
+            --, editBGColor
+            , Element.Border.widthEach
+                { bottom = 1
+                , left = 0
+                , right = 0
+                , top = 1
+                }
+            ]
+
+        ( CSEditCompact, _ ) ->
+            [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0.75 0.75 0.75)
+
+            --, editBGColor
+            , Element.Border.widthEach
+                { bottom = 1
+                , left = 0
+                , right = 0
+                , top = 1
+                }
+            ]
+
+        ( CSView, CTCode ) ->
+            [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0 0 1.0)
+            , Element.Border.widthEach
+                { bottom = 0 -- 1
+                , left = 0
+                , right = 0
+                , top = 1
+                }
+            ]
+
+        ( CSView, CTMarkdown ) ->
+            [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0.75 0.75 0.75)
+            , Element.Border.widthEach
+                { bottom = 0
+                , left = 0
+                , right = 0
+                , top = 1
+                }
+            , Background.color (themedBackgroundColor viewData.theme)
+            ]
 
 
 hrule theme cell =
@@ -315,7 +312,7 @@ par highlightTime theme width =
 
           else
             Font.color (themedValueTextColor theme)
-        , E.width (E.px width)
+        , E.width (E.px (width - 10))
         , E.paddingXY 12 12
         , if highlightTime > 0 then
             Background.color (themedHighlightColor theme)
@@ -344,21 +341,10 @@ viewIndex theme cell =
 
                 CSEditCompact ->
                     Element.Events.onMouseDown (EvalCell cell.cellState cell.index)
-
-        padding =
-            case cell.cellState of
-                CSView ->
-                    E.paddingEach { top = 9, bottom = 6, left = 6, right = 16 }
-
-                CSEdit ->
-                    E.paddingEach { top = 6, bottom = 6, left = 12, right = 16 }
-
-                CSEditCompact ->
-                    E.paddingEach { top = 6, bottom = 6, left = 12, right = 16 }
     in
     E.el
         [ action
-        , padding
+        , E.paddingXY 4 4
         , Background.color
             (case cell.tipe of
                 CTCode ->
@@ -370,6 +356,7 @@ viewIndex theme cell =
         , Font.color (themedMutedTextColor theme)
         , E.htmlAttribute <| HA.style "z-index" "100"
         , E.htmlAttribute <| HA.style "cursor" "pointer"
+        , Font.size 12
         , Font.family
             [ Font.typeface "Open Sans"
             , Font.sansSerif
@@ -404,8 +391,6 @@ renderCode pressedKeys theme cell width =
 
           else
             Element.Events.onMouseDown NoOpFrontendMsg
-
-        --  , E.inFront (E.el [ E.alignRight, E.moveDown 8 ] (viewIndex theme cell))
         ]
         [ View.Utility.preformattedElement [ HA.style "line-height" "1.5" ] cell.text
         ]
@@ -418,14 +403,7 @@ renderCode pressedKeys theme cell width =
 renderMarkdown theme cell width =
     E.column
         [ E.spacing 0
-
-        --, if not cell.locked then
-        --    Element.Events.onMouseDown (EditCell cell)
-        --
-        --  else
-        --    Element.Events.onMouseDown NoOpFrontendMsg
         , E.width (E.px width)
-        , E.inFront (E.el [ E.alignRight, E.moveDown 4 ] (viewIndex theme cell))
         , Font.size 14
         , Font.family
             [ Font.typeface "Open Sans"
