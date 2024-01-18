@@ -13,6 +13,7 @@ module Notebook.Book exposing
     , resetHighlightTime
     , scratchPad
     , setAllCellStates
+    , setCellType
     , setReplDataAt
     )
 
@@ -317,6 +318,26 @@ replaceCell cell book =
                 (\c ->
                     if c.index == cell.index then
                         cell
+
+                    else
+                        c
+                )
+                cells
+    }
+
+
+setCellType : Cell -> CellType -> Book -> Book
+setCellType cell cellType book =
+    let
+        cells =
+            book.cells
+    in
+    { book
+        | cells =
+            List.map
+                (\c ->
+                    if c.index == cell.index then
+                        { c | tipe = cellType }
 
                     else
                         c
