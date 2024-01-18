@@ -30,15 +30,12 @@ view currentCellIndex viewData cellContents cell =
         , Background.color (themedGutterColor viewData.theme)
         , Element.Border.widthEach { left = 0, right = 8, top = 0, bottom = 0 }
         , if currentCellIndex == cell.index then
-            Element.Border.color (E.rgb 0.5 0.9 0.8)
+            Element.Border.color (E.rgb 1.0 0.3 0.3)
 
           else
             Element.Border.color (themedBackgroundColor viewData.theme)
         ]
-        [ E.row
-            [ E.width (E.px viewData.width) ]
-            [ viewSourceAndValue viewData cellContents cell
-            ]
+        [ viewSourceAndValue viewData cellContents cell
         ]
 
 
@@ -49,81 +46,18 @@ viewSourceAndValue originalviewData cellContents cell =
             { originalviewData | width = originalviewData.width }
     in
     E.column
-        ([ Font.color (themedCodeCellTextColor viewData.theme)
-         ]
-         --  ++ style cell originalviewData viewData
-        )
+        [ Font.color (themedCodeCellTextColor viewData.theme)
+        ]
         [ controls viewData cell
         , E.row [ E.paddingEach { left = 0, right = 8, top = 0, bottom = 0 } ]
             [ viewSource viewData (viewData.width - toolBarWidth) cell cellContents
             , E.column [ E.width (E.px toolBarWidth), E.alignTop ]
                 [ E.el [] (viewIndex viewData.theme cell)
                 , E.el [ E.centerX ] (newCodeCellAt cell.cellState cell.index)
-
-                --, E.el [ E.centerX ] (View.Button.runCellSmall cell.cellState cell.tipe cell.index )
                 ]
             ]
         , viewValue viewData cell
         ]
-
-
-style cell originalviewData viewData =
-    case ( cell.cellState, cell.tipe ) of
-        ( CSEdit, _ ) ->
-            [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0.75 0.75 0.75)
-
-            --, editBGColor
-            , Element.Border.widthEach
-                { bottom = 1
-                , left = 0
-                , right = 0
-                , top = 1
-                }
-            ]
-
-        ( CSEditCompact, _ ) ->
-            [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0.75 0.75 0.75)
-
-            --, editBGColor
-            , Element.Border.widthEach
-                { bottom = 1
-                , left = 0
-                , right = 0
-                , top = 1
-                }
-            ]
-
-        ( CSView, CTCode ) ->
-            [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0 0 1.0)
-            , Element.Border.widthEach
-                { bottom = 0 -- 1
-                , left = 0
-                , right = 0
-                , top = 1
-                }
-            ]
-
-        ( CSView, CTMarkdown ) ->
-            [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0.75 0.75 0.75)
-            , Element.Border.widthEach
-                { bottom = 0
-                , left = 0
-                , right = 0
-                , top = 1
-                }
-            , Background.color (themedBackgroundColor viewData.theme)
-            ]
-
-
-hrule theme cell =
-    case cell.tipe of
-        CTCode ->
-            [ Element.Border.widthEach { top = 2, bottom = 0, left = 0, right = 0 }
-            , Element.Border.color (themedCodeCellTextColor theme) --(E.rgba 0.75 0.75 1.0 0.8)
-            ]
-
-        CTMarkdown ->
-            []
 
 
 bgColor cell =
@@ -137,14 +71,10 @@ controls viewData cell =
 
         CSEdit ->
             E.row
-                [ --controlBGEdit
-                  E.width (E.px (viewData.width - toolBarWidth - 50))
+                [ E.width (E.px (viewData.width - toolBarWidth - 50))
                 , E.centerX
                 , E.paddingEach { left = 0, right = 12, bottom = 0, top = 0 }
-
-                --, bgColor cell
-                --, Background.color (themedBackgroundColor viewData.theme) --      bgColor cell
-                , Background.color Notebook.Config.lightThemeCodeColor --      bgColor cell
+                , Background.color Notebook.Config.lightThemeCodeColor
                 , Font.color (themedTextColor viewData.theme)
                 ]
                 [ E.row
@@ -154,16 +84,7 @@ controls viewData cell =
                     , E.spacing 12
                     , E.paddingEach { top = 2, bottom = 2, left = 8, right = 4 }
                     ]
-                    [ --E.row [ E.spacing 6 ]
-                      --    [ E.row [ E.spacing 0 ]
-                      --        [ newCellAboveOrBelow viewData.cellDirection
-                      --        , E.el [ E.paddingEach { left = 12, right = 7, top = 0, bottom = 0 }, Font.color (themedMutedTextColor viewData.theme) ] (E.text "New:")
-                      --
-                      --        -- , newCodeCellAt cell.cellState cell.index
-                      --        , newMarkdownCellAt cell.cellState cell.index
-                      --        ]
-                      --    ]
-                      E.row []
+                    [ E.row []
                         [ deleteCellAt cell.cellState cell.index
                         , clearCellAt cell.cellState cell.index
                         ]
@@ -394,10 +315,6 @@ renderCode pressedKeys theme cell width =
         ]
         [ View.Utility.preformattedElement [ HA.style "line-height" "1.5" ] cell.text
         ]
-
-
-
--- , Styled.style [ ( "z-index", "1" ) ]
 
 
 renderMarkdown theme cell width =
