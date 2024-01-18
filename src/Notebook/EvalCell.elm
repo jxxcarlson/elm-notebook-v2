@@ -112,7 +112,7 @@ removeComments str =
         noComments =
             List.filter (\line -> String.left 2 line /= "--") lines
     in
-    String.join "\n" noComments
+    String.join "\n" noComments |> String.trim
 
 
 passExpressionCellFilter : Cell -> Bool
