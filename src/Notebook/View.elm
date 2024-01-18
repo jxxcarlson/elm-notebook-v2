@@ -51,8 +51,19 @@ viewSourceAndValue originalviewData cellContents cell =
         [ controls viewData cell
         , E.row [ E.paddingEach { left = 0, right = 8, top = 0, bottom = 0 } ]
             [ viewSource viewData (viewData.width - toolBarWidth) cell cellContents
-            , E.column [ E.width (E.px toolBarWidth), E.alignTop ]
-                [ E.el [] (viewIndex viewData.theme cell)
+            , E.column
+                [ E.width (E.px toolBarWidth)
+                , E.alignTop
+                , case cell.cellState of
+                    CSEdit ->
+                        E.moveUp 30
+
+                    _ ->
+                        E.moveUp 0
+                ]
+                [ E.el
+                    []
+                    (viewIndex viewData.theme cell)
                 , E.el [ E.centerX ] (newCodeCellAt cell.cellState cell.index)
                 ]
             ]
@@ -71,8 +82,9 @@ controls viewData cell =
 
         CSEdit ->
             E.row
-                [ E.width (E.px (viewData.width - toolBarWidth - 50))
-                , E.centerX
+                [ E.width (E.px (viewData.width - toolBarWidth))
+
+                --, E.centerX
                 , E.paddingEach { left = 0, right = 12, bottom = 0, top = 0 }
                 , Background.color Notebook.Config.lightThemeCodeColor
                 , Font.color (themedTextColor viewData.theme)
