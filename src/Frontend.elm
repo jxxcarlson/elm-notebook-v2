@@ -615,6 +615,9 @@ update msg model =
         SetCellType cell cellType ->
             ( { model | currentBook = Notebook.Book.setCellType cell cellType model.currentBook }, Cmd.none )
 
+        SetCellState cell cellState ->
+            ( { model | currentBook = Notebook.Book.setCellState cell cellState model.currentBook }, Cmd.none )
+
         ToggleComment commented index ->
             Notebook.Update.toggleComment model commented index
 

@@ -106,7 +106,11 @@ viewSourceAndValue originalviewData cellContents cell =
             (controls viewData cell)
         , E.row []
             [ viewSource viewData (viewData.width - controlWidth) cell cellContents
-            , E.column [] [ newCodeCellAt cell.cellState cell.index, View.Button.runCellSmall cell.cellState cell.tipe cell.index ]
+            , E.column []
+                [ newCodeCellAt cell.cellState cell.index
+                , View.Button.runCellSmall cell.cellState cell.tipe cell.index
+                , toggleCellState cell
+                ]
             ]
         , E.el
             []
@@ -532,6 +536,16 @@ toggleCellType cell =
 
         CTCode ->
             Button.smallPrimary { msg = SetCellType cell CTMarkdown, status = Button.ActiveTransparent, label = Button.Text "Code", tooltipText = Just "Code -> Text" }
+
+
+toggleCellState : Cell -> Element FrontendMsg
+toggleCellState cell =
+    case cell.cellState of
+        CSView ->
+            Button.smallPrimary { msg = SetCellState cell CSEdit, status = Button.ActiveTransparent, label = Button.Text "V", tooltipText = Just "Edit cell" }
+
+        CSEdit ->
+            Button.smallPrimary { msg = SetCellState cell CSView, status = Button.ActiveTransparent, label = Button.Text "E", tooltipText = Just "View cell" }
 
 
 commentCell : Bool -> Int -> Element FrontendMsg
