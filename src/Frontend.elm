@@ -624,6 +624,9 @@ update msg model =
         EvalCell cellState ->
             Notebook.EvalCell.processCell cellState model.currentCellIndex { model | errorReports = [] }
 
+        MakeCellCurrent index ->
+            ( { model | currentCellIndex = index }, Cmd.none )
+
         RunCommand ->
             Notebook.CLI.executeCommand model
 

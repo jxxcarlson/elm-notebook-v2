@@ -220,6 +220,7 @@ type FrontendMsg
     | EditCell Cell
     | ClearCell Int
     | EvalCell CellState
+    | MakeCellCurrent Int
     | InputElmCode Int String
     | UpdateNotebookTitle
     | NewNotebook
