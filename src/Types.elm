@@ -11,6 +11,7 @@ import Http
 import Json.Encode as Encode
 import Keyboard
 import Lamdera exposing (ClientId)
+import Loading as Spinner
 import Notebook.Book exposing (Book, DirectionToMove(..))
 import Notebook.Cell exposing (Cell, CellState(..), CellValue(..))
 import Notebook.DataSet
@@ -58,6 +59,7 @@ type alias FrontendModel =
     , privateDataSetMetaDataList : List Notebook.DataSet.DataSetMetaData
 
     -- NOTEBOOKS
+    , spinnerState : Spinner.LoadingState
     , includedCells : List Cell
     , errorReports : List Notebook.Types.ErrorReport
     , showErrorPanel : Bool

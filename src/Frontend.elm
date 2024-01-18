@@ -22,6 +22,7 @@ import Json.Encode
 import Keyboard
 import Lamdera exposing (sendToBackend)
 import List.Extra
+import Loading
 import Message
 import Navigation
 import Notebook.Action
@@ -120,6 +121,7 @@ init url key =
       , privateDataSetMetaDataList = []
 
       -- NOTEBOOKS
+      , spinnerState = Loading.Off |> Debug.log "@@spinnerState (0)"
       , kvDict = Dict.empty
       , books = []
       , currentCell = Nothing
@@ -218,7 +220,7 @@ update msg model =
         ExecuteCells result ->
             case result of
                 Err httpError ->
-                    Message.postMessage "Error executing cells" Types.MSRed model
+                    Message.postMessage "Error executing cells" Types.MSRed { model | spinnerState = Loading.Off }
 
                 Ok compilerOutput ->
                     let
@@ -259,7 +261,13 @@ update msg model =
                         commands =
                             List.map (\( idx, str ) -> Ports.encodeIndexAndSourcePair ( idx, str ) |> Ports.sendJSData) errorFreeOutput
                     in
-                    ( { model | currentBook = newBook, errorReports = errorReports }, Cmd.batch commands )
+                    ( { model
+                        | currentBook = newBook
+                        , errorReports = errorReports
+                        , spinnerState = Loading.Off
+                      }
+                    , Cmd.batch commands
+                    )
 
         UpdateErrorReports ->
             ( { model | errorReports = Notebook.ErrorReporter.collateErrorReports model.currentBook.cells }, Cmd.none )
@@ -437,7 +445,7 @@ update msg model =
             Notebook.Update.clearNotebookValues model.currentBook model
 
         ExecuteNotebook ->
-            Notebook.EvalCell.executeNotebook model
+            Notebook.EvalCell.executeNotebook { model | spinnerState = Loading.On |> Debug.log "@@Execute, spinner" }
 
         UpdateDeclarationsDictionary ->
             ( { model | evalState = Notebook.EvalCell.updateEvalStateWithCells model.includedCells model.currentBook.cells Notebook.Types.emptyEvalState }, Cmd.none )

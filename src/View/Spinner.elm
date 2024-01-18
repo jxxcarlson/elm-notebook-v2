@@ -1,11 +1,12 @@
 module View.Spinner exposing (view)
 
+import Element exposing (Element)
 import Html exposing (Html)
 import Loading
 import Types exposing (FrontendModel, FrontendMsg)
 
 
-view : Loading.LoadingState -> Html FrontendMsg
+view : Loading.LoadingState -> Element FrontendMsg
 view loadingState =
     let
         config =
@@ -15,9 +16,10 @@ view loadingState =
         [ Loading.render
             Loading.Spinner
             -- LoaderType
-            { config | color = "#ff6040" }
+            { config | color = "#ff4040" }
             -- Config
             loadingState
 
         -- LoadingState
         ]
+        |> Element.html

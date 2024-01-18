@@ -7,7 +7,7 @@ import Element.Background as Background
 import Element.Border
 import Element.Events
 import Element.Font as Font
-import Message
+import Loading
 import Predicate
 import Types exposing (AppMode(..))
 import UILibrary.Color as Color
@@ -15,6 +15,7 @@ import View.Button as Button
 import View.Color
 import View.Geometry
 import View.Input
+import View.Spinner
 import View.Style
 import View.Utility
 
@@ -61,6 +62,10 @@ welcomeLink =
 
 
 signedInHeader model user =
+    let
+        _ =
+            Debug.log "@@Spinner (1)" model.spinnerState
+    in
     E.row
         [ E.spacing 36
         , E.paddingXY View.Geometry.hPadding 0
@@ -83,6 +88,7 @@ signedInHeader model user =
             ]
         , E.row [ E.spacing 8 ]
             [ Button.executeNotebook
+            , E.el [ E.paddingXY 8 0 ] (View.Spinner.view model.spinnerState)
             , Button.clearValues
             ]
         , E.row [ E.spacing 8 ]
