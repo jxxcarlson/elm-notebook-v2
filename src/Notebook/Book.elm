@@ -361,7 +361,7 @@ setCellState cell cellState book =
                         { c | cellState = cellState }
 
                     else
-                        c
+                        { c | cellState = CSView }
                 )
                 cells
     }

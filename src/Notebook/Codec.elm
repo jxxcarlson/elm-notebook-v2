@@ -154,14 +154,18 @@ cellValueCodec =
 cellStateCodec : Codec CellState
 cellStateCodec =
     Codec.custom
-        (\fcsedit fcsview value ->
+        (\fcsedit fcseditcompact fcsview value ->
             case value of
                 CSEdit ->
                     fcsedit
+
+                CSEditCompact ->
+                    fcseditcompact
 
                 CSView ->
                     fcsview
         )
         |> Codec.variant0 "CSEdit" CSEdit
+        |> Codec.variant0 "CSEditCompact" CSEditCompact
         |> Codec.variant0 "CSView" CSView
         |> Codec.buildCustom

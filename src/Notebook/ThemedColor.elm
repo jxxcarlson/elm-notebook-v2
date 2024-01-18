@@ -102,6 +102,14 @@ themedButtonColor tipe cstate theme =
                         CTMarkdown ->
                             E.rgb 0.2 0.2 0.4
 
+                CSEditCompact ->
+                    case tipe of
+                        CTCode ->
+                            E.rgb 0.2 0.2 0.4
+
+                        CTMarkdown ->
+                            E.rgb 0.2 0.2 0.4
+
         Notebook.Book.LightTheme ->
             case cstate of
                 CSView ->
@@ -113,6 +121,14 @@ themedButtonColor tipe cstate theme =
                             E.rgb 0.75 0.75 1.0
 
                 CSEdit ->
+                    case tipe of
+                        CTCode ->
+                            E.rgb 0.75 0.75 1.0
+
+                        CTMarkdown ->
+                            E.rgb 0.75 0.75 1.0
+
+                CSEditCompact ->
                     case tipe of
                         CTCode ->
                             E.rgb 0.75 0.75 1.0

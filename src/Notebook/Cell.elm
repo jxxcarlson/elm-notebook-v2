@@ -30,6 +30,7 @@ type CellValue
 
 type CellState
     = CSEdit
+    | CSEditCompact
     | CSView
 
 

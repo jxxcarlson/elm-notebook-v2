@@ -616,7 +616,13 @@ update msg model =
             ( { model | currentBook = Notebook.Book.setCellType cell cellType model.currentBook }, Cmd.none )
 
         SetCellState cell cellState ->
-            ( { model | currentBook = Notebook.Book.setCellState cell cellState model.currentBook }, Cmd.none )
+            ( { model
+                | currentBook = Notebook.Book.setCellState cell cellState model.currentBook
+                , cellContent = cell.text
+                , currentCellIndex = cell.index
+              }
+            , Cmd.none
+            )
 
         ToggleComment commented index ->
             Notebook.Update.toggleComment model commented index
@@ -630,8 +636,14 @@ update msg model =
         EvalCell cellState cellIndex ->
             Notebook.EvalCell.processCell cellState cellIndex { model | errorReports = [] }
 
-        MakeCellCurrent index ->
-            ( { model | currentCellIndex = index }, Cmd.none )
+        MakeCellCurrent cell ->
+            ( { model
+                | currentCellIndex = cell.index
+                , cellContent = cell.text
+                , currentBook = Notebook.Book.setCellState cell CSEditCompact model.currentBook
+              }
+            , Cmd.none
+            )
 
         RunCommand ->
             Notebook.CLI.executeCommand model

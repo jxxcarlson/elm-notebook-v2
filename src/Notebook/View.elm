@@ -31,9 +31,6 @@ view currentCellIndex viewData cellContents cell =
         , if currentCellIndex == cell.index then
             Background.color (E.rgb 0.5 0.9 0.8)
 
-          else if currentCellIndex == cell.index + 1 then
-            Background.color (E.rgb 0.5 0.5 0.9)
-
           else
             Background.color (themedBackgroundColor viewData.theme)
         ]
@@ -50,6 +47,18 @@ viewSourceAndValue originalviewData cellContents cell =
         style =
             case ( cell.cellState, cell.tipe ) of
                 ( CSEdit, _ ) ->
+                    [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0.75 0.75 0.75)
+
+                    --, editBGColor
+                    , Element.Border.widthEach
+                        { bottom = 1
+                        , left = 0
+                        , right = 0
+                        , top = 1
+                        }
+                    ]
+
+                ( CSEditCompact, _ ) ->
                     [ Element.Border.color (themedDividerColor originalviewData.theme) -- (E.rgb 0.75 0.75 0.75)
 
                     --, editBGColor
@@ -91,25 +100,17 @@ viewSourceAndValue originalviewData cellContents cell =
 
            else
             Background.color (themedCodeCellBackgroundColor viewData.theme)
-         , Font.color (themedCodeCellTextColor viewData.theme) -- (Utility.cellColor cell.tipe)
+         , Font.color (themedCodeCellTextColor viewData.theme)
          ]
             ++ style
         )
-        [ E.el
-            [ E.alignRight
-            , if cell.highlightTime > 0 then
-                Background.color (E.rgba 1 0 0 1.0)
-
-              else
-                Background.color (Utility.cellColor cell.tipe)
-            ]
-            (controls viewData cell)
+        [ controls viewData cell
         , E.row []
-            [ viewSource viewData (viewData.width - controlWidth) cell cellContents
-            , E.column []
-                [ newCodeCellAt cell.cellState cell.index
+            [ viewSource viewData (viewData.width - toolBarWidth) cell cellContents
+            , E.column [ E.width (E.px toolBarWidth) ]
+                [ viewIndex viewData.theme cell
+                , newCodeCellAt cell.cellState cell.index
                 , View.Button.runCellSmall cell.cellState cell.tipe cell.index
-                , toggleCellState cell
                 ]
             ]
         , E.el
@@ -185,34 +186,36 @@ controls viewData cell =
 
                     --, View.Button.lockCell cell
                     ]
-                , E.row
-                    [ E.spacing 6
-                    , E.alignRight
-                    , E.height (E.px 32)
-                    , E.paddingEach { top = 2, bottom = 2, left = 8, right = 4 }
-                    ]
-                    [ viewIndex viewData.theme cell
-                    ]
                 ]
 
+        CSEditCompact ->
+            E.none
 
-controlWidth =
-    0
+
+toolBarWidth =
+    40
 
 
 viewSource : ViewData -> Int -> Cell -> String -> Element FrontendMsg
 viewSource viewData width cell cellContent =
+    let
+        dx =
+            10
+    in
     case cell.cellState of
         CSView ->
             case cell.tipe of
                 CTCode ->
-                    renderCode viewData.pressedKeys viewData.theme cell width
+                    renderCode viewData.pressedKeys viewData.theme cell (width - dx)
 
                 CTMarkdown ->
-                    renderMarkdown viewData.theme cell width
+                    renderMarkdown viewData.theme cell (width - dx)
 
         CSEdit ->
-            editCell viewData.theme width cell cellContent
+            editCell viewData.theme (width - dx) cell cellContent
+
+        CSEditCompact ->
+            editCell viewData.theme (width - dx) cell cellContent
 
 
 viewValue : ViewData -> Cell -> Element FrontendMsg
@@ -232,7 +235,11 @@ viewValue viewData cell =
 
 viewFailure : ViewData -> Cell -> List Notebook.Types.MessageItem -> Element FrontendMsg
 viewFailure viewData cell report =
-    E.el [ Font.color (E.rgb 1 0.5 0), E.height (E.px 30), E.paddingXY 6 6, E.width (E.px 700), Background.color (E.rgb 0 0 0) ] (E.text "Error")
+    let
+        realWidth =
+            viewData.width - toolBarWidth
+    in
+    E.el [ Font.color (E.rgb 1 0.5 0), E.height (E.px 30), E.paddingXY 6 6, E.width (E.px realWidth), Background.color (E.rgb 0 0 0) ] (E.text "Error")
 
 
 viewSuccess : ViewData -> Cell -> Element FrontendMsg
@@ -240,7 +247,7 @@ viewSuccess viewData cell =
     -- TODO
     let
         realWidth =
-            viewData.width - controlWidth
+            viewData.width - toolBarWidth
     in
     case cell.value of
         CVNone ->
@@ -335,12 +342,18 @@ viewIndex theme cell =
                 CSEdit ->
                     Element.Events.onMouseDown (EvalCell cell.cellState cell.index)
 
+                CSEditCompact ->
+                    Element.Events.onMouseDown (EvalCell cell.cellState cell.index)
+
         padding =
             case cell.cellState of
                 CSView ->
                     E.paddingEach { top = 9, bottom = 6, left = 6, right = 16 }
 
                 CSEdit ->
+                    E.paddingEach { top = 6, bottom = 6, left = 12, right = 16 }
+
+                CSEditCompact ->
                     E.paddingEach { top = 6, bottom = 6, left = 12, right = 16 }
     in
     E.el
@@ -355,7 +368,7 @@ viewIndex theme cell =
                     themedButtonColor cell.tipe cell.cellState theme
             )
         , Font.color (themedMutedTextColor theme)
-        , E.htmlAttribute <| HA.style "z-index" "1"
+        , E.htmlAttribute <| HA.style "z-index" "100"
         , E.htmlAttribute <| HA.style "cursor" "pointer"
         , Font.family
             [ Font.typeface "Open Sans"
@@ -381,14 +394,18 @@ renderCode pressedKeys theme cell width =
                     -- TODO: and are going to make clickng in the cell make
                     -- TODO: the cell current
                     --  Element.Events.onMouseDown (EditCell cell)
-                    Element.Events.onMouseDown (MakeCellCurrent cell.index)
+                    Element.Events.onMouseDown (MakeCellCurrent cell)
 
                 CSEdit ->
                     Element.Events.onMouseDown (EvalCell CSEdit cell.index)
 
+                CSEditCompact ->
+                    Element.Events.onMouseDown (EvalCell CSEdit cell.index)
+
           else
             Element.Events.onMouseDown NoOpFrontendMsg
-        , E.inFront (E.el [ E.alignRight, E.moveDown 8 ] (viewIndex theme cell))
+
+        --  , E.inFront (E.el [ E.alignRight, E.moveDown 8 ] (viewIndex theme cell))
         ]
         [ View.Utility.preformattedElement [ HA.style "line-height" "1.5" ] cell.text
         ]
@@ -490,6 +507,9 @@ newCodeCellAt cellState index =
         CSEdit ->
             Button.smallPrimary { msg = NewCodeCell CSEdit index, status = Button.ActiveTransparent, label = Button.Text "+", tooltipText = Just "Insert  new code cell" }
 
+        CSEditCompact ->
+            Button.smallPrimary { msg = NewCodeCell CSEdit index, status = Button.ActiveTransparent, label = Button.Text "+", tooltipText = Just "Insert  new code cell" }
+
 
 newMarkdownCellAt : CellState -> Int -> Element FrontendMsg
 newMarkdownCellAt cellState index =
@@ -500,6 +520,9 @@ newMarkdownCellAt cellState index =
         CSEdit ->
             Button.smallPrimary { msg = NewMarkdownCell CSEdit index, status = Button.ActiveTransparent, label = Button.Text "Text", tooltipText = Just "Insert  new cell" }
 
+        CSEditCompact ->
+            Button.smallPrimary { msg = NewMarkdownCell CSEdit index, status = Button.ActiveTransparent, label = Button.Text "Text", tooltipText = Just "Insert  new cell" }
+
 
 newCodeCellBangAt : CellState -> Int -> Element FrontendMsg
 newCodeCellBangAt cellState index =
@@ -508,6 +531,9 @@ newCodeCellBangAt cellState index =
             Button.smallPrimary { msg = NewCodeCell CSView index, status = Button.Active, label = Button.Text "New Code", tooltipText = Just "Insert  new cell" }
 
         CSEdit ->
+            Button.smallPrimary { msg = NewCodeCell CSView index, status = Button.Active, label = Button.Text "New Code", tooltipText = Just "Insert  new cell" }
+
+        CSEditCompact ->
             Button.smallPrimary { msg = NewCodeCell CSView index, status = Button.Active, label = Button.Text "New Code", tooltipText = Just "Insert  new cell" }
 
 
@@ -532,19 +558,19 @@ toggleCellType : Cell -> Element FrontendMsg
 toggleCellType cell =
     case cell.tipe of
         CTMarkdown ->
-            Button.smallPrimary { msg = SetCellType cell CTCode, status = Button.ActiveTransparent, label = Button.Text "Text", tooltipText = Just "Text -> Code" }
+            Button.smallPrimary { msg = SetCellType cell CTCode, status = Button.ActiveTransparent, label = Button.Text "Text > Code", tooltipText = Nothing }
 
         CTCode ->
-            Button.smallPrimary { msg = SetCellType cell CTMarkdown, status = Button.ActiveTransparent, label = Button.Text "Code", tooltipText = Just "Code -> Text" }
+            Button.smallPrimary { msg = SetCellType cell CTMarkdown, status = Button.ActiveTransparent, label = Button.Text "Code > Text", tooltipText = Nothing }
 
 
 toggleCellState : Cell -> Element FrontendMsg
 toggleCellState cell =
     case cell.cellState of
         CSView ->
-            Button.smallPrimary { msg = SetCellState cell CSEdit, status = Button.ActiveTransparent, label = Button.Text "V", tooltipText = Just "Edit cell" }
+            Button.smallPrimary { msg = SetCellState cell CSEditCompact, status = Button.ActiveTransparent, label = Button.Text "E", tooltipText = Just "Edit cell" }
 
-        CSEdit ->
+        _ ->
             Button.smallPrimary { msg = SetCellState cell CSView, status = Button.ActiveTransparent, label = Button.Text "E", tooltipText = Just "View cell" }
 
 

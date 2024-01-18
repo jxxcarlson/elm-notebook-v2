@@ -273,6 +273,9 @@ processCell cellState cellIndex model_ =
                 CSEdit ->
                     model_
 
+                CSEditCompact ->
+                    model_
+
                 CSView ->
                     { model_ | currentBook = Notebook.Book.setAllCellStates CSView model_.currentBook }
     in

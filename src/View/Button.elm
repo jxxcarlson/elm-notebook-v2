@@ -158,6 +158,9 @@ runCell cellState cellType index =
 
                         CSEdit ->
                             "Run"
+
+                        CSEditCompact ->
+                            "Run"
             in
             Button.smallPrimary { msg = EvalCell cellState index, status = Button.ActiveTransparent, label = Button.Text label, tooltipText = Just "ctrl-Enter" }
 
@@ -167,6 +170,9 @@ runCell cellState cellType index =
                     E.none
 
                 CSEdit ->
+                    Button.smallPrimary { msg = EvalCell CSView index, status = Button.ActiveTransparent, label = Button.Text "Close", tooltipText = Just "ctrl-Enter" }
+
+                CSEditCompact ->
                     Button.smallPrimary { msg = EvalCell CSView index, status = Button.ActiveTransparent, label = Button.Text "Close", tooltipText = Just "ctrl-Enter" }
 
 
@@ -183,6 +189,9 @@ runCellSmall cellState cellType index =
 
                         CSEdit ->
                             "R"
+
+                        CSEditCompact ->
+                            "R"
             in
             Button.smallPrimary { msg = EvalCell cellState index, status = Button.ActiveTransparent, label = Button.Text label, tooltipText = Just "Evaluate cell (ctrl-Enter)" }
 
@@ -192,6 +201,9 @@ runCellSmall cellState cellType index =
                     E.none
 
                 CSEdit ->
+                    Button.smallPrimary { msg = EvalCell CSView index, status = Button.ActiveTransparent, label = Button.Text "C", tooltipText = Just "Save cell (ctrl-Enter)" }
+
+                CSEditCompact ->
                     Button.smallPrimary { msg = EvalCell CSView index, status = Button.ActiveTransparent, label = Button.Text "C", tooltipText = Just "Save cell (ctrl-Enter)" }
 
 
