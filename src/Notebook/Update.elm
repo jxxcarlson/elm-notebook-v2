@@ -142,14 +142,16 @@ clearCell model index =
 makeNewCell : FrontendModel -> CellState -> CellType -> Int -> ( FrontendModel, Cmd FrontendMsg )
 makeNewCell model cellState cellType index =
     let
-        newCell =
-            { index =
-                case model.cellInsertionDirection of
-                    Notebook.Types.Down ->
-                        index + 1
+        newIndex =
+            case model.cellInsertionDirection of
+                Notebook.Types.Down ->
+                    index + 1
 
-                    Notebook.Types.Up ->
-                        index
+                Notebook.Types.Up ->
+                    index
+
+        newCell =
+            { index = newIndex
             , text = "# New cell (" ++ String.fromInt (index + 2) ++ ") "
             , value = CVNone
             , tipe = cellType
@@ -163,14 +165,11 @@ makeNewCell model cellState cellType index =
 
         newBook =
             Notebook.CellHelper.addCellToBook newCell (Notebook.Book.initializeCellState model.currentBook)
-
-        _ =
-            List.length newBook.cells
     in
     ( { model
         | cellContent = ""
         , currentBook = newBook
-        , currentCellIndex = index + 1
+        , currentCellIndex = newIndex
       }
     , Cmd.none
     )
