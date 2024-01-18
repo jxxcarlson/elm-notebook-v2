@@ -524,6 +524,16 @@ moveCell cellstate index direction =
             Button.smallPrimary { msg = MoveCell index direction, status = Button.ActiveTransparent, label = Button.Text "Up", tooltipText = Just "Move cell up" }
 
 
+toggleCellType : Cell -> Element FrontendMsg
+toggleCellType cell =
+    case cell.tipe of
+        CTMarkdown ->
+            Button.smallPrimary { msg = SetCellType cell CTCode, status = Button.ActiveTransparent, label = Button.Text "Text", tooltipText = Just "Text -> Code" }
+
+        CTCode ->
+            Button.smallPrimary { msg = SetCellType cell CTMarkdown, status = Button.ActiveTransparent, label = Button.Text "Code", tooltipText = Just "Code -> Text" }
+
+
 commentCell : Bool -> Int -> Element FrontendMsg
 commentCell commented index =
     case commented of

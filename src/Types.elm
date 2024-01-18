@@ -216,6 +216,7 @@ type FrontendMsg
     | ToggleShowErrorPanel
     | DeleteCell Int
     | MoveCell Int DirectionToMove
+    | SetCellType Cell Notebook.Cell.CellType
     | ToggleComment Bool Int
     | EditCell Cell
     | ClearCell Int

@@ -612,6 +612,9 @@ update msg model =
         MoveCell index direction ->
             Notebook.Book.moveCellUpDown model index direction
 
+        SetCellType cell cellType ->
+            ( { model | currentBook = Notebook.Book.setCellType cell cellType model.currentBook }, Cmd.none )
+
         ToggleComment commented index ->
             Notebook.Update.toggleComment model commented index
 
