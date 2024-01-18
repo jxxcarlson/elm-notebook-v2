@@ -321,7 +321,7 @@ getArg k args =
 
 viewIndex : Notebook.Book.Theme -> Cell -> Element FrontendMsg
 viewIndex theme cell =
-    -- TODO
+    -- TODO: rethink action
     let
         action =
             case cell.cellState of
@@ -329,7 +329,7 @@ viewIndex theme cell =
                     Element.Events.onMouseDown (EditCell cell)
 
                 CSEdit ->
-                    Element.Events.onMouseDown (EvalCell cell.cellState)
+                    Element.Events.onMouseDown (EvalCell cell.cellState cell.index)
 
         padding =
             case cell.cellState of
@@ -477,10 +477,10 @@ newCodeCellAt : CellState -> Int -> Element FrontendMsg
 newCodeCellAt cellState index =
     case cellState of
         CSView ->
-            Button.smallPrimary { msg = NewCodeCell CSEdit index, status = Button.ActiveTransparent, label = Button.Text "Code", tooltipText = Just "Insert  new cell" }
+            Button.smallPrimary { msg = NewCodeCell CSEdit index, status = Button.ActiveTransparent, label = Button.Text "+", tooltipText = Just "Insert  new code cell" }
 
         CSEdit ->
-            Button.smallPrimary { msg = NewCodeCell CSEdit index, status = Button.ActiveTransparent, label = Button.Text "Code", tooltipText = Just "Insert  new cell" }
+            Button.smallPrimary { msg = NewCodeCell CSEdit index, status = Button.ActiveTransparent, label = Button.Text "+", tooltipText = Just "Insert  new code cell" }
 
 
 newMarkdownCellAt : CellState -> Int -> Element FrontendMsg
