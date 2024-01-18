@@ -18,7 +18,6 @@ import Notebook.Types
 import Notebook.Utility as Utility
 import Types exposing (FrontendModel, FrontendMsg(..))
 import UILibrary.Button as Button
-import View.Button exposing (runCell)
 import View.CellThemed
 import View.Style
 import View.Utility
@@ -139,12 +138,13 @@ controls viewData cell =
         CSEdit ->
             E.row
                 [ --controlBGEdit
-                  E.width (E.px (viewData.width - 3))
+                  E.width (E.px (viewData.width - toolBarWidth - 50))
                 , E.centerX
                 , E.paddingEach { left = 0, right = 12, bottom = 0, top = 0 }
 
                 --, bgColor cell
-                , Background.color (themedBackgroundColor viewData.theme) --      bgColor cell
+                --, Background.color (themedBackgroundColor viewData.theme) --      bgColor cell
+                , Background.color Notebook.Config.lightThemeCodeColor --      bgColor cell
                 , Font.color (themedTextColor viewData.theme)
                 ]
                 [ E.row

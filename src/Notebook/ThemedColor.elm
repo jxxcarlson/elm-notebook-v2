@@ -64,6 +64,15 @@ themedBackgroundColor theme =
             Notebook.Config.darkThemeBackgroundColor
 
 
+themedControlBackgroundColor theme =
+    case theme of
+        Notebook.Book.LightTheme ->
+            Notebook.Config.lightThemeCodeColor
+
+        Notebook.Book.DarkTheme ->
+            Notebook.Config.darkThemeCodeColor
+
+
 themedGutterColor theme =
     case theme of
         Notebook.Book.LightTheme ->
