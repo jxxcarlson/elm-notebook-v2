@@ -373,10 +373,14 @@ renderCode pressedKeys theme cell width =
         , if not cell.locked then
             case cell.cellState of
                 CSView ->
-                    Element.Events.onMouseDown (EditCell cell)
+                    -- TODO: review this.  We disabled auto-editing for now
+                    -- TODO: and are going to make clickng in the cell make
+                    -- TODO: the cell current
+                    --  Element.Events.onMouseDown (EditCell cell)
+                    Element.Events.onMouseDown (MakeCellCurrent cell.index)
 
                 CSEdit ->
-                    Element.Events.onMouseDown (EvalCell CSEdit)
+                    Element.Events.onMouseDown (EvalCell CSEdit cell.index)
 
           else
             Element.Events.onMouseDown NoOpFrontendMsg
